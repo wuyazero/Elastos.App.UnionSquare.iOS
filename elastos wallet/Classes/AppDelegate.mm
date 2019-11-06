@@ -79,21 +79,11 @@
             model=array[i];
              model.walletID=[NSString stringWithFormat:@"%@",model.walletID];
             BOOL isbool = [reArray containsObject: model.walletID];
-            
             if (isbool==NO) {
-                
-               
-               
                 [[HMWFMDBManager sharedManagerType:walletType]delectRecordWallet: model];
-                
             }
-            
         }
-        
     }else if(array.count<reArray.count){
-        
-        
-        
         for (int i=0; i<reArray.count; i++) {
             FMDBWalletModel *model=[[FMDBWalletModel alloc]init];
             model.walletID=[NSString stringWithFormat:@"%@",reArray[i]];
@@ -107,21 +97,15 @@
                 
                 [[HMWFMDBManager sharedManagerType:sideChain] addsideChain:sideModel];
                 [[HMWFMDBManager sharedManagerType:walletType]addWallet:model];
-                
             }
-            
         }
-        
     }
-    
     array =[[HMWFMDBManager sharedManagerType:walletType] allRecordWallet];
     if (array.count==0) {
-        
         FLPrepareVC *vc=[[FLPrepareVC alloc]init];
         BaseNavigationVC *naVC=[[BaseNavigationVC alloc]initWithRootViewController:vc];
         vc.type=creatWalletType;
         self.window.rootViewController = naVC;
-        
     }else{
         FLFLTabBarVC *tabVC = [[FLFLTabBarVC alloc]init];
         self.window.rootViewController = tabVC;

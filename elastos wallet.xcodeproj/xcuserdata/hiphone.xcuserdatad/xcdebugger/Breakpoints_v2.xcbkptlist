@@ -276,34 +276,34 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 97b2af41d939d1f1"
+                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 15d2a2112fd6bb0b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[ELWalletManager RegisterProducerWithMainchainSubWallet:With:]"
                   moduleName = "elastos_wallet"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/hiphone/Documents/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
+                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1447"
                   endingLineNumber = "1447"
-                  offsetFromSymbolStart = "2345">
+                  offsetFromSymbolStart = "4252">
                </Location>
                <Location
-                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 97b2af41d939d1f1"
+                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 15d2a2112fd6bb0b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[ELWalletManager RegisterProducerWithMainchainSubWallet:With:]"
                   moduleName = "elastos_wallet"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/hiphone/Documents/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
+                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1447"
                   endingLineNumber = "1447"
-                  offsetFromSymbolStart = "2357">
+                  offsetFromSymbolStart = "4276">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -485,6 +485,38 @@
             startingLineNumber = "37"
             endingLineNumber = "37"
             landmarkName = "-viewDidLoad"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA46D85C-F63C-4156-8A59-D2BA38BE47DB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ELA/Base/NSDictionary+NilSafe.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "+gl_dictionaryWithObjects:forKeys:count:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C38F55A9-2B82-4B5A-96F7-5F2F8B55A4F4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ELA/Base/UIButton+HMWButton.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "-setIsIgnoreEvent:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
