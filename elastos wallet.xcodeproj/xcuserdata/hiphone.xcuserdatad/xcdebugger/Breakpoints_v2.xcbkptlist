@@ -288,7 +288,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1447"
                   endingLineNumber = "1447"
-                  offsetFromSymbolStart = "4252">
+                  offsetFromSymbolStart = "2084">
                </Location>
                <Location
                   uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 15d2a2112fd6bb0b"
@@ -303,7 +303,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1447"
                   endingLineNumber = "1447"
-                  offsetFromSymbolStart = "4276">
+                  offsetFromSymbolStart = "2100">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -373,38 +373,6 @@
             startingLineNumber = "111"
             endingLineNumber = "111"
             landmarkName = "-NodeRegisteredState:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "19B5370A-2D07-4401-B2AE-F9EF52572DAB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ELA/Wallet/walletCreate/MemorizingWords/HMWverifyTheMnemonicWordViewController.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "-compareTextView"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D4C9CFEC-AEC5-4CB0-9668-918419B256A6"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ELA/Wallet/walletCreate/MemorizingWords/FLPastWordVC.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
-            landmarkName = "-creatWallet"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -501,22 +469,6 @@
             startingLineNumber = "59"
             endingLineNumber = "59"
             landmarkName = "+gl_dictionaryWithObjects:forKeys:count:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C38F55A9-2B82-4B5A-96F7-5F2F8B55A4F4"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ELA/Base/UIButton+HMWButton.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "-setIsIgnoreEvent:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

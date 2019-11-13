@@ -56,7 +56,7 @@ static NSString *crossCellString=@"HMWVotingListTypeCrossCollectionViewCell";
 }
 -(void)setDataSource:(NSArray *)dataSource{
     _dataSource = dataSource;
-    self.numberNodesLabel.text=[NSString stringWithFormat:@"%ld",dataSource.count+1];
+    self.numberNodesLabel.text=[NSString stringWithFormat:@"%lu",(unsigned long)dataSource.count];
     [self.baseCollectionView reloadData];
 }
 #pragma mark -- UICollectionViewDataSource
