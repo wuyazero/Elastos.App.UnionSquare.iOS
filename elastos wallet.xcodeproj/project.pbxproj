@@ -334,6 +334,7 @@
 		426365BF22D82FC200352396 /* UIButton+HMWButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 426365BE22D82FC200352396 /* UIButton+HMWButton.m */; };
 		4264A73E221BDC24008D5C7B /* DAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4264A73D221BDC24008D5C7B /* DAConfig.m */; };
 		4264A741221BDC8D008D5C7B /* NSBundle+DAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4264A740221BDC8D008D5C7B /* NSBundle+DAUtils.m */; };
+		427D504D2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m in Sources */ = {isa = PBXBuildFile; fileRef = 427D504B2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m */; };
 		428054D42242296500E74F0E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 428054D62242296500E74F0E /* InfoPlist.strings */; };
 		4287D7802307D0C000B91C82 /* UILabel+HMWinternationalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4287D77F2307D0C000B91C82 /* UILabel+HMWinternationalization.m */; };
 		42885A562216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42885A542216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m */; };
@@ -972,6 +973,8 @@
 		4264A73D221BDC24008D5C7B /* DAConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DAConfig.m; sourceTree = "<group>"; };
 		4264A73F221BDC8D008D5C7B /* NSBundle+DAUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSBundle+DAUtils.h"; sourceTree = "<group>"; };
 		4264A740221BDC8D008D5C7B /* NSBundle+DAUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+DAUtils.m"; sourceTree = "<group>"; };
+		427D504B2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HWMNSTaggedPointerString.m"; sourceTree = "<group>"; };
+		427D504C2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HWMNSTaggedPointerString.h"; sourceTree = "<group>"; };
 		428054D52242296500E74F0E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		428054D72242296700E74F0E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		4287D77E2307D0C000B91C82 /* UILabel+HMWinternationalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HMWinternationalization.h"; sourceTree = "<group>"; };
@@ -2072,6 +2075,8 @@
 		4202C99A21F6EF29009E5932 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				427D504C2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.h */,
+				427D504B2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m */,
 				426365BD22D82FC200352396 /* UIButton+HMWButton.h */,
 				426365BE22D82FC200352396 /* UIButton+HMWButton.m */,
 				4261CF3422A15D20006B1DDE /* NSDictionary+NilSafe.h */,
@@ -3131,6 +3136,7 @@
 				4202CA6121F6EF2A009E5932 /* HMWtransferTransactionSingleAddressDetailsView.m in Sources */,
 				422672A722C9E0CD00179D66 /* HWMVUpdateLogWebViewController.m in Sources */,
 				4202CA3F21F6EF2A009E5932 /* FLNetErrorView.m in Sources */,
+				427D504D2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m in Sources */,
 				4202C9F021F6EF2A009E5932 /* MJRefreshAutoNormalFooter.m in Sources */,
 				4202CA2C21F6EF2A009E5932 /* friendsModel.m in Sources */,
 				4228AA5721F88C87002866B5 /* NSBundle+YYAdd.m in Sources */,

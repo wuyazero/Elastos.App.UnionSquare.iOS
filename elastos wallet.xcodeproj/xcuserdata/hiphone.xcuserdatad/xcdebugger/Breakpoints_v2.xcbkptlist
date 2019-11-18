@@ -70,38 +70,6 @@
             endingLineNumber = "103"
             landmarkName = "-getDBRecored"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8894B111-7C77-4D03-AFE6-DF37C7C86878 - 21e850a3e7efe326"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[FLChangeVotedTicketsVC getWalletType]"
-                  moduleName = "elastos_wallet"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/ELA/found/SuperPoint/ViewController/FLChangeVotedTicketsVC.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "107"
-                  endingLineNumber = "107"
-                  offsetFromSymbolStart = "4905">
-               </Location>
-               <Location
-                  uuid = "8894B111-7C77-4D03-AFE6-DF37C7C86878 - 21e850a3e7efe326"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[FLChangeVotedTicketsVC getWalletType]"
-                  moduleName = "elastos_wallet"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/ELA/found/SuperPoint/ViewController/FLChangeVotedTicketsVC.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "107"
-                  endingLineNumber = "107"
-                  offsetFromSymbolStart = "4917">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -306,6 +274,38 @@
             endingLineNumber = "1447"
             landmarkName = "-RegisterProducerWithMainchainSubWallet:With:"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 15d2a2112fd6bb0b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ELWalletManager RegisterProducerWithMainchainSubWallet:With:]"
+                  moduleName = "elastos_wallet"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1447"
+                  endingLineNumber = "1447"
+                  offsetFromSymbolStart = "2084">
+               </Location>
+               <Location
+                  uuid = "CC305A04-1175-4A8E-93F7-C9AF82897812 - 15d2a2112fd6bb0b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ELWalletManager RegisterProducerWithMainchainSubWallet:With:]"
+                  moduleName = "elastos_wallet"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hiphone/Documents/ElastosApp/Elastos.App.UnionSquare.iOS/WalletManager/ELWalletManager.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1447"
+                  endingLineNumber = "1447"
+                  offsetFromSymbolStart = "2100">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
