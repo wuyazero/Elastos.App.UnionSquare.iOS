@@ -41,7 +41,7 @@
 #endif
 
 #ifdef __OBJC__
-#define Localized(key)  NSLocalizedStringFromTable(key, @"Language", nil);
+//#define Localized(key)  NSLocalizedStringFromTable(key, @"Language", nil);
 
 
 //通用
@@ -70,7 +70,8 @@
 #define TransactionStatusChanged @"TransactionStatusChanged"
 #define AccountBalanceChanges    @"AccountBalanceChanges"
 #define OnTxPublishedResult      @"OnTxPublishedResult"
-#define  UWUserLanguageKey  @"AppleLanguagesUserLanguageKey"
+#define  UWUserLanguageKey  @"AppleLanguages"
+//#define  UWUserLanguageKey  @"AppleLanguagesUserLanguageKey"
 #define  selectIndexWallet  @"selectIndexWallet"
 #define STANDARD_USER_DEFAULT  [NSUserDefaults standardUserDefaults]
 #import <Foundation/Foundation.h>
@@ -95,5 +96,9 @@
 #import "NSObject+Swizzling.h"
 #import "UIButton+HMWButton.h"
 #import "UILabel+HMWinternationalization.h"
+#import "YRClassSafeCategory.h"
+#import "YRClassSafeCategoryConfig.h"
+
+
 
 #endif

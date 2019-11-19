@@ -295,6 +295,13 @@
 		422D60AB21FC42D100DD07FF /* HMWChooseTheCountryAreasTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 422D60A721FC42D100DD07FF /* HMWChooseTheCountryAreasTableViewCell.xib */; };
 		4230217A22C0BB000004AB65 /* nodeInformationDetailsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4230217922C0BB000004AB65 /* nodeInformationDetailsView.m */; };
 		4230217C22C0BB0C0004AB65 /* nodeInformationDetailsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4230217B22C0BB0C0004AB65 /* nodeInformationDetailsView.xib */; };
+		423461E62383E26900E4B135 /* UILabel+HMWinternationalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461E52383E26900E4B135 /* UILabel+HMWinternationalization.m */; };
+		423461F72383F18900E4B135 /* NSNumber+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461EB2383F18600E4B135 /* NSNumber+YRSafeCategory.m */; };
+		423461F82383F18900E4B135 /* NSString+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461EC2383F18600E4B135 /* NSString+YRSafeCategory.m */; };
+		423461F92383F18900E4B135 /* NSArray+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461ED2383F18600E4B135 /* NSArray+YRSafeCategory.m */; };
+		423461FA2383F18900E4B135 /* UITableView+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461EF2383F18700E4B135 /* UITableView+YRSafeCategory.m */; };
+		423461FB2383F18900E4B135 /* NSDictionary+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461F12383F18700E4B135 /* NSDictionary+YRSafeCategory.m */; };
+		423461FC2383F18900E4B135 /* NSNull+YRSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 423461F22383F18700E4B135 /* NSNull+YRSafeCategory.m */; };
 		4241D21F2302858900000F1D /* libspvsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4241D21E2302858900000F1D /* libspvsdk.a */; };
 		424910E72271BFCF00C41E50 /* SDWebImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 424910C62271BFCF00C41E50 /* SDWebImageManager.m */; };
 		424910E82271BFCF00C41E50 /* SDWebImageDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 424910C72271BFCF00C41E50 /* SDWebImageDecoder.m */; };
@@ -335,7 +342,6 @@
 		4264A741221BDC8D008D5C7B /* NSBundle+DAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4264A740221BDC8D008D5C7B /* NSBundle+DAUtils.m */; };
 		427D504D2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m in Sources */ = {isa = PBXBuildFile; fileRef = 427D504B2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m */; };
 		428054D42242296500E74F0E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 428054D62242296500E74F0E /* InfoPlist.strings */; };
-		4287D7802307D0C000B91C82 /* UILabel+HMWinternationalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4287D77F2307D0C000B91C82 /* UILabel+HMWinternationalization.m */; };
 		42885A562216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42885A542216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m */; };
 		42885A572216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 42885A552216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.xib */; };
 		428B4D7122CAFA5D004AE7D0 /* Data in Resources */ = {isa = PBXBuildFile; fileRef = 428B4D7022CAFA5D004AE7D0 /* Data */; };
@@ -883,6 +889,22 @@
 		4230217822C0BB000004AB65 /* nodeInformationDetailsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nodeInformationDetailsView.h; sourceTree = "<group>"; };
 		4230217922C0BB000004AB65 /* nodeInformationDetailsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = nodeInformationDetailsView.m; sourceTree = "<group>"; };
 		4230217B22C0BB0C0004AB65 /* nodeInformationDetailsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = nodeInformationDetailsView.xib; sourceTree = "<group>"; };
+		423461E42383E26900E4B135 /* UILabel+HMWinternationalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HMWinternationalization.h"; sourceTree = "<group>"; };
+		423461E52383E26900E4B135 /* UILabel+HMWinternationalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HMWinternationalization.m"; sourceTree = "<group>"; };
+		423461E92383F18500E4B135 /* UITableView+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+YRSafeCategory.h"; sourceTree = "<group>"; };
+		423461EA2383F18600E4B135 /* NSArray+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+YRSafeCategory.h"; sourceTree = "<group>"; };
+		423461EB2383F18600E4B135 /* NSNumber+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461EC2383F18600E4B135 /* NSString+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461ED2383F18600E4B135 /* NSArray+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461EE2383F18700E4B135 /* YRClassSafeCategoryConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRClassSafeCategoryConfig.h; sourceTree = "<group>"; };
+		423461EF2383F18700E4B135 /* UITableView+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461F02383F18700E4B135 /* YRClassSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRClassSafeCategory.h; sourceTree = "<group>"; };
+		423461F12383F18700E4B135 /* NSDictionary+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461F22383F18700E4B135 /* NSNull+YRSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNull+YRSafeCategory.m"; sourceTree = "<group>"; };
+		423461F32383F18800E4B135 /* NSNull+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNull+YRSafeCategory.h"; sourceTree = "<group>"; };
+		423461F42383F18800E4B135 /* NSNumber+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+YRSafeCategory.h"; sourceTree = "<group>"; };
+		423461F52383F18900E4B135 /* NSString+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+YRSafeCategory.h"; sourceTree = "<group>"; };
+		423461F62383F18900E4B135 /* NSDictionary+YRSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+YRSafeCategory.h"; sourceTree = "<group>"; };
 		4241D21E2302858900000F1D /* libspvsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libspvsdk.a; path = "elastos wallet/spvsdk/lib/libspvsdk.a"; sourceTree = "<group>"; };
 		424910C32271BFCF00C41E50 /* NSImage+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+WebCache.h"; sourceTree = "<group>"; };
 		424910C42271BFCF00C41E50 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+WebCache.h"; sourceTree = "<group>"; };
@@ -975,8 +997,6 @@
 		427D504C2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HWMNSTaggedPointerString.h"; sourceTree = "<group>"; };
 		428054D52242296500E74F0E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		428054D72242296700E74F0E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		4287D77E2307D0C000B91C82 /* UILabel+HMWinternationalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HMWinternationalization.h"; sourceTree = "<group>"; };
-		4287D77F2307D0C000B91C82 /* UILabel+HMWinternationalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HMWinternationalization.m"; sourceTree = "<group>"; };
 		42885A532216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HWMTransactionDetailsURLViewController.h; sourceTree = "<group>"; };
 		42885A542216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HWMTransactionDetailsURLViewController.m; sourceTree = "<group>"; };
 		42885A552216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HWMTransactionDetailsURLViewController.xib; sourceTree = "<group>"; };
@@ -2072,6 +2092,9 @@
 		4202C99A21F6EF29009E5932 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				423461E82383F16A00E4B135 /* safeCategory */,
+				423461E42383E26900E4B135 /* UILabel+HMWinternationalization.h */,
+				423461E52383E26900E4B135 /* UILabel+HMWinternationalization.m */,
 				427D504C2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.h */,
 				427D504B2382719E00C765F3 /* NSString+HWMNSTaggedPointerString.m */,
 				426365BD22D82FC200352396 /* UIButton+HMWButton.h */,
@@ -2097,8 +2120,6 @@
 				4202C9A221F6EF29009E5932 /* UIView+FL.m */,
 				4202C99E21F6EF29009E5932 /* UIViewController+FLVCExt.h */,
 				4202C9A621F6EF29009E5932 /* UIViewController+FLVCExt.m */,
-				4287D77E2307D0C000B91C82 /* UILabel+HMWinternationalization.h */,
-				4287D77F2307D0C000B91C82 /* UILabel+HMWinternationalization.m */,
 				CBD48D6B21FEA22400BF3B11 /* FLNotePointDBManager.h */,
 				CBD48D6C21FEA22400BF3B11 /* FLNotePointDBManager.m */,
 				42B7AD97221BAA61006959B8 /* Localizable.strings */,
@@ -2383,6 +2404,27 @@
 				4228AA4021F88C86002866B5 /* YYCGUtilities.h */,
 			);
 			path = Quartz;
+			sourceTree = "<group>";
+		};
+		423461E82383F16A00E4B135 /* safeCategory */ = {
+			isa = PBXGroup;
+			children = (
+				423461EA2383F18600E4B135 /* NSArray+YRSafeCategory.h */,
+				423461ED2383F18600E4B135 /* NSArray+YRSafeCategory.m */,
+				423461F62383F18900E4B135 /* NSDictionary+YRSafeCategory.h */,
+				423461F12383F18700E4B135 /* NSDictionary+YRSafeCategory.m */,
+				423461F32383F18800E4B135 /* NSNull+YRSafeCategory.h */,
+				423461F22383F18700E4B135 /* NSNull+YRSafeCategory.m */,
+				423461F42383F18800E4B135 /* NSNumber+YRSafeCategory.h */,
+				423461EB2383F18600E4B135 /* NSNumber+YRSafeCategory.m */,
+				423461F52383F18900E4B135 /* NSString+YRSafeCategory.h */,
+				423461EC2383F18600E4B135 /* NSString+YRSafeCategory.m */,
+				423461E92383F18500E4B135 /* UITableView+YRSafeCategory.h */,
+				423461EF2383F18700E4B135 /* UITableView+YRSafeCategory.m */,
+				423461F02383F18700E4B135 /* YRClassSafeCategory.h */,
+				423461EE2383F18700E4B135 /* YRClassSafeCategoryConfig.h */,
+			);
+			path = safeCategory;
 			sourceTree = "<group>";
 		};
 		424910C22271BFCF00C41E50 /* SDWebImage */ = {
@@ -2968,6 +3010,7 @@
 				4202CA0E21F6EF2A009E5932 /* WCQRCodeScanningVC.m in Sources */,
 				CBD48D6D21FEA22400BF3B11 /* FLNotePointDBManager.m in Sources */,
 				CBD48D5B21FC36BA00BF3B11 /* AFHTTPSessionManager.m in Sources */,
+				423461F92383F18900E4B135 /* NSArray+YRSafeCategory.m in Sources */,
 				4202CA5021F6EF2A009E5932 /* FLSearchContractTableCell.m in Sources */,
 				4228AA5421F88C87002866B5 /* UIFont+YYAdd.m in Sources */,
 				4202C9E621F6EF2A009E5932 /* MJRefreshConst.m in Sources */,
@@ -2995,6 +3038,7 @@
 				4202CA0F21F6EF2A009E5932 /* SGQRCodeAlbumManager.m in Sources */,
 				4202CA0121F6EF2A009E5932 /* MASViewConstraint.m in Sources */,
 				4202CAAC21F6EF2B009E5932 /* AddTheCurrencyListModel.m in Sources */,
+				423461FB2383F18900E4B135 /* NSDictionary+YRSafeCategory.m in Sources */,
 				422D609F21FC405A00DD07FF /* HMWSelectCountriesOrRegionsViewController.m in Sources */,
 				4202CA8321F6EF2B009E5932 /* HMWtheWalletListTableViewCell.m in Sources */,
 				4202CA2621F6EF2A009E5932 /* HMWClassificationOfLanguageTableViewCell.m in Sources */,
@@ -3012,6 +3056,7 @@
 				4202CACE21F6EF2B009E5932 /* HMWsignUpForViewController.mm in Sources */,
 				424910F02271BFCF00C41E50 /* SDWebImageDownloaderOperation.m in Sources */,
 				4228AA4F21F88C87002866B5 /* UIView+YYAdd.m in Sources */,
+				423461F82383F18900E4B135 /* NSString+YRSafeCategory.m in Sources */,
 				4228AA6721F88F18002866B5 /* assetDetailsModel.m in Sources */,
 				4202CAA421F6EF2B009E5932 /* HMWImKeystoreView.m in Sources */,
 				4202CA7121F6EF2B009E5932 /* HMWtransferTransactionDetailsViewController.m in Sources */,
@@ -3053,7 +3098,6 @@
 				4202C9FB21F6EF2A009E5932 /* MASCompositeConstraint.m in Sources */,
 				4202C9F621F6EF2A009E5932 /* MJRefreshBackFooter.m in Sources */,
 				424910EC2271BFCF00C41E50 /* UIImage+MultiFormat.m in Sources */,
-				4287D7802307D0C000B91C82 /* UILabel+HMWinternationalization.m in Sources */,
 				4202CA3621F6EF2A009E5932 /* FLSugarModel.m in Sources */,
 				CBD48D5C21FC36BA00BF3B11 /* AFURLSessionManager.m in Sources */,
 				4202CA3421F6EF2A009E5932 /* FLFounderSugarVC.m in Sources */,
@@ -3083,6 +3127,7 @@
 				4228AA4D21F88C87002866B5 /* UIScrollView+YYAdd.m in Sources */,
 				42885A562216DF3800C9AD47 /* HWMTransactionDetailsURLViewController.m in Sources */,
 				4202CAAB21F6EF2B009E5932 /* FMDBWalletModel.m in Sources */,
+				423461FC2383F18900E4B135 /* NSNull+YRSafeCategory.m in Sources */,
 				4202CADB21F6EF2B009E5932 /* HMWfoundViewController.mm in Sources */,
 				CBD48D4A21FC341200BF3B11 /* FLCoinPointInfoModel.m in Sources */,
 				4202CA4721F6EF2A009E5932 /* FLGoToIdentyAlertView.m in Sources */,
@@ -3092,6 +3137,7 @@
 				4202C9E921F6EF2A009E5932 /* NSBundle+MJRefresh.m in Sources */,
 				42B57AC222150C1C004CF089 /* NSMutableArray+WOCrash.m in Sources */,
 				4228AA4421F88C86002866B5 /* YYMemoryCache.m in Sources */,
+				423461F72383F18900E4B135 /* NSNumber+YRSafeCategory.m in Sources */,
 				4202C9F321F6EF2A009E5932 /* MJRefreshGifHeader.m in Sources */,
 				4202CA5921F6EF2A009E5932 /* FLItemCollectionCell.m in Sources */,
 				4202C9FC21F6EF2A009E5932 /* MASConstraintMaker.m in Sources */,
@@ -3129,6 +3175,7 @@
 				4228AA6121F88C87002866B5 /* NSDictionary+YYAdd.m in Sources */,
 				4228AA6421F88C87002866B5 /* CALayer+YYAdd.m in Sources */,
 				4202CA3921F6EF2A009E5932 /* FLticketProgressView.m in Sources */,
+				423461E62383E26900E4B135 /* UILabel+HMWinternationalization.m in Sources */,
 				4202CA6121F6EF2A009E5932 /* HMWtransferTransactionSingleAddressDetailsView.m in Sources */,
 				422672A722C9E0CD00179D66 /* HWMVUpdateLogWebViewController.m in Sources */,
 				4202CA3F21F6EF2A009E5932 /* FLNetErrorView.m in Sources */,
@@ -3173,6 +3220,7 @@
 				424910EA2271BFCF00C41E50 /* SDWebImageDownloader.m in Sources */,
 				4228AA5221F88C87002866B5 /* UIImage+YYAdd.m in Sources */,
 				4202CA0321F6EF2A009E5932 /* SVRadialGradientLayer.m in Sources */,
+				423461FA2383F18900E4B135 /* UITableView+YRSafeCategory.m in Sources */,
 				4202CABF21F6EF2B009E5932 /* UIViewController+FLVCExt.m in Sources */,
 				4228AA5E21F88C87002866B5 /* NSDate+YYAdd.m in Sources */,
 				CBD48D5D21FC36BA00BF3B11 /* AFURLRequestSerialization.m in Sources */,
