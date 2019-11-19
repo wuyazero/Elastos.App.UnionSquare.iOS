@@ -123,7 +123,7 @@
 //    if (@available(iOS 13.2, *)) {
 //
 //               }else{
-                   const char *className = "_UITextLayoutView";
+                   const char *className = "_IBBrokenImage_";
                    Class cls = objc_getClass(className);
                    if (cls == nil) {
                        cls = objc_allocateClassPair([UIView class], className, 0);

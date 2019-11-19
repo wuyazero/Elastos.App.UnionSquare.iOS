@@ -47,12 +47,8 @@ static NSString *crossCellString=@"HMWVotingListTypeCrossCollectionViewCell";
          self.runningNodeListTextLabel.text=NSLocalizedString(@"参选节点列表", nil);
        self.numberNodesTextLabel.text=NSLocalizedString(@"节点数量", nil);
         self.listType=@"1";
-       
-
     }
-    
-    return self;
-
+ return self;
 }
 -(void)setDataSource:(NSArray *)dataSource{
     _dataSource = dataSource;
