@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-               BuildableName = "ELA WalletPreNet.app"
+               BuildableName = "ELA Wallet F.app"
                BlueprintName = "elastos wallet"
                ReferencedContainer = "container:elastos wallet.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "ELA WalletPreNet.app"
+            BuildableName = "ELA Wallet F.app"
             BlueprintName = "elastos wallet"
             ReferencedContainer = "container:elastos wallet.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "ELA WalletPreNet.app"
+            BuildableName = "ELA Wallet F.app"
             BlueprintName = "elastos wallet"
             ReferencedContainer = "container:elastos wallet.xcodeproj">
          </BuildableReference>
@@ -113,7 +113,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "ELA WalletPreNet.app"
+            BuildableName = "ELA Wallet F.app"
             BlueprintName = "elastos wallet"
             ReferencedContainer = "container:elastos wallet.xcodeproj">
          </BuildableReference>
