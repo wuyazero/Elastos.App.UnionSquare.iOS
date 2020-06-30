@@ -31,7 +31,7 @@
     NSArray* array = [fileManager contentsOfDirectoryAtPath:sourcePath error:&error];
     if(error)
     {
-        //        //NSLog(@"%@", error.localizedDescription);
+        //        //WYLog(@"%@", error.localizedDescription);
     }
     for(int i = 0; i<[array count]; i++)
     {

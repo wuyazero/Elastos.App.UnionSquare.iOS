@@ -179,7 +179,7 @@
             //            }];
             //分享 成功
         } else  {
-            //            //NSLog(@"cancled");
+            //            //WYLog(@"cancled");
             //分享 取消
         }
     };
@@ -217,7 +217,7 @@
                 break;
             }
             case AVAuthorizationStatusRestricted: {
-                //                //NSLog(@"因为系统原因, 无法访问相册");
+                //                //WYLog(@"因为系统原因, 无法访问相册");
                 break;
             }
                 
@@ -427,7 +427,7 @@
     
     if (!jsonData) {
         
-        //        //NSLog(@"%@",error);
+        //        //WYLog(@"%@",error);
         
     }else{
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -665,19 +665,19 @@
         [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             if (settings.notificationCenterSetting == UNNotificationSettingEnabled) {
                 isOn = YES;
-                NSLog(@"打开了通知");
+                WYLog(@"打开了通知");
             }else {
                 isOn = NO;
-                NSLog(@"关闭了通知");
+                WYLog(@"关闭了通知");
                 [self showAlertView];
             }
         }];
     }else {
         if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone){
-            NSLog(@"关闭了通知");
+            WYLog(@"关闭了通知");
             [self showAlertView];
         }else {
-            NSLog(@"打开了通知");
+            WYLog(@"打开了通知");
         }
     }
 }

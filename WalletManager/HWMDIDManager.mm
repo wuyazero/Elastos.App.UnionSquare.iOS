@@ -420,7 +420,7 @@ DIDAdapter *TestDIDAdapter_Create(const char *pwd, const char *walletId)
     if ([self jwtSignatureWithDIDString:jsonDict[@"iss"] withSignature:manySecrets.lastObject withUnSignature:UnSignature]) {
         return jsonDict;
     }else{
-        NSLog(@"%s : wallet did invalid Manager", __func__);
+        WYLog(@"%s : wallet did invalid Manager", __func__);
         [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
         return @"1";
     }
@@ -564,7 +564,7 @@ DIDAdapter *TestDIDAdapter_Create(const char *pwd, const char *walletId)
        NSString* UnSignature=[NSString stringWithFormat:@"%@.%@",[self removeSpaceAndNewline:manySecrets.firstObject],manySecrets[1]];
        UnSignature=[UnSignature stringByReplacingOccurrencesOfString:@"//n" withString:@""];
        bool isDID=[pubKey isEqualToString:jsonDict[@"data"][@"ownerpublickey"]];
-    NSLog(@"pubKey==%@-------ownerpublickey==%@",pubKey,jsonDict[@"data"][@"ownerpublickey"]);
+    WYLog(@"pubKey==%@-------ownerpublickey==%@",pubKey,jsonDict[@"data"][@"ownerpublickey"]);
        if (isDID){
            return NO;
        }else{

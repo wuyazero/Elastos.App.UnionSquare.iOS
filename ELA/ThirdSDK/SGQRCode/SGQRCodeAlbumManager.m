@@ -17,7 +17,7 @@
 #import "UIImage+SGImageSize.h"
 
 #ifdef DEBUG
-#define SGQRCodeLog(...) //NSLog(__VA_ARGS__)
+#define SGQRCodeLog(...) //WYLog(__VA_ARGS__)
 #else
 #define SGQRCodeLog(...)
 #endif

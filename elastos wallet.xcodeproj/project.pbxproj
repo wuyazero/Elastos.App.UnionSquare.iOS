@@ -10,6 +10,7 @@
 		0377F67DC70B4CEFBD787502 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FEFE2C15307426D819C2CA3 /* libz.tbd */; };
 		1D3623260D0F684500981E51 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.mm */; };
 		1D60589B0D05DD56006BFB54 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; };
+		380233A424ABBF42001DAD52 /* WYUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 380233A324ABBF42001DAD52 /* WYUtils.m */; };
 		383EFE2B249727D00087BA01 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 383EFE2A249727B50087BA01 /* libresolv.tbd */; };
 		383EFE2F249736FA0087BA01 /* WYResyncChainDataViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */; };
 		383EFE30249736FA0087BA01 /* WYResyncChainDataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 383EFE2E249736FA0087BA01 /* WYResyncChainDataViewController.xib */; };
@@ -706,6 +707,8 @@
 		1D6058910D05DD3D006BFB54 /* ELA Wallet F.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ELA Wallet F.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		29B97316FDCFA39411CA2CEA /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* elastos wallet-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "elastos wallet-Prefix.pch"; sourceTree = "<group>"; };
+		380233A224ABBF42001DAD52 /* WYUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYUtils.h; sourceTree = "<group>"; };
+		380233A324ABBF42001DAD52 /* WYUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYUtils.m; sourceTree = "<group>"; };
 		383EFE2A249727B50087BA01 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		383EFE2C249736FA0087BA01 /* WYResyncChainDataViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYResyncChainDataViewController.h; sourceTree = "<group>"; };
 		383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYResyncChainDataViewController.mm; sourceTree = "<group>"; };
@@ -3150,6 +3153,8 @@
 				CBD48D6B21FEA22400BF3B11 /* FLNotePointDBManager.h */,
 				CBD48D6C21FEA22400BF3B11 /* FLNotePointDBManager.m */,
 				42B7AD97221BAA61006959B8 /* Localizable.strings */,
+				380233A224ABBF42001DAD52 /* WYUtils.h */,
+				380233A324ABBF42001DAD52 /* WYUtils.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -5333,6 +5338,7 @@
 				42D1060023A3344D0063AADC /* MJRefreshStateHeader.m in Sources */,
 				4279CAD924796C3100B503A4 /* ELACouncilAndSecretariatModel.m in Sources */,
 				422D609721FC405000DD07FF /* HMWChooseTheCountryAreasModel.m in Sources */,
+				380233A424ABBF42001DAD52 /* WYUtils.m in Sources */,
 				4279CADB24796C3100B503A4 /* ELABaseModel.m in Sources */,
 				42EAEFE3238BB60700D6A912 /* HWMVoteTheEditorialBoardTableViewCell.m in Sources */,
 				4279CAE224796C3100B503A4 /* ELANetwork.m in Sources */,

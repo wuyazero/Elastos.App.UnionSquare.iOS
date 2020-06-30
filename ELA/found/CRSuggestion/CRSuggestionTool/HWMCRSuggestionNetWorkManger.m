@@ -85,7 +85,7 @@ static HWMCRSuggestionNetWorkManger* _instatance;
 -(void)reloadCRSuggestionDetailsWithID:(NSString*)ID withComplete:(_Nonnull CRSuggestionNetWorkComplete)Completed{
     NSString *bordyUrlString=[NSString stringWithFormat:@"/api/cvote/get_proposal/%@",ID];
     [HttpUrl NetGETHost:CRProposalIP url:bordyUrlString header:nil body:nil showHUD:NO WithSuccessBlock:^(id data) {
-        NSLog(@"详情数据---%@",data);
+        WYLog(@"详情数据---%@",data);
         Completed(data);
     } WithFailBlock:^(id data) {
         Completed(data);

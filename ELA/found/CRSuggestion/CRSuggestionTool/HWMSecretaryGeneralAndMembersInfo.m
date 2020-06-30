@@ -73,7 +73,7 @@ static HWMSecretaryGeneralAndMembersInfo *_instance;
     __weak __typeof__(self)weakSelf=self;
     [[HWMCRSuggestionNetWorkManger shareCRSuggestionNetWorkManger]reloadSecretaryGeneralAndMembersDetailsWithID:@"" withDIDString:didString withComplete:^(id  _Nonnull data) {
         
-        NSLog(@"委员信息获取成功---%@",data);
+        WYLog(@"委员信息获取成功---%@",data);
         [self parsingModelWithData:data[@"data"] complete:^(HWMSecretaryGeneralAndMembersDetailsModel *model) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 com(model);

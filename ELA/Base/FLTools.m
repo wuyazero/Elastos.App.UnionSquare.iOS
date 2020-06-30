@@ -58,7 +58,7 @@ static FLTools *tool;
     //    NSMutableArray *b = [NSMutableArray array];
     //    for (FLWallet *a in list) {
     //        NSString* c = [a modelToJSONString];
-    //        //NSLog(@"__+_+%@",a.walletName);
+    //        //WYLog(@"__+_+%@",a.walletName);
     //
     //        [b addObject:c];
     //    }
@@ -310,7 +310,7 @@ static FLTools *tool;
     
     NSString *currentTimeString = [formatter stringFromDate:datenow];
     
-    //    //NSLog(@"currentTimeString =  %@",currentTimeString);
+    //    //WYLog(@"currentTimeString =  %@",currentTimeString);
     
     return currentTimeString;
     
@@ -388,7 +388,7 @@ static FLTools *tool;
         [SVProgressHUD setAnimationDuration:4];
         [SVProgressHUD showImage:[UIImage imageNamed:@""] status:str];
     });
-    NSLog(@"错误提示信息---%@",info);
+    WYLog(@"错误提示信息---%@",info);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [SVProgressHUD showImage:[UIImage imageNamed:@""] status:info];
         });
@@ -412,7 +412,7 @@ static FLTools *tool;
         [SVProgressHUD setAnimationDuration:4];
         [SVProgressHUD showImage:[UIImage imageNamed:@""] status:str];
     });
-    NSLog(@"错误提示信息---%@",info);
+    WYLog(@"错误提示信息---%@",info);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [SVProgressHUD showImage:[UIImage imageNamed:@""] status:info];
         });
@@ -702,7 +702,7 @@ static FLTools *tool;
                                                           error:&err];
     if(err)
     {
-        //NSLog(@"json解析失败：%@",err);
+        //WYLog(@"json解析失败：%@",err);
         return nil;
     }
     return dic;
@@ -1264,7 +1264,7 @@ static FLTools *tool;
     CGFloat maxChar=300.0;
     int max =ceil(contentString.length/maxChar);
     int min=floor(contentString.length/maxChar);
-    //NSLog(@"二维码max==%d min===%d",max,min);
+    //WYLog(@"二维码max==%d min===%d",max,min);
     for (NSInteger i=0; i<max; i++) {
         NSString *dataString;
         if ((i==min && max>min) ) {
@@ -1285,7 +1285,7 @@ static FLTools *tool;
         };
         NSString *QRCodeString=[self returnJSONStringWithDictionary:dic];
         [allQRCodeArray addObject:QRCodeString];
-        //NSLog(@"二维码 dic==%@",dic);
+        //WYLog(@"二维码 dic==%@",dic);
         
     }
     return allQRCodeArray;
@@ -1300,7 +1300,7 @@ static FLTools *tool;
     if (errn) {
         
         
-        //NSLog(@"e:%@",errn);
+        //WYLog(@"e:%@",errn);
         
         
     }
@@ -1544,7 +1544,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString;
     if (!jsonData) {
-        //NSLog(@"%@",error);
+        //WYLog(@"%@",error);
     }else{
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
@@ -1640,7 +1640,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
     NSString *path=[NSString stringWithFormat:@"%@/_CodeSignature/CodeResources",bundlePath];
     NSData *data=[manger contentsAtPath:path];
     NSString *hashStr=[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    //NSLog(@"\n %@",hashStr);
+    //WYLog(@"\n %@",hashStr);
     return YES;
 }
 //生成资源文件名及对应的hash的字典， eg:@{@"appicon":@"wegdfser45t643232324234"}；
@@ -1678,7 +1678,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
     //时间转时间戳的方法:
     NSString * timeSp = [[NSNumber numberWithDouble:[date timeIntervalSince1970]] stringValue];
     
-    //NSLog(@"将某个时间转化成 时间戳timeSp:%ld",(long)timeSp); //时间戳的值
+    //WYLog(@"将某个时间转化成 时间戳timeSp:%ld",(long)timeSp); //时间戳的值
     //    [self TimeFormatConversion:timeSp ];
     return timeSp;
     
@@ -1712,7 +1712,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
     
     NSString *jsonString;
     if (!jsonData) {
-        //NSLog(@"%@",error);
+        //WYLog(@"%@",error);
     }else{
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
@@ -2238,7 +2238,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
 //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
 //    NSString *jsonString;
 //    if (!jsonData) {
-//        //NSLog(@"%@",error);
+//        //WYLog(@"%@",error);
 //    }else{
 //        jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
 //    }
