@@ -67,17 +67,22 @@
     [[FLTools share]showErrorInfo:NSLocalizedString(@"客服邮箱已复制到粘贴板", nil)];
 }
 - (IBAction)RunLogAction:(id)sender {
-    NSString *fileName = @"spvsdk.log";
-    NSString *zipName = @"spvsdk.log.zip";
+    NSArray *fileNames = @[@"spvsdk.log", LOG_FILE_NAME, @"didsdk.log"];
+    NSString *zipName = @"elawalletlogs.zip";
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *rootPath = [MyUtil getRootPath];
-    NSString *testDirectory = [rootPath stringByAppendingPathComponent:fileName];
-    NSString *zipDirectory = [rootPath stringByAppendingPathComponent:zipName];
-    BOOL res = [fileManager fileExistsAtPath:testDirectory];
-    if (res) {
-        [SSZipArchive createZipFileAtPath:zipDirectory withFilesAtPaths:@[testDirectory]];
-        NSData *data =[NSData dataWithContentsOfFile:zipDirectory];
-        NSURL *URL =[NSURL fileURLWithPath:zipDirectory];
+    NSMutableArray *srcPath = [[NSMutableArray alloc] init];
+    for (NSString *fname in fileNames) {
+        NSString *testPath = [rootPath stringByAppendingPathComponent:fname];
+        if ([fileManager fileExistsAtPath:testPath]) {
+            [srcPath addObject:testPath];
+        }
+    }
+    NSString *zipPath = [rootPath stringByAppendingPathComponent:zipName];
+    if ([srcPath count] > 0) {
+        [SSZipArchive createZipFileAtPath:zipPath withFilesAtPaths:srcPath];
+        NSData *data =[NSData dataWithContentsOfFile:zipPath];
+        NSURL *URL =[NSURL fileURLWithPath:zipPath];
         NSArray *ARR=[NSArray arrayWithObjects:data,@"log",URL,nil];
         [self mq_share:ARR];
     }

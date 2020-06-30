@@ -63,7 +63,7 @@
     activityVC.completionWithItemsHandler = ^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
         
         if (self.needDe) {
-            //NSLog(@"需要删除");
+            //WYLog(@"需要删除");
         }
         
         

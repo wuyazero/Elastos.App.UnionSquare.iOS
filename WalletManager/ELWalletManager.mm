@@ -481,7 +481,7 @@ static uint64_t feePerKB = 10000;
     //            [masterWalletListJson addObject:str];
     //        }
     //        NSString *msg = [self arrayToJSONString:masterWalletListJson];
-    //        //NSLog(@"钱包===%@",msg);
+    //        //WYLog(@"钱包===%@",msg);
     //        return [self successProcess:command msg:msg];
     //    } catch (const std:: exception & e ) {
     //
@@ -2361,7 +2361,7 @@ static uint64_t feePerKB = 10000;
 -(NSString *)ExportxPrivateKey:(invokedUrlCommand *)command{
     
     
-    NSLog(@"xxl for ExportxPrivateKey");
+    WYLog(@"xxl for ExportxPrivateKey");
     
     NSArray *args = command.arguments;
     int idx = 0;
@@ -2718,7 +2718,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
             NSData *testData =[NSData dataWithHexString:resultString];
 
             Byte *testByte = (Byte *)[testData bytes];
-            NSLog(@"转换前----%s",testByte);
+            WYLog(@"转换前----%s",testByte);
             for(int i=0;i<[testData length];i++){
                 
                 printf("testByte = %02x\n",testByte[i]);
@@ -2733,7 +2733,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
                 ReverseChar[i] = testByte[i];
                 
             };
-            NSLog(@"转换后----%s",testByte);
+            WYLog(@"转换后----%s",testByte);
            return [[HWMDIDManager shareDIDManager]adviceTheSignatureWithPWD:pwdString withDigestChar:ReverseChar];
             
         }
@@ -3013,7 +3013,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
                 dic = @{};
             }else{
                 dic=[self dictionaryWithJsonString:resultString];
-                NSLog(@"createProposalForVoteTransaction dis is %@",dic);
+                WYLog(@"createProposalForVoteTransaction dis is %@",dic);
             }
 
             Json invalidJson;
@@ -3031,23 +3031,23 @@ void *ReverseByteOrder(void *p, unsigned int len)
                 
                 for (id item in dic){
                   //do something
-                  NSLog(@"item is %@",item);
+                  WYLog(@"item is %@",item);
                    
                   NSDictionary * votes = item[@"Votes"];
-                  NSLog(@"votes is %@",votes);
+                  WYLog(@"votes is %@",votes);
                   
                   
                   NSMutableArray *InvalidateHashArray = [NSMutableArray array];
                   for(id vote in votes){
                         
-                      NSLog(@"11 vote is %@",vote);
+                      WYLog(@"11 vote is %@",vote);
                       
                       NSMutableArray *VotingProporal = dicPlayload[@"VotingProposal"];
                       BOOL isVote = NO ;
                       for (id proporalItem in VotingProporal){
                           
                           
-                          NSLog(@"11 proposalHash is %@",proporalItem[@"proposalHash"]);
+                          WYLog(@"11 proposalHash is %@",proporalItem[@"proposalHash"]);
                           if([proporalItem[@"proposalHash"] isEqualToString: vote]){
                               isVote = YES;
                           }
@@ -3148,7 +3148,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
         NSDictionary *dataDic = [[NSDictionary alloc] initWithDictionary:dic];
         NSString *payload  = [self createProposalReviewTransaction:dataDic walletID:masterWalletID];
     
-        NSLog(@"xxl Payload is %@",payload);
+        WYLog(@"xxl Payload is %@",payload);
         if(!payload)
         {
             return nil;
@@ -3181,12 +3181,12 @@ void *ReverseByteOrder(void *p, unsigned int len)
            NSString *jsonString = [self stringWithCString:result.dump()];
            
            //xxl #943
-           NSLog(@"xxl 943 0 proposalReviewTransaction %@",jsonString);
+           WYLog(@"xxl 943 0 proposalReviewTransaction %@",jsonString);
            
            
            NSDictionary *dic=[self dictionaryWithJsonString:jsonString];
            
-           NSLog(@"xxl 943 1 txid %@",dic[@"TxHash"]);
+           WYLog(@"xxl 943 1 txid %@",dic[@"TxHash"]);
            
            
            [resultDic setValue:dic[@"TxHash"] forKey:@"txid"];

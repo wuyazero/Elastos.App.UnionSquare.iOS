@@ -231,7 +231,7 @@
                            model.iconImageUrl= infoDic[@"url"];
                            model.infoEN=infoDic[@"infoEN"];
                            model.infoZH=infoDic[@"infoZH"];
-            NSLog(@"超级节点----%@",infoDic);
+            WYLog(@"超级节点----%@",infoDic);
               
                 if (model.iconImageUrl.length>0) {
                     [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/getimage" header:@{} body:@{@"imageurl":model.iconImageUrl} showHUD:NO WithSuccessBlock:^(id data) {

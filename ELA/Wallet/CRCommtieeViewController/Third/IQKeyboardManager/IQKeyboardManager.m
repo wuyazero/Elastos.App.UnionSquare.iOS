@@ -2466,7 +2466,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
         }
 
         [preLog appendString:logString];
-        NSLog(@"%@",preLog);
+        WYLog(@"%@",preLog);
     }
     
     if (indent > 0)

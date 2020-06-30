@@ -132,14 +132,14 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     NSMutableDictionary *resultDic = _votingProcessUtil.resultDic;
     
     NSDictionary *param =notice.object;
-    NSLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish %@ 1",param);
+    WYLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish %@ 1",param);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        NSLog(@"xxl 943 Code = %@",param[@"Code"]);
-        NSLog(@"xxl 943 _pluginResult = %@",resultDic);
-        NSLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
-        NSLog(@"xxl 943 SignTransaction = %@",resultDic[@"SignTransaction"]);
-        NSLog(@"xxl 943 calculateProposalHash = %@",resultDic[@"calculateProposalHash"]);
+        WYLog(@"xxl 943 Code = %@",param[@"Code"]);
+        WYLog(@"xxl 943 _pluginResult = %@",resultDic);
+        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
+        WYLog(@"xxl 943 SignTransaction = %@",resultDic[@"SignTransaction"]);
+        WYLog(@"xxl 943 calculateProposalHash = %@",resultDic[@"calculateProposalHash"]);
         
     
         if(resultDic != nil
@@ -162,14 +162,14 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
                 [self updaeJWTInfoWithDic:callDic];
             }else {
                 
-                NSLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish 2.1");
+                WYLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish 2.1");
                 [self showSendSuccessOrFial:SignatureFailureType];
             }
             
             
         }else{
             
-            NSLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish 2.2");
+            WYLog(@"xxl 943 2 HWMSuggestionViewController onTxPublish 2.2");
             [self showSendSuccessOrFial:SignatureFailureType];
         }
     
@@ -180,11 +180,11 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 
 -(void)timerAction: (NSTimer *)timer{
     
-    NSLog(@"xxl timerAction ");
+    WYLog(@"xxl timerAction ");
     NSDictionary *callDic = [timer userInfo];
     if(self->_isCallBackOK  == NO){
         
-         NSLog(@"xxl call updaeJWTInfoWithDic ");
+         WYLog(@"xxl call updaeJWTInfoWithDic ");
          [self updaeJWTInfoWithDic:callDic];
     }else{
         
@@ -205,7 +205,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
         
         
         //get the voting list
-        NSLog(@"data is %@",data[@"data"][@"list"]);
+        WYLog(@"data is %@",data[@"data"][@"list"]);
         self.VoteingProposalArray = data[@"data"][@"list"];
         [self hiddLoading];
     
@@ -432,7 +432,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 -(NSDictionary*)proposalhashRequestFileWithString:(NSString*)String{
     
     
-    NSLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
+    WYLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
     
     String = [String stringByReplacingOccurrencesOfString:@"\"" withString:@""];
     NSDictionary *FLDic=@{
@@ -450,7 +450,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 -(NSDictionary*)proposalReivewhashRequestFileWithString:(NSString*)String{
     
     
-    NSLog(@"proposalReivewhashRequestFileWithString rep %@",self.jwtString);
+    WYLog(@"proposalReivewhashRequestFileWithString rep %@",self.jwtString);
     
     
     String = [String stringByReplacingOccurrencesOfString:@"\"" withString:@""];
@@ -467,22 +467,22 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 }
 
 -(void)updaeJWTInfoWithDic:(NSDictionary*)pare{
-    NSLog(@"xxl %s pare %@", __func__ ,pare);
+    WYLog(@"xxl %s pare %@", __func__ ,pare);
     
     if (self.VCType != SuggestionType) {
         [self showSendSuccessOrFial:sendDealType];
     } else {
         
-        NSLog(@"xxl calback url %@",self.PayLoadDic[@"callbackurl"]);
+        WYLog(@"xxl calback url %@",self.PayLoadDic[@"callbackurl"]);
         
         [HttpUrl NetPOSTHost:self.PayLoadDic[@"callbackurl"] url:@"" header:nil body:pare showHUD:NO WithSuccessBlock:^(id data) {
             
-            NSLog(@"xxl 回调成功");
+            WYLog(@"xxl 回调成功");
             self->_isCallBackOK = YES;
             [self showSendSuccessOrFial:SignatureSuccessType];
         } WithFailBlock:^(id data) {
-            NSLog(@"xxl 回调失败");
-            NSLog(@"error --- %@",data);
+            WYLog(@"xxl 回调失败");
+            WYLog(@"error --- %@",data);
             [self showSendSuccessOrFial:SignatureFailureType];
         }];
     }
@@ -528,7 +528,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 -(void)voteForProposal:(NSString*) pwd pwd:(NSString*)amount{
     
     //
-    NSLog(@"voteForProposal is %@",self.PayLoadDic);
+    WYLog(@"voteForProposal is %@",self.PayLoadDic);
     
     [self showLoading];
     invokedUrlCommand *mommand = [[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID, pwd] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"exportWalletWithMnemonic"];
@@ -555,7 +555,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     
     PluginResult *pluginResult = [[ELWalletManager share] proposalVoteForTransaction:mommand];
     
-    NSLog(@"pluginResult is %@",pluginResult);
+    WYLog(@"pluginResult is %@",pluginResult);
     
 }
 
@@ -619,7 +619,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     PluginResult *pluginResult = [[ELWalletManager share] proposaSignTransaction:mommand];
     _votingProcessUtil.resultDic = pluginResult.message[@"success"];
     
-    NSLog(@"xxl 943 1  proposaSignTransaction %@",_votingProcessUtil.resultDic);
+    WYLog(@"xxl 943 1  proposaSignTransaction %@",_votingProcessUtil.resultDic);
     
 //    PluginResult *pluginResult = [[ELWalletManager share] proposaSignTransaction:mommand];
 //    if(pluginResult){
