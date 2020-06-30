@@ -279,7 +279,7 @@
     dispatch_group_enter(group);
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-        NSLog(@"request CRC");
+        WYLog(@"request CRC");
         //CRC
         NSArray *CRC = [[ELWalletManager share] getVoteInfoList:weakSelf.masterWalletID :@"CRC"];
         if(CRC.count < 0)
@@ -321,7 +321,7 @@
     dispatch_group_enter(group);
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-        NSLog(@"request proposal");
+        WYLog(@"request proposal");
         NSArray *CRCProposal = [[ELWalletManager share] getVoteInfoList:weakSelf.masterWalletID :@"CRCProposal"];
         if(CRCProposal.count < 0)
         {

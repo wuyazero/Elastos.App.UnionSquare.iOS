@@ -563,7 +563,7 @@
         }
         
         NSString *termNo = [WYLocalizedOrdinalNumber stringFromNumber:@(model.index)];
-//        NSLog(@" === localized Term number: %@ === ", termNo);
+//        WYLog(@" === localized Term number: %@ === ", termNo);
         if ([termNo hasPrefix:@"第"]) {
             termNo = [termNo substringFromIndex:1];
         }
@@ -770,7 +770,7 @@
         ELACRCommitteeViewController *vc = [[ELACRCommitteeViewController alloc] init];
         
         NSString *termNo = [WYLocalizedOrdinalNumber stringFromNumber:@(model.index)];
-//        NSLog(@" === localized Term number: %@ === ", termNo);
+//        WYLog(@" === localized Term number: %@ === ", termNo);
         if ([termNo hasPrefix:@"第"]) {
             termNo = [termNo substringFromIndex:1];
         }

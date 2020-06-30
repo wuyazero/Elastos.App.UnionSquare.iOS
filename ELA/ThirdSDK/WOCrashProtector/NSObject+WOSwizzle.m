@@ -13,7 +13,7 @@
 @implementation CrashProxy
 
 - (void)getCrashMsg{
-    //NSLog(@"%@",_crashMsg);
+    //WYLog(@"%@",_crashMsg);
 }
 
 @end

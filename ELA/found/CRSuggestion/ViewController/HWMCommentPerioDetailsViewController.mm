@@ -110,7 +110,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
         [self parsingQRCodeDataWithType:self.codeSignatureT withDicData:self.DicData withQRString:self.qrString];
     }
     
-    NSLog(@"xxl viewDidLoad %@",self.view);
+    WYLog(@"xxl viewDidLoad %@",self.view);
     //xxl #943
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(onTxPublish:)
@@ -138,12 +138,12 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     }
     
     NSDictionary *param =notice.object;
-    NSLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish %@ 1",param);
+    WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish %@ 1",param);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        NSLog(@"xxl 943 resultDic = %@",resultDic);
-        NSLog(@"xxl 943 txid = %@",resultDic[@"txid"]);
-        NSLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
+        WYLog(@"xxl 943 resultDic = %@",resultDic);
+        WYLog(@"xxl 943 txid = %@",resultDic[@"txid"]);
+        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
         
         
         if(resultDic != nil
@@ -164,18 +164,18 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
             
             
             //xxl resultDic is
-            //NSLog(@"xxl 943 callDic = %@",callDic);
+            //WYLog(@"xxl 943 callDic = %@",callDic);
             if(callDic)
             {
                 [self updaeJWTInfoWithDic:callDic];
             }else {
                 
-                NSLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.1");
+                WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.1");
                 [self showSendSuccessOrFial:SignatureFailureType];
             }
             
         }else{
-            NSLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.2");
+            WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.2");
             [self showSendSuccessOrFial:SignatureFailureType];
         }
     
@@ -185,12 +185,12 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 
 -(void)timerAction: (NSTimer *)timer{
     
-    NSLog(@"xxl timerAction ");
-    NSLog(@"xxl _isCallBackOK %d",self->_isCallBackOK);
+    WYLog(@"xxl timerAction ");
+    WYLog(@"xxl _isCallBackOK %d",self->_isCallBackOK);
     NSDictionary *callDic = [timer userInfo];
     if(self->_isCallBackOK  == NO){
         
-         NSLog(@"xxl call updaeJWTInfoWithDic ");
+         WYLog(@"xxl call updaeJWTInfoWithDic ");
          [self updaeJWTInfoWithDic:callDic];
     }else{
         
@@ -467,7 +467,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
             make.left.right.top.bottom.equalTo(mainView);
         }];
     }else if(type==AuthenticationDID){
-        NSLog(@"%s : wallet did invalid QR ADID", __func__);
+        WYLog(@"%s : wallet did invalid QR ADID", __func__);
           [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
     }
     else{
@@ -513,7 +513,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 -(void)voteForProposal:(NSString*)pwd{
     
     //
-    NSLog(@"voteForProposal is %@",self.PayLoadDic);
+    WYLog(@"voteForProposal is %@",self.PayLoadDic);
     
     [self showLoading];
     invokedUrlCommand *mommand = [[invokedUrlCommand alloc]initWithArguments:@[[[HWMSecretaryGeneralAndMembersInfo shareTools] getmasterWalletID], pwd] callbackId:[[HWMSecretaryGeneralAndMembersInfo shareTools] getmasterWalletID] className:@"Wallet" methodName:@"exportWalletWithMnemonic"];
@@ -548,7 +548,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     number =pluginResult.status;
     if( [number intValue] != 1){
         NSString *errCode=[NSString stringWithFormat:@"%@", result.message[@"error"][@"message"]];
-        NSLog(@"errCode: %@", errCode);
+        WYLog(@"errCode: %@", errCode);
 //        [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
         
         return;
@@ -564,7 +564,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     [self showLoading];
     [self.VoteingProposalArray removeAllObjects];
     [[HWMCRSuggestionNetWorkManger shareCRSuggestionNetWorkManger]searchReloadCRSuggestionDataSourceWithType:NOTIFICATIONType withStartIndex:0 withNumbers:100 withSearchContent:@"" withComplete:^(id  _Nonnull data) {
-        NSLog(@"data is %@",data[@"data"][@"list"]);
+        WYLog(@"data is %@",data[@"data"][@"list"]);
         self.VoteingProposalArray = data[@"data"][@"list"];
         [self hiddLoading];
         
@@ -717,7 +717,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     PluginResult *pluginResult = [[ELWalletManager share] proposalReviewTransaction:mommand];
     _votingProcessUtil = [ELAVotingProcessUtil shareVotingProcess];
     _votingProcessUtil.resultDic = pluginResult.message[@"success"];
-    NSLog(@"xxl 943 resultDic %@",_votingProcessUtil.resultDic);
+    WYLog(@"xxl 943 resultDic %@",_votingProcessUtil.resultDic);
     
     //    if(pluginResult){
     //        NSDictionary *resultDic = pluginResult.message[@"success"];
@@ -735,7 +735,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 //xxl 943
 -(void)updaeJWTInfoWithDic:(NSDictionary*)pare{
     
-    NSLog(@"xxl %s pare %@", __func__, pare);
+    WYLog(@"xxl %s pare %@", __func__, pare);
     
     if(self.type >= 0){
         
@@ -743,23 +743,23 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
         
     } else {
         
-        NSLog(@"xxl calback url %@",self.PayLoadDic[@"callbackurl"]);
+        WYLog(@"xxl calback url %@",self.PayLoadDic[@"callbackurl"]);
         
         [HttpUrl NetPOSTHost:self.PayLoadDic[@"callbackurl"] url:@"" header:nil body:pare showHUD:NO WithSuccessBlock:^(id data) {
             
-            NSLog(@"xxl callback OK ");
+            WYLog(@"xxl callback OK ");
             self->_isCallBackOK = YES;
             [self showSendSuccessOrFial:SignatureSuccessType];
         } WithFailBlock:^(id data) {
             
-            NSLog(@"xxl error --- %@",data);
+            WYLog(@"xxl error --- %@",data);
             [self showSendSuccessOrFial:SignatureFailureType];
         }];
     }
 }
 - (NSDictionary *)callBack:(NSString *)payString pwd:(NSString *)PWDString
 {
-    NSLog(@"xxl for callBack ExportxPrivateKey");
+    WYLog(@"xxl for callBack ExportxPrivateKey");
     
     if(payString && ![payString isEqualToString:@""])
     {
@@ -799,7 +799,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 -(NSDictionary*)proposalReivewhashRequestFileWithString:(NSString*)String{
     
     
-    NSLog(@"proposalReivewhashRequestFileWithString rep %@",self.jwtString);
+    WYLog(@"proposalReivewhashRequestFileWithString rep %@",self.jwtString);
     
     NSString * didString= [[HWMSecretaryGeneralAndMembersInfo shareTools] getDIDString];
     String = [String stringByReplacingOccurrencesOfString:@"\"" withString:@""];
@@ -818,10 +818,10 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 -(void)showSendSuccessOrFial:(SendSuccessType)type{
     
     
-    NSLog(@"xxl comet to showSendSuccessOrFial ");
-    NSLog(@"xxl comet to self.CRProposalConfirmV %@",self.CRProposalConfirmV);
-    NSLog(@"xxl comet to self.sendSuccessPopuV %@ ",self.sendSuccessPopuV);
-    NSLog(@"xxl comet to self.view %@ ",self.view);
+    WYLog(@"xxl comet to showSendSuccessOrFial ");
+    WYLog(@"xxl comet to self.CRProposalConfirmV %@",self.CRProposalConfirmV);
+    WYLog(@"xxl comet to self.sendSuccessPopuV %@ ",self.sendSuccessPopuV);
+    WYLog(@"xxl comet to self.view %@ ",self.view);
     //[SVProgressHUD dismiss];
     
     [[FLTools share]hideLoadingView];
@@ -835,7 +835,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        NSLog(@"xxl comet to dispatch_after ");
+        WYLog(@"xxl comet to dispatch_after ");
         
         if(self.sendSuccessPopuV != nil){
             
@@ -910,7 +910,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 -(void)viewWillDisappear:(BOOL)animated{
     
     
-    NSLog(@"xxl viewWillDisappear %@ start ",self.view);
+    WYLog(@"xxl viewWillDisappear %@ start ",self.view);
     //xxl #943
     //[[NSNotificationCenter defaultCenter] removeObserver:OnTxPublishedResult];
     [[NSNotificationCenter defaultCenter] removeObserver:self name: OnTxPublishedResult object:nil];
@@ -922,7 +922,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     }
     
     
-    NSLog(@"xxl viewWillDisappear %@ end",self.view);
+    WYLog(@"xxl viewWillDisappear %@ end",self.view);
 
     
 }

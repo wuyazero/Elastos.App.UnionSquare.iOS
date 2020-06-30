@@ -516,7 +516,7 @@
     WCQRCodeScanningVC *WCQRCode=[[WCQRCodeScanningVC alloc]init];
     WCQRCode.frVC=self;
     WCQRCode.scanBack=^(NSString *addr){
-        NSLog(@"扫二维码 获取到的数据---%@",addr);
+        WYLog(@"扫二维码 获取到的数据---%@",addr);
         [weakSelf SweepCodeProcessingResultsWithQRCodeString:addr];
         
     };
@@ -792,7 +792,7 @@
     [[HWMQrCodeSignatureManager shareTools]QrCodeDataWithData:QRCodeString withDidString:self.currentWallet.didString withmastWalletID:self.currentWallet.masterWalletID withComplete:^(QrCodeSignatureType type, id  _Nonnull data) {
         if (data !=NULL) {
             
-            NSLog(@"data is %@",data);
+            WYLog(@"data is %@",data);
             
             
             
@@ -821,7 +821,7 @@
     }
     switch (type) {
         case CreadDIDType:
-            NSLog(@"%s : wallet did invalid 1st CDID", __func__);
+            WYLog(@"%s : wallet did invalid 1st CDID", __func__);
             [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
             break;
         case DIDTimePassType:
@@ -867,7 +867,7 @@
             [[FLTools share]showErrorInfo:NSLocalizedString(@"二维码已过期", nil)];
             break;
         case AuthenticationDID:
-            NSLog(@"%s : wallet did invalid 1st ADID", __func__);
+            WYLog(@"%s : wallet did invalid 1st ADID", __func__);
             [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
             break;
         default:
@@ -1104,7 +1104,7 @@
 -(void)parsingQRCodeDataWithType:(QrCodeSignatureType)type withDicData:(id)data withQRString:(NSString*)qrString{
     HWMCommentPerioDetailsViewController *CommentPerioDetailsVC=[[HWMCommentPerioDetailsViewController alloc]init];
     
-    //NSLog(@"xxl 943 create CommentPerioDetailsVC %@",CommentPerioDetailsVC.view);
+    //WYLog(@"xxl 943 create CommentPerioDetailsVC %@",CommentPerioDetailsVC.view);
     
     
     if (type==reviewPropalQrCodeType) {

@@ -61,7 +61,7 @@
         [self makeLine];
     }
 //    if ([[self labletextNumberLine] intValue]>3) {
-//        NSLog(@"需要超过三行");
+//        WYLog(@"需要超过三行");
 //    }
     _model=model;
 }

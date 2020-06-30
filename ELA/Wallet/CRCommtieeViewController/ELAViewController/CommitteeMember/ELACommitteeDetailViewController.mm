@@ -395,7 +395,7 @@
     if(_model.impeachmentVotes != 0)
     {
         
-        //NSLog(@"xxl _model is @%",_model);
+        //WYLog(@"xxl _model is @%",_model);
         //xxl 957
         self.ringProgress.progress =  _model.impeachmentRatio;
         

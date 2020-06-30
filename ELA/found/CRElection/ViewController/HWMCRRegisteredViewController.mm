@@ -321,14 +321,14 @@
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     NSInteger number=[string charactorNumber];
     if (textField==self.self.MemberNameTextField) {
-         //NSLog(@"MemberNameTextField===%ld-----%lu",(long)number,(unsigned long)textField.text.length);
+         //WYLog(@"MemberNameTextField===%ld-----%lu",(long)number,(unsigned long)textField.text.length);
         if (number>100) {
            
             return NO;
         }
     }
     if (textField==self.URLTextField) {
-  //NSLog(@"URLTextField===%ld-----%lu",(long)number,(unsigned long)textField.text.length);
+  //WYLog(@"URLTextField===%ld-----%lu",(long)number,(unsigned long)textField.text.length);
         if (number>100) {
             
                   return NO;

@@ -169,8 +169,8 @@
  iOS 9.0 以下 程序运行过程中调用
  */
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
-    //NSLog(@"URL scheme:%@", [url scheme]);
-    //NSLog(@"URL host:%@", [url host]);
+    //WYLog(@"URL scheme:%@", [url scheme]);
+    //WYLog(@"URL host:%@", [url host]);
     return YES;
 }
 
@@ -179,9 +179,9 @@
  */
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options{
     
-    //NSLog(@"URL scheme:%@", [url scheme]);
+    //WYLog(@"URL scheme:%@", [url scheme]);
     //参数
-    //NSLog(@"URL host:%@", [url host]);
+    //WYLog(@"URL host:%@", [url host]);
     NSString *path = [url absoluteString];
     path = [path stringByRemovingPercentEncoding];
     NSMutableString *string = [[NSMutableString alloc] initWithString:path];
