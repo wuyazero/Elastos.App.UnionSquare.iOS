@@ -21,38 +21,13 @@
  * SOFTWARE.
  */
 
-#ifndef LOG_SIZE_LIMIT
-#define LOG_SIZE_LIMIT 50 * 1024 * 1024
-#endif
 
-#ifndef LOG_FILE_NAME
-#define LOG_FILE_NAME @"walletapp.log"
-#endif
-
-#ifndef CRASH_REPORT
-#define CRASH_REPORT NO
-#endif
-
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WYUtils : NSObject
-
-+ (NSString *)getLogPath;
-+ (void)setExceptionHandler;
+@interface WYCrashViewController : UIViewController
 
 @end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void WYLog(NSString *fmt, ...);
-void WYExceptionHandler(NSException *exception);
-
-#ifdef __cplusplus
-}
-#endif
 
 NS_ASSUME_NONNULL_END
