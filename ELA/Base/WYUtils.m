@@ -28,6 +28,7 @@
 static dispatch_queue_t logQueue = nil;
 static NSString *logPath = nil;
 static NSDateFormatter *dateFormatter = nil;
+static NSUncaughtExceptionHandler *nextHandler = nil;
 
 @implementation WYUtils
 
@@ -108,6 +109,13 @@ static NSDateFormatter *dateFormatter = nil;
     }
 }
 
++ (void)setExceptionHandler {
+    if (NSGetUncaughtExceptionHandler() != WYExceptionHandler) {
+        nextHandler = NSGetUncaughtExceptionHandler();
+    }
+    NSSetUncaughtExceptionHandler(&WYExceptionHandler);
+}
+
 @end
 
 void WYLog(NSString *fmt, ...) {
@@ -157,4 +165,15 @@ void WYLog(NSString *fmt, ...) {
         
     }
     
+}
+
+void WYExceptionHandler(NSException *exception) {
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:YES forKey:@"crashed"];
+    [prefs setObject:exception.reason forKey:@"crashReason"];
+    WYLog(@"App Crashed: %@", exception.reason);
+    
+    if (nextHandler) {
+        nextHandler(exception);
+    }
 }
