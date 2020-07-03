@@ -39,17 +39,26 @@
 #define KYRect  [UIScreen mainScreen].bounds
 #import <UserNotifications/UserNotifications.h>
 #import "IQKeyboardManager.h"
+#import "WYCrashViewController.h"
 
 @interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
 @end
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
     
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    BOOL crashed = [prefs boolForKey:@"crashed"];
+    NSString *crashReason = [prefs stringForKey:@"crashReason"];
+    [prefs setBool:YES forKey:@"crashed"];
+    [prefs setObject:@"Crashed Outside App" forKey:@"crashReason"];
+    if (crashed) {
+        WYLog(@"App Crashed Last Time: %@", crashReason);
+    }
     
     //初始化一个imageView，并添加到window上
+    [WYUtils setExceptionHandler];
     
     if(launchOptions[UIApplicationLaunchOptionsURLKey] != nil){
         [self application:application handleOpenURL:launchOptions[UIApplicationLaunchOptionsURLKey]];
@@ -109,15 +118,23 @@
         }
     }
     array =[[HMWFMDBManager sharedManagerType:walletType] allRecordWallet];
-    if (array.count==0) {
-        FLPrepareVC *vc=[[FLPrepareVC alloc]init];
-        BaseNavigationVC *naVC=[[BaseNavigationVC alloc]initWithRootViewController:vc];
-        vc.type=creatWalletType;
+    
+    if (crashed && CRASH_REPORT) {
+        WYCrashViewController *vc = [[WYCrashViewController alloc] init];
+        BaseNavigationVC *naVC = [[BaseNavigationVC alloc]initWithRootViewController:vc];
         self.window.rootViewController = naVC;
-    }else{
-        FLFLTabBarVC *tabVC = [[FLFLTabBarVC alloc]init];
-        self.window.rootViewController = tabVC;
+    } else {
+        if (array.count==0) {
+            FLPrepareVC *vc=[[FLPrepareVC alloc]init];
+            BaseNavigationVC *naVC=[[BaseNavigationVC alloc]initWithRootViewController:vc];
+            vc.type=creatWalletType;
+            self.window.rootViewController = naVC;
+        } else {
+            FLFLTabBarVC *tabVC = [[FLFLTabBarVC alloc]init];
+            self.window.rootViewController = tabVC;
+        }
     }
+    
     [WOCrashProtectorManager makeAllEffective];
     UITableView.appearance.estimatedRowHeight = 0;
     UITableView.appearance.estimatedSectionFooterHeight = 0;
@@ -148,23 +165,36 @@
     
 }
 
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
-
-{
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
     
       return UIInterfaceOrientationMaskPortrait;
     
 }
+
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions{
     
     return YES;
     
 }
+
 -(void)applicationWillTerminate:(UIApplication *)application{
-    
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:NO forKey:@"crashed"];
+    [prefs setObject:@"" forKey:@"crashReason"];
 }
+
 -(void)applicationDidEnterBackground:(UIApplication *)application {
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:NO forKey:@"crashed"];
+    [prefs setObject:@"" forKey:@"crashReason"];
 }
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:YES forKey:@"crashed"];
+    [prefs setObject:@"Crashed Outside App" forKey:@"crashReason"];
+}
+
 /**
  iOS 9.0 以下 程序运行过程中调用
  */
@@ -196,14 +226,24 @@
     [[FLTools share]showErrorInfo:message];
     return YES;
 }
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 }
+
 -(void)applicationWillResignActive:(UIApplication *)application {
     [[ELWalletManager share]EMWMFlushData];
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:NO forKey:@"crashed"];
+    [prefs setObject:@"" forKey:@"crashReason"];
 }
-- (void)applicationDidBecomeActive:(UIApplication *)application{
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:YES forKey:@"crashed"];
+    [prefs setObject:@"Crashed Outside App" forKey:@"crashReason"];
     [[ELWalletManager share]EMWMFlushData];
 }
+
 -(void)regsLocaNotc{
     if (@available(iOS 10.0, *)) {
         UNUserNotificationCenter *notiCenter = [UNUserNotificationCenter currentNotificationCenter];
