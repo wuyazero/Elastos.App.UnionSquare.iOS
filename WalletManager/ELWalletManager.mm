@@ -1856,13 +1856,12 @@ static uint64_t feePerKB = 10000;
         NSString *resultString=[self stringWithCString:tx.dump()];
         NSDictionary *resultdic=  [self dictionaryWithJsonString:resultString];
         NSArray *DorpVotes=resultdic[@"DropVotes"];
-        return @{@"fee":resultdic[@"Fee"],@"JSON":resultString,@"DorpVotes":DorpVotes};
-        
+        return @{@"fee": resultdic[@"Fee"], @"JSON": resultString, @"DorpVotes": DorpVotes, @"errCode": @""};
     } catch (const std:: exception & e ) {
         NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]];
         NSString *errCode=[NSString stringWithFormat:@"err%@",errDic[@"Code"]];
         [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
-        return @{@"fee":@"-1",@"JSON":@""};
+        return @{@"fee": @"-1", @"JSON": @"", @"errCode": errCode};
     }
     
     

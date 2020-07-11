@@ -397,8 +397,12 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
                     
                     if ([self.fee doubleValue]<0) {
                         [self closeTransactionDetailsView];
-                        [[FLTools share] showErrorInfo:NSLocalizedString(@"计算手续费失败", nil)];
-                        WYLog(@"%s : Fee less than zero", __func__);
+                        NSString *errCode = dic[@"errCode"];
+                        if ([errCode isEqualToString:@""]) {
+                            errCode = @"计算手续费失败";
+                        }
+                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
                         return;
                     }
                     UIView *mainView =[self mainWindow];
@@ -460,8 +464,12 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
                     
                     if ([self.fee doubleValue]<0) {
                         [self closeTransactionDetailsView];
-                        [[FLTools share] showErrorInfo:NSLocalizedString(@"计算手续费失败", nil)];
-                        WYLog(@"%s : Fee less than zero", __func__);
+                        NSString *errCode = dic[@"errCode"];
+                        if ([errCode isEqualToString:@""]) {
+                            errCode = @"计算手续费失败";
+                        }
+                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
                         return;
                     }
                     UIView *mainView =[self mainWindow];
