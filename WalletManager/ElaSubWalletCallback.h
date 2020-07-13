@@ -65,6 +65,9 @@ namespace Elastos {
          */
         void OnAssetRegistered(const std::string &asset, const nlohmann::json &info);
         void OnConnectStatusChanged(const std::string &status);
+        
+        void OnETHSCEventHandled(const nlohmann::json &event);
+        
         ElaSubWalletCallback(const std::string &callBackInfo);
         
         ~ElaSubWalletCallback();
