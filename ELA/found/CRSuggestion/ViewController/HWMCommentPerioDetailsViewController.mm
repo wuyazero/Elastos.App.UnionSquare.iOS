@@ -141,37 +141,40 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish %@ 1",param);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        WYLog(@"xxl 943 resultDic = %@",resultDic);
+//        WYLog(@"xxl 943 resultDic = %@",resultDic);
         WYLog(@"xxl 943 txid = %@",resultDic[@"txid"]);
-        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
+//        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
         
         
         if(resultDic != nil
            && [[resultDic allKeys] containsObject:@"txid"]
-           && resultDic[@"txid"] != nil ){
-            NSDictionary *callDic = [self callBack:resultDic[@"txid"] pwd:resultDic[@"pwd"]];
+           && resultDic[@"txid"] != nil ) {
             
-            self->_isCallBackOK = NO;
-            
-            //xxl 995
-            self->_timer = [NSTimer timerWithTimeInterval:10
-                                    target:self
-                                    selector:@selector(timerAction:)
-                                    userInfo:callDic
-                                    repeats:YES
-                              ];
-            [[NSRunLoop mainRunLoop] addTimer:self->_timer forMode:NSDefaultRunLoopMode];
-            
-            
-            //xxl resultDic is
-            //WYLog(@"xxl 943 callDic = %@",callDic);
-            if(callDic)
-            {
-                [self updaeJWTInfoWithDic:callDic];
-            }else {
+            if (resultDic[@"pwd"] != nil) {
+                NSDictionary *callDic = [self callBack:resultDic[@"txid"] pwd:resultDic[@"pwd"]];
                 
-                WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.1");
-                [self showSendSuccessOrFial:SignatureFailureType];
+                self->_isCallBackOK = NO;
+                
+                //xxl 995
+                self->_timer = [NSTimer timerWithTimeInterval:10
+                                        target:self
+                                        selector:@selector(timerAction:)
+                                        userInfo:callDic
+                                        repeats:YES
+                                  ];
+                [[NSRunLoop mainRunLoop] addTimer:self->_timer forMode:NSDefaultRunLoopMode];
+                
+                
+                //xxl resultDic is
+                //WYLog(@"xxl 943 callDic = %@",callDic);
+                if(callDic)
+                {
+                    [self updaeJWTInfoWithDic:callDic];
+                }else {
+                    
+                    WYLog(@"xxl 943 2 HWMCommentPerioDetailsViewController onTxPublish 2.1");
+                    [self showSendSuccessOrFial:SignatureFailureType];
+                }
             }
             
         }else{
@@ -545,6 +548,10 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
                                                methodName:@"createProposalForVoteTransaction"];
     
     PluginResult *pluginResult = [[ELWalletManager share] proposalVoteForTransaction:mommand];
+    _votingProcessUtil = [ELAVotingProcessUtil shareVotingProcess];
+    _votingProcessUtil.resultDic = pluginResult.message[@"success"];
+    WYLog(@"xxl 943 resultDic %@",_votingProcessUtil.resultDic);
+    
     number =pluginResult.status;
     if( [number intValue] != 1){
         NSString *errCode=[NSString stringWithFormat:@"%@", result.message[@"error"][@"message"]];
@@ -818,7 +825,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 -(void)showSendSuccessOrFial:(SendSuccessType)type{
     
     
-    WYLog(@"xxl comet to showSendSuccessOrFial ");
+    WYLog(@"xxl comet to showSendSuccessOrFial: %d", type);
     WYLog(@"xxl comet to self.CRProposalConfirmV %@",self.CRProposalConfirmV);
     WYLog(@"xxl comet to self.sendSuccessPopuV %@ ",self.sendSuccessPopuV);
     WYLog(@"xxl comet to self.view %@ ",self.view);

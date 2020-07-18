@@ -33,6 +33,10 @@
 #define CRASH_REPORT NO
 #endif
 
+#ifndef WAIT_TIMEOUT
+#define WAIT_TIMEOUT 60
+#endif
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -41,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)getLogPath;
 + (void)setExceptionHandler;
++ (dispatch_queue_t)getNetworkQueue;
 
 @end
 
@@ -50,6 +55,8 @@ extern "C" {
 
 void WYLog(NSString *fmt, ...);
 void WYExceptionHandler(NSException *exception);
+BOOL WYUseNetworkQueue(void);
+void WYSetUseNetworkQueue(BOOL useFlag);
 
 #ifdef __cplusplus
 }

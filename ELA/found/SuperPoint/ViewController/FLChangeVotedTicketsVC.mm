@@ -15,6 +15,7 @@
 #import "HMWToDeleteTheWalletPopView.h"
 #import "HMWFMDBManager.h"
 #import "HWMSignatureTradingSingleQrCodeViewController.h"
+#import "WYVoteUtils.h"
 
 static NSString *cellString=@"HMWtheCandidateListTableViewCell";
 
@@ -295,9 +296,13 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
     }
     if (self.wallet.TypeW==0) {
         NSString *walletId = [ELWalletManager share].currentWallet.masterWalletID;
-        BOOL ret = [[ELWalletManager share]useMainchainSubWallet:walletId ToVote:stringArray tickets:self.ticket pwd:pwd isChangeVote:YES withInvalidIDArray:self.invalidCRArray];
-        if (ret) {
-          [[FLTools share]showErrorInfo:NSLocalizedString(@"变更成功",nil)];
+        NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:walletId];
+        if (voteInfo) {
+            BOOL ret = [[ELWalletManager share]useMainchainSubWallet:walletId ToVote:stringArray tickets:self.ticket pwd:pwd isChangeVote:YES withInvalidIDArray:voteInfo[@"invalidCandidates"]];
+            WYLog(@"dev temp === Producer === masterID: %@, stringArray: %@, ticket %f, invalids: %@, ret: %d", walletId, stringArray, self.ticket, voteInfo[@"invalidCandidates"], ret);
+            if (ret) {
+              [[FLTools share]showErrorInfo:NSLocalizedString(@"变更成功",nil)];
+            }
         }
         [self.pwdPopupV removeFromSuperview];
         self.pwdPopupV =  nil;

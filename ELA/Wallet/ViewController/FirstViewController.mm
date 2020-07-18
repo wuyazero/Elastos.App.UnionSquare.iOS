@@ -42,6 +42,7 @@
 #import "HWMSecretaryGeneralAndMembersInfo.h"
 #import "HMWToDeleteTheWalletPopView.h"
 #import "HWMCommentPerioDetailsViewController.h"
+#import "WYVoteUtils.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -429,6 +430,11 @@
         self.currentWallet.M=[baseDic[@"M"] integerValue];
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
+        
+        //WYDebug
+        NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:self.currentWallet.masterWalletID];
+        WYLog(@"dev temp debug result is %@", voteInfo);
+        
         [self hiddLoading];
     }
 }

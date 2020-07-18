@@ -13,6 +13,7 @@
 #import "HWMMessageCenterModel.h"
 #import "HWMDIDManager.h"
 #import "YYKit.h"
+#import "WYVoteUtils.h"
 static ELWalletManager *tool;
 static uint64_t feePerKB = 10000;
 
@@ -1809,13 +1810,12 @@ static uint64_t feePerKB = 10000;
         NSString *resultString=[self stringWithCString:tx.dump()];
         NSDictionary *resultdic=  [self dictionaryWithJsonString:resultString];
         NSArray *DorpVotes=resultdic[@"DropVotes"];
-        return @{@"fee":resultdic[@"Fee"],@"JSON":resultString,@"DorpVotes":DorpVotes};
+        return @{@"fee": resultdic[@"Fee"], @"JSON": resultString, @"DorpVotes": DorpVotes,  @"errCode": @""};
     } catch (const std:: exception & e ) {
-        
         NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]];
         NSString *errCode=[NSString stringWithFormat:@"err%@",errDic[@"Code"]];
         [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
-        return @{@"fee":@"-1",@"JSON":@""};
+        return @{@"fee": @"-1", @"JSON": @"", @"errCode": errCode};
     }
     
 }
@@ -1854,6 +1854,7 @@ static uint64_t feePerKB = 10000;
     try {
         nlohmann::json tx = mainchainSubWallet->CreateVoteProducerTransaction("", acount,Json::parse(keys),"",InvalidJson);
         NSString *resultString=[self stringWithCString:tx.dump()];
+        WYLog(@"dev temp wy ttt tx: %@", resultString);
         NSDictionary *resultdic=  [self dictionaryWithJsonString:resultString];
         NSArray *DorpVotes=resultdic[@"DropVotes"];
         return @{@"fee":resultdic[@"Fee"],@"JSON":resultString,@"DorpVotes":DorpVotes};
@@ -1864,7 +1865,6 @@ static uint64_t feePerKB = 10000;
         [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
         return @{@"fee":@"-1",@"JSON":@""};
     }
-    
     
 }
 -(BOOL)useMainchainSubWallet:(NSString*)mainchainSubWalletId WithJsonString:(NSString*)jsonstring pwd:(NSString*)pwd{
@@ -2923,7 +2923,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
        }
        try {
            result = suWall->PublishTransaction(signedTx);
-           
+           WYLog(@"dev temp resultDic: %@", resultDic);
            return [self successProcess:command msg:resultDic];
        } catch (const std:: exception & e ) {
            return  [self errInfoToDic:e.what() with:command];
@@ -2956,6 +2956,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
        try {
 
            NSString *payload  = [self createProposalForVoteTransaction:payLoadDic walletID:masterWalletID];
+           WYLog(@"dev temp pv tx payload str: %@", payload);
            if(!payload)
            {
                return nil;
@@ -2998,23 +2999,26 @@ void *ReverseByteOrder(void *p, unsigned int len)
 - (NSString *)createProposalForVoteTransaction:(NSDictionary *)dicPlayload walletID:(NSString *)masterWalletID
 {
     try {
+        WYLog(@"dev temp pv dicpayload: %@", dicPlayload);
         NSString *payLoadStrig = [dicPlayload jsonStringEncoded];
         String std = [self cstringWithString:payLoadStrig];
         Json payloadJson = nlohmann::json::parse(std);
         IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
         if (mainchainSubWallet)
         {
-            //Vote info
-            Json json = mainchainSubWallet->GetVoteInfo("");
-            //logic of create the invalidJson
-            NSString *resultString = [self stringWithJson:json];
-            NSDictionary *dic;
-            if([resultString isEqualToString: @"null"]){
-                dic = @{};
-            }else{
-                dic=[self dictionaryWithJsonString:resultString];
-                WYLog(@"createProposalForVoteTransaction dis is %@",dic);
-            }
+//            //Vote info
+//            Json json = mainchainSubWallet->GetVoteInfo("");
+//            //logic of create the invalidJson
+//            NSString *resultString = [self stringWithJson:json];
+//            WYLog(@"dev temp pv tx all vote info: %@", resultString);
+//
+//            NSDictionary *dic;
+//            if([resultString isEqualToString: @"null"]){
+//                dic = @{};
+//            }else{
+//                dic=[self dictionaryWithJsonString:resultString];
+//                WYLog(@"createProposalForVoteTransaction dis is %@",dic);
+//            }
 
             Json invalidJson;
             Json votesJson;
@@ -3024,75 +3028,86 @@ void *ReverseByteOrder(void *p, unsigned int len)
                  dicPlayload[@"ProposalHash"]: dicPlayload[@"Amount"]
             };
         
-            if([dic count] > 0){ //TODO
-                
-                //invalid
-                NSMutableArray *InvalidJson = [NSMutableArray array];
-                
-                for (id item in dic){
-                  //do something
-                  WYLog(@"item is %@",item);
-                   
-                  NSDictionary * votes = item[@"Votes"];
-                  WYLog(@"votes is %@",votes);
-                  
-                  
-                  NSMutableArray *InvalidateHashArray = [NSMutableArray array];
-                  for(id vote in votes){
-                        
-                      WYLog(@"11 vote is %@",vote);
-                      
-                      NSMutableArray *VotingProporal = dicPlayload[@"VotingProposal"];
-                      BOOL isVote = NO ;
-                      for (id proporalItem in VotingProporal){
-                          
-                          
-                          WYLog(@"11 proposalHash is %@",proporalItem[@"proposalHash"]);
-                          if([proporalItem[@"proposalHash"] isEqualToString: vote]){
-                              isVote = YES;
-                          }
-                      }
-        
-                      if(isVote == NO){
-                          [InvalidateHashArray addObject: vote];
-                      }
-                      
-//                      if([vote isEqualToString: dicPlayload[@"ProposalHash"]]){
+//            if([dic count] > 0){ //TODO
+//
+//                //invalid
+//                NSMutableArray *InvalidJson = [NSMutableArray array];
+//
+//                for (id item in dic){
+//                  //do something
+//                  WYLog(@"item is %@",item);
+//
+//                  NSDictionary * votes = item[@"Votes"];
+//                  WYLog(@"votes is %@",votes);
+//
+//
+//                  NSMutableArray *InvalidateHashArray = [NSMutableArray array];
+//                  for(id vote in votes){
+//
+//                      WYLog(@"11 vote is %@",vote);
+//
+//                      NSMutableArray *VotingProporal = dicPlayload[@"VotingProposal"];
+//                      BOOL isVote = NO ;
+//                      for (id proporalItem in VotingProporal){
+//
+//
+//                          WYLog(@"11 proposalHash is %@",proporalItem[@"proposalHash"]);
+//                          if([proporalItem[@"proposalHash"] isEqualToString: vote]){
+//                              isVote = YES;
+//                          }
+//                      }
+//
+//                      if(isVote == NO){
 //                          [InvalidateHashArray addObject: vote];
 //                      }
-    
-                  }
-                  
-                  //Add by Invalid
-                  if([InvalidateHashArray count] > 0){
-                       
-                       NSDictionary* invalidateDic = @{
-                           @"Type": item[@"Type"],
-                           @"Candidates": InvalidateHashArray
-                       };
-                       [InvalidJson addObject: invalidateDic];
-                       
-                  }
-                    
-                  
-                    
-                }
-
-                NSString *invalidJsonStrig = [self arrayToJSONString:InvalidJson];
-                //NSString *invalidJsonStrig = [dic jsonStringEncoded];
-                String std = [self cstringWithString:invalidJsonStrig];
-                invalidJson = nlohmann::json::parse(std);
-                
-            }else{
-                
-                //invalid
-                NSArray *InvalidArr = @[];
-                NSString *invalidJsonStrig = [self arrayToJSONString:InvalidArr];
-                //NSString *invalidJsonStrig = [dic jsonStringEncoded];
-                String std = [self cstringWithString:invalidJsonStrig];
-                invalidJson = nlohmann::json::parse(std);
-                                
+//
+////                      if([vote isEqualToString: dicPlayload[@"ProposalHash"]]){
+////                          [InvalidateHashArray addObject: vote];
+////                      }
+//
+//                  }
+//
+//                  //Add by Invalid
+//                  if([InvalidateHashArray count] > 0){
+//
+//                       NSDictionary* invalidateDic = @{
+//                           @"Type": item[@"Type"],
+//                           @"Candidates": InvalidateHashArray
+//                       };
+//                       [InvalidJson addObject: invalidateDic];
+//
+//                  }
+//
+//
+//
+//                }
+//
+//                NSString *invalidJsonStrig = [self arrayToJSONString:InvalidJson];
+//                //NSString *invalidJsonStrig = [dic jsonStringEncoded];
+//                String std = [self cstringWithString:invalidJsonStrig];
+//                invalidJson = nlohmann::json::parse(std);
+//
+//            }else{
+//
+//                //invalid
+//                NSArray *InvalidArr = @[];
+//                NSString *invalidJsonStrig = [self arrayToJSONString:InvalidArr];
+//                //NSString *invalidJsonStrig = [dic jsonStringEncoded];
+//                String std = [self cstringWithString:invalidJsonStrig];
+//                invalidJson = nlohmann::json::parse(std);
+//
+//            }
+            
+            NSDictionary *voteInfo = [WYVoteUtils createProposalVote:votesDic withWallet:masterWalletID];
+            if (!voteInfo) {
+                return nil;
             }
+            votesDic = voteInfo[@"votePayloads"];
+            
+            NSArray *invalidCandidates = voteInfo[@"invalidCandidates"];
+            NSString *invalidJsonStrig = [self arrayToJSONString:invalidCandidates];
+            String std = [self cstringWithString:invalidJsonStrig];
+            invalidJson = nlohmann::json::parse(std);
             
             NSString *voteLoadStrig = [votesDic jsonStringEncoded];
             String strVote = [self cstringWithString:voteLoadStrig];
@@ -3100,6 +3115,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
             
             //Json jsonCreateTx ;
             Json jsonCreateTx = mainchainSubWallet->CreateVoteCRCProposalTransaction("", votesJson,"",invalidJson);
+            WYLog(@"dev temp === Proposal === pv tx votes: %@ invalids: %@ tx: %@", [self stringWithJson:votesJson], [self stringWithJson:invalidJson], [self stringWithJson:jsonCreateTx]);
             
             NSString *retString = [self stringWithJson:jsonCreateTx];
             return retString;
@@ -3190,7 +3206,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
            
            
            [resultDic setValue:dic[@"TxHash"] forKey:@"txid"];
-           
+           WYLog(@"dev temp resultDic: %@", resultDic);
            return [self successProcess:command msg:resultDic];
        } catch (const std:: exception & e ) {
            return  [self errInfoToDic:e.what() with:command];
@@ -3706,6 +3722,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
             
             //Json jsonCreateTx ;
             Json jsonCreateTx = mainchainSubWallet->CreateImpeachmentCRCTransaction("", votesJson,"",invalidJson);
+            WYLog(@"dev temp === Impeachment === imp tx votes: %@ invalids: %@ tx: %@", [self stringWithJson:votesJson], [self stringWithJson:invalidJson], [self stringWithJson:jsonCreateTx]);
             
             Json signedTx;
             Json result;
