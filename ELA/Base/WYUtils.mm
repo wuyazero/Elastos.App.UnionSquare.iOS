@@ -26,11 +26,28 @@
 #import "MyUtil.h"
 
 static dispatch_queue_t logQueue = nil;
+static dispatch_queue_t networkQueue = nil;
+static BOOL useNetworkQueue = NO;
 static NSString *logPath = nil;
 static NSDateFormatter *dateFormatter = nil;
 static NSUncaughtExceptionHandler *nextHandler = nil;
+static WYUtils *sharedWYUtils = nil;
 
 @implementation WYUtils
+
++ (WYUtils *)shared {
+    if (!sharedWYUtils) {
+        sharedWYUtils = [[WYUtils alloc] init];
+    }
+    return sharedWYUtils;
+}
+
++ (dispatch_queue_t)getNetworkQueue {
+    if (!networkQueue) {
+        networkQueue = dispatch_queue_create("elastos.elawallet.NetworkQueue", DISPATCH_QUEUE_CONCURRENT);
+    }
+    return networkQueue;
+}
 
 + (NSString *)getLogPath {
     NSString *rootPath = [MyUtil getRootPath];
@@ -44,65 +61,65 @@ static NSUncaughtExceptionHandler *nextHandler = nil;
         [file seekToEndOfFile];
         size = file.offsetInFile;
     }
-
+    
     // Calculate where we want to trim
     unsigned long long src = 0;
     if (size > lower) {
         src = size - lower;
     }
-
+    
     // Move pointer
     [file seekToFileOffset:src];
-
+    
     // What we are looking for
     NSData * nl = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
-
+    
     // Read some data
     NSUInteger len = 100;   // Arbitrary but small as we are just looking for the next nl
-
+    
     while (src < size) {
         if (size - src < len) {
             len = size - src;
         }
-
+        
         NSData *data = [file readDataOfLength:len];
         NSRange r = [data rangeOfData:nl options:0 range:NSMakeRange(0, data.length)];
-
+        
         if (r.location != NSNotFound) {
             src += r.location + nl.length;
             break;
         }
-
+        
         src += data.length;
     }
-
+    
     if (src < size) {
         // Data destination
         unsigned long long dst = 0;
-
+        
         // New buffer size - can be a bit larger
         len = 100000;
-
+        
         // Now shuffle the bytes from here to the start
         while (src < size) {
             [file seekToFileOffset:src];
-
+            
             if (size - src < len) {
                 len = size - src;
             }
-
+            
             NSData * data = [file readDataOfLength:len];
-
+            
             [file seekToFileOffset:dst];
             [file writeData:data];
-
+            
             dst += data.length;
             src += data.length;
         }
-
+        
         // Done
         [file truncateFileAtOffset:dst];
-
+        
         return YES;
     } else {
         return NO;
@@ -120,7 +137,7 @@ static NSUncaughtExceptionHandler *nextHandler = nil;
 
 void WYLog(NSString *fmt, ...) {
     if (!logQueue) {
-        logQueue = dispatch_queue_create("elastos.elawallet.LogQueue", NULL);
+        logQueue = dispatch_queue_create("elastos.elawallet.LogQueue", DISPATCH_QUEUE_SERIAL);
     }
     if (!logPath) {
         NSString *rootPath = [MyUtil getRootPath];
@@ -176,4 +193,12 @@ void WYExceptionHandler(NSException *exception) {
     if (nextHandler) {
         nextHandler(exception);
     }
+}
+
+BOOL WYUseNetworkQueue(void) {
+    return useNetworkQueue;
+}
+
+void WYSetUseNetworkQueue(BOOL useFlag) {
+    useNetworkQueue = useFlag;
 }

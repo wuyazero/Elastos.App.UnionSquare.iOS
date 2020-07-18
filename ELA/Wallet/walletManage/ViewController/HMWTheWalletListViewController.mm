@@ -43,6 +43,7 @@ static NSString *celladdString=@"HMWaddWalletListTableViewCell";
     self.needUpdate=NO;
     [self setBackgroundImg:@""];
     self.title=NSLocalizedString(@"钱包列表", nil);
+    WYLog(@"Selecting Wallet");
     [self makeView];
     self.selectIndex=[NSIndexPath indexPathForRow:0 inSection:self.currentWalletIndex];
     [self loadAddress];
@@ -122,6 +123,7 @@ static NSString *celladdString=@"HMWaddWalletListTableViewCell";
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    WYLog(@"Wallet Selected: %@", indexPath);
     if (indexPath.section==self.walletIDListArray.count) {
         FLPrepareVC *VC=[[FLPrepareVC alloc]init];
         VC.type=addWalletType;

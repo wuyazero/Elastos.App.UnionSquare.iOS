@@ -35,6 +35,10 @@
     dispatch_once(&onceToken, ^{
         
         manager = [AFHTTPSessionManager manager];
+        if (WYUseNetworkQueue()) {
+            manager.completionQueue = [WYUtils getNetworkQueue];
+        }
+        
         //网络传输类型
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];

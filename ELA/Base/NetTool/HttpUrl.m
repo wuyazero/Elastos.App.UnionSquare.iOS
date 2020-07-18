@@ -16,6 +16,10 @@ NSInteger timeOut = 60;
 
 +(AFHTTPSessionManager*)getManage{
     AFHTTPSessionManager *manage = [AFHTTPSessionManager manager];
+    if (WYUseNetworkQueue()) {
+        manage.completionQueue = [WYUtils getNetworkQueue];
+    }
+    
     //    AFHTTPSessionManager *manage = [[AFHTTPSessionManager manager]initWithBaseURL:[NSURL URLWithString:Http_UpImage]];
     manage.requestSerializer = [AFJSONRequestSerializer serializer];//请求
     
@@ -136,6 +140,10 @@ NSInteger timeOut = 60;
     }
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    if (WYUseNetworkQueue()) {
+        manager.completionQueue = [WYUtils getNetworkQueue];
+    }
+    
     //接收类型不一致请替换一致text/html或别的
     manager.requestSerializer = [AFJSONRequestSerializer new];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];//请求
@@ -193,6 +201,9 @@ NSInteger timeOut = 60;
     }
     
     AFHTTPSessionManager  *manager = [AFHTTPSessionManager manager];
+    if (WYUseNetworkQueue()) {
+        manager.completionQueue = [WYUtils getNetworkQueue];
+    }
     
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];

@@ -23,37 +23,22 @@
 
 
 #import <Foundation/Foundation.h>
-#import "ELABaseModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ELACouncilAndSecretariatModel : ELABaseModel
+@interface WYVoteUtils : NSObject
 
-@property (nonatomic, strong) NSArray *council;
-@property (nonatomic, strong) NSArray *secretariat;
++ (NSDictionary *)getVoteInfo:(NSString *)masterWalletID;
++ (NSDictionary *)getVotePayloads:(NSDictionary *)voteInfo;
++ (NSDictionary *)getVoteAddrs:(NSDictionary *)votePayloads;
++ (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs;
++ (NSDictionary *)getValidPayloads:(NSDictionary *)payloads withInvalidAddrs:(NSDictionary *)invalidAddrs;
++ (NSDictionary *)prepareVoteInfo:(NSString *)masterWalletID;
++ (NSDictionary *)createDelegateVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
++ (NSDictionary *)createCRCVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
++ (NSDictionary *)createProposalVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
++ (NSDictionary *)createImpeachmentVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 
-@end
-
-@interface ELACouncilModel : ELABaseModel
-
-@property (nonatomic, strong) NSString *cid;
-@property (nonatomic, strong) NSString *did;
-@property (nonatomic, strong) NSString *didName;
-@property (nonatomic, strong) NSString *avatar;
-@property (nonatomic, assign) NSInteger location;
-@property (nonatomic, strong) NSString *status;
-
-@end
-
-@interface ELASecretariatModel : ELABaseModel
-
-@property (nonatomic, strong) NSString *did;
-@property (nonatomic, strong) NSString *didName;
-@property (nonatomic, strong) NSString *avatar;
-@property (nonatomic, assign) NSInteger location;
-@property (nonatomic, strong) NSString *status;
-@property (nonatomic, strong) NSString *startDate;
-@property (nonatomic, strong) NSString *endDate;
 @end
 
 NS_ASSUME_NONNULL_END

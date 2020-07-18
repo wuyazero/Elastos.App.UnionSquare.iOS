@@ -20,6 +20,7 @@
 #import "ELAUtils.h"
 #import "ELACommitteeInfoModel.h"
 #import "ELANetwork.h"
+#import "WYVoteUtils.h"
 
 static NSString *cellString=@"HMWtheCandidateListTableViewCell";
 @interface HMWtheCandidateListViewController ()<UITableViewDelegate,UITableViewDataSource,VotesPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate,HWMTransactionDetailsViewDelegate>
@@ -101,7 +102,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
     [self.selectAllBtn setImage:[UIImage imageNamed:@"found_vote_selected"] forState:UIControlStateSelected];
     [self.selectAllBtn setImage:[UIImage imageNamed:@"found_vote_border"] forState:UIControlStateNormal];
     self.invalidCRArray=@[];
-    [self LoadInvalidCR];
+//    [self LoadInvalidCR];
 }
 -(void)getWalletType{
     NSArray *walletArray=[NSArray arrayWithArray:[[HMWFMDBManager sharedManagerType:walletType] allRecordWallet]];
@@ -364,149 +365,204 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
         [stringArray addObject:model.ownerpublickey];
     }
     
-    //添加网络 判断是否是选举期
+//    //添加网络 判断是否是选举期（此逻辑已废除）
+//    [[FLTools share]showLoadingView];
+    
+    // 获取InvalidCandidates，构建Vote
     [[FLTools share]showLoadingView];
-    ELAWeakSelf;
-    _task = [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
+    FLWallet *wallet = [ELWalletManager share].currentWallet;
+    NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:wallet.masterWalletID];
+    [[FLTools share]hideLoadingView];
+    
+    if (voteInfo) {
+        NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:voteInfo[@"invalidCandidates"]];
+        WYLog(@"dev temp === Producer === masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, stringArray, ticket, voteInfo[@"invalidCandidates"], dic);
+        self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
+        NSArray *DorpVotes=dic[@"DorpVotes"];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[FLTools share]hideLoadingView];
-            if(error)
-            {
-                if(error.code == -999)
-                {
-                    //已取消
-                    [[FLTools share] showErrorInfo:error.localizedDescription];
-                    WYLog(@"%s : getCommitteeInfo failed with error code %ld", __func__, error.code);
-                }
-                else
-                {
-                    [[FLTools share] showErrorInfo:error.localizedDescription];
-                    WYLog(@"%s : getCommitteeInfo failed with error code %ld", __func__, error.code);
-                }
+        if ([self.fee doubleValue]<0) {
+            [self closeTransactionDetailsView];
+            NSString *errCode = dic[@"errCode"];
+            if ([errCode isEqualToString:@""]) {
+                errCode = @"计算手续费失败";
             }
-            else
-            {
-                ELACommitteeInfoModel *model = data;
-                BOOL result = [weakSelf isVoting:model.data];
-                if(result)// YES  选举期 逻辑不变
-                {
-                    NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:self.invalidCRArray];
-                    self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
-                    NSArray *DorpVotes=dic[@"DorpVotes"];
-                    
-                    if ([self.fee doubleValue]<0) {
-                        [self closeTransactionDetailsView];
-                        NSString *errCode = dic[@"errCode"];
-                        if ([errCode isEqualToString:@""]) {
-                            errCode = @"计算手续费失败";
-                        }
-                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
-                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
-                        return;
-                    }
-                    UIView *mainView =[self mainWindow];
-                    if (DorpVotes.count>0) {
-                        [mainView addSubview:self.moreThan36View];
-                        self.moreThan36View.deleteType=voteInvalidType;
-                        [self.moreThan36View mas_makeConstraints:^(MASConstraintMaker *make) {
-                            make.left.top.right.bottom.equalTo(mainView);
-                        }];
-                        
-                    }else{
-                        self.jsonString=dic[@"JSON"];
-                        
-                        
-                        if (isMax) {
-                            self.alltickNumer=@"MAX";
-                            
-                        }
-                        else{
-                            self.alltickNumer=  [[FLTools share]CRVotingDecimalNumberByMultiplying:ticketNumer withCRMermVoting:[NSString stringWithFormat:@"%d",1] ];
-                        }
-                        self.ticket=ticketNumer.doubleValue;
-                        [mainView addSubview:self.transactionDetailsView];
-                        [self.transactionDetailsView TransactionDetailsWithFee:self.fee withTransactionDetailsAumont:self.alltickNumer];
-                        [self.transactionDetailsView mas_makeConstraints:^(MASConstraintMaker *make) {
-                            make.left.top.right.bottom.equalTo(mainView);
-                        }];
-                        
-                        
-                    }
-                }
-                else// NO  非选举期
-                {
-                    //获取 非选举期 cr候选人
-                    FLWallet *wallet = [ELWalletManager share].currentWallet;
-                    NSArray *CRC = [[ELWalletManager share] getVoteInfoList:wallet.masterWalletID :@"CRC"];
-                    NSMutableArray *candidatesArray = [[NSMutableArray alloc] init];
-                    if(CRC.count > 0)
-                    {
-                        NSDictionary *crcDic = CRC[0];
-                        
-                        NSDictionary *votes = crcDic[@"Votes"];
-                        for (NSString *key in votes)//用key取值
-                        {
-                            
-                            if(![key isEqualToString:@""])
-                            {
-                                [candidatesArray addObject:key];
-                            }
-                            
-                        }
-                    }
-                    
-                    NSArray *invalidCRArray = @[@{@"Type":@"CRC",
-                                                  @"Candidates":candidatesArray}];// 将cr候选人加入无效列表里
-                    NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:invalidCRArray];
-                    self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
-                    NSArray *DorpVotes=dic[@"DorpVotes"];
-                    
-                    if ([self.fee doubleValue]<0) {
-                        [self closeTransactionDetailsView];
-                        NSString *errCode = dic[@"errCode"];
-                        if ([errCode isEqualToString:@""]) {
-                            errCode = @"计算手续费失败";
-                        }
-                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
-                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
-                        return;
-                    }
-                    UIView *mainView =[self mainWindow];
-                    if (DorpVotes.count>0) {
-                        [mainView addSubview:self.moreThan36View];
-                        self.moreThan36View.deleteType=voteInvalidType;
-                        [self.moreThan36View mas_makeConstraints:^(MASConstraintMaker *make) {
-                            make.left.top.right.bottom.equalTo(mainView);
-                        }];
-                        
-                    }else{
-                        self.jsonString=dic[@"JSON"];
-                        
-                        
-                        if (isMax) {
-                            self.alltickNumer=@"MAX";
-                            
-                        }
-                        else{
-                            self.alltickNumer=  [[FLTools share]CRVotingDecimalNumberByMultiplying:ticketNumer withCRMermVoting:[NSString stringWithFormat:@"%d",1] ];
-                        }
-                        self.ticket=ticketNumer.doubleValue;
-                        [mainView addSubview:self.transactionDetailsView];
-                        [self.transactionDetailsView TransactionDetailsWithFee:self.fee withTransactionDetailsAumont:self.alltickNumer];
-                        [self.transactionDetailsView mas_makeConstraints:^(MASConstraintMaker *make) {
-                            make.left.top.right.bottom.equalTo(mainView);
-                        }];
-                        
-                        
-                    }
-                    
-                }
+            [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+            WYLog(@"%s : Fee less than zero %@", __func__, errCode);
+            return;
+        }
+        UIView *mainView =[self mainWindow];
+        if (DorpVotes.count>0) {
+            [mainView addSubview:self.moreThan36View];
+            self.moreThan36View.deleteType=voteInvalidType;
+            [self.moreThan36View mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.top.right.bottom.equalTo(mainView);
+            }];
+            
+        }else{
+            self.jsonString=dic[@"JSON"];
+            
+            
+            if (isMax) {
+                self.alltickNumer=@"MAX";
                 
             }
-        });
-        
-    }];
+            else{
+                self.alltickNumer=  [[FLTools share]CRVotingDecimalNumberByMultiplying:ticketNumer withCRMermVoting:[NSString stringWithFormat:@"%d",1] ];
+            }
+            self.ticket=ticketNumer.doubleValue;
+            [mainView addSubview:self.transactionDetailsView];
+            [self.transactionDetailsView TransactionDetailsWithFee:self.fee withTransactionDetailsAumont:self.alltickNumer];
+            [self.transactionDetailsView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.top.right.bottom.equalTo(mainView);
+            }];
+            
+            
+        }
+    }
+    
+//    ELAWeakSelf;
+//    _task = [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[FLTools share]hideLoadingView];
+//            if(error)
+//            {
+//                if(error.code == -999)
+//                {
+//                    //已取消
+//                    [[FLTools share] showErrorInfo:error.localizedDescription];
+//                    WYLog(@"%s : getCommitteeInfo failed with error code %ld", __func__, error.code);
+//                }
+//                else
+//                {
+//                    [[FLTools share] showErrorInfo:error.localizedDescription];
+//                    WYLog(@"%s : getCommitteeInfo failed with error code %ld", __func__, error.code);
+//                }
+//            }
+//            else
+//            {
+//                ELACommitteeInfoModel *model = data;
+//                BOOL result = [weakSelf isVoting:model.data];
+//                if(result)// YES  选举期 逻辑不变
+//                {
+//                    NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:self.invalidCRArray];
+//                    WYLog(@"dev temp masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, stringArray, ticket, self.invalidCRArray, dic);
+//                    self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
+//                    NSArray *DorpVotes=dic[@"DorpVotes"];
+//
+//                    if ([self.fee doubleValue]<0) {
+//                        [self closeTransactionDetailsView];
+//                        NSString *errCode = dic[@"errCode"];
+//                        if ([errCode isEqualToString:@""]) {
+//                            errCode = @"计算手续费失败";
+//                        }
+//                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+//                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
+//                        return;
+//                    }
+//                    UIView *mainView =[self mainWindow];
+//                    if (DorpVotes.count>0) {
+//                        [mainView addSubview:self.moreThan36View];
+//                        self.moreThan36View.deleteType=voteInvalidType;
+//                        [self.moreThan36View mas_makeConstraints:^(MASConstraintMaker *make) {
+//                            make.left.top.right.bottom.equalTo(mainView);
+//                        }];
+//
+//                    }else{
+//                        self.jsonString=dic[@"JSON"];
+//
+//
+//                        if (isMax) {
+//                            self.alltickNumer=@"MAX";
+//
+//                        }
+//                        else{
+//                            self.alltickNumer=  [[FLTools share]CRVotingDecimalNumberByMultiplying:ticketNumer withCRMermVoting:[NSString stringWithFormat:@"%d",1] ];
+//                        }
+//                        self.ticket=ticketNumer.doubleValue;
+//                        [mainView addSubview:self.transactionDetailsView];
+//                        [self.transactionDetailsView TransactionDetailsWithFee:self.fee withTransactionDetailsAumont:self.alltickNumer];
+//                        [self.transactionDetailsView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                            make.left.top.right.bottom.equalTo(mainView);
+//                        }];
+//
+//
+//                    }
+//                }
+//                else// NO  非选举期
+//                {
+//                    //获取 非选举期 cr候选人
+//                    FLWallet *wallet = [ELWalletManager share].currentWallet;
+//                    NSArray *CRC = [[ELWalletManager share] getVoteInfoList:wallet.masterWalletID :@"CRC"];
+//                    NSMutableArray *candidatesArray = [[NSMutableArray alloc] init];
+//                    if(CRC.count > 0)
+//                    {
+//                        NSDictionary *crcDic = CRC[0];
+//
+//                        NSDictionary *votes = crcDic[@"Votes"];
+//                        for (NSString *key in votes)//用key取值
+//                        {
+//
+//                            if(![key isEqualToString:@""])
+//                            {
+//                                [candidatesArray addObject:key];
+//                            }
+//
+//                        }
+//                    }
+//
+//                    NSArray *invalidCRArray = @[@{@"Type":@"CRC",
+//                                                  @"Candidates":candidatesArray}];// 将cr候选人加入无效列表里
+//                    NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:invalidCRArray];
+//                    WYLog(@"dev temp masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, stringArray, ticket, self.invalidCRArray, dic);
+//                    self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
+//                    NSArray *DorpVotes=dic[@"DorpVotes"];
+//
+//                    if ([self.fee doubleValue]<0) {
+//                        [self closeTransactionDetailsView];
+//                        NSString *errCode = dic[@"errCode"];
+//                        if ([errCode isEqualToString:@""]) {
+//                            errCode = @"计算手续费失败";
+//                        }
+//                        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+//                        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
+//                        return;
+//                    }
+//                    UIView *mainView =[self mainWindow];
+//                    if (DorpVotes.count>0) {
+//                        [mainView addSubview:self.moreThan36View];
+//                        self.moreThan36View.deleteType=voteInvalidType;
+//                        [self.moreThan36View mas_makeConstraints:^(MASConstraintMaker *make) {
+//                            make.left.top.right.bottom.equalTo(mainView);
+//                        }];
+//
+//                    }else{
+//                        self.jsonString=dic[@"JSON"];
+//
+//
+//                        if (isMax) {
+//                            self.alltickNumer=@"MAX";
+//
+//                        }
+//                        else{
+//                            self.alltickNumer=  [[FLTools share]CRVotingDecimalNumberByMultiplying:ticketNumer withCRMermVoting:[NSString stringWithFormat:@"%d",1] ];
+//                        }
+//                        self.ticket=ticketNumer.doubleValue;
+//                        [mainView addSubview:self.transactionDetailsView];
+//                        [self.transactionDetailsView TransactionDetailsWithFee:self.fee withTransactionDetailsAumont:self.alltickNumer];
+//                        [self.transactionDetailsView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                            make.left.top.right.bottom.equalTo(mainView);
+//                        }];
+//
+//
+//                    }
+//
+//                }
+//
+//            }
+//        });
+//
+//    }];
     
     
     //    if (self.wallet.TypeW==0) {
@@ -519,6 +575,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
     //        [self makeSureWithPWD:@""];
     //    }
 }
+
 //-(void)cancelThePWDPageView{
 //    [self.pwdPopupV removeFromSuperview];
 //     self.pwdPopupV  = nil;
@@ -669,6 +726,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
 }
 -(void)pwdAndInfoWithPWD:(NSString*)pwd{
     NSString *walletId = [ELWalletManager share].currentWallet.masterWalletID;
+//    WYLog(@"dev temp walletID: %@ JSON:%@ pwd:%@", walletId, self.jsonString, pwd);
     BOOL ret = [[ELWalletManager share]useMainchainSubWallet:walletId WithJsonString:self.jsonString pwd:pwd];
     
     if (ret) {
@@ -688,6 +746,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
             if (target) {
                 [self.navigationController popToViewController:target animated:YES];
             }
+            WYLog(@"dev temp wy1");
         });
     }
     

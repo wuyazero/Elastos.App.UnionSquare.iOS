@@ -39,7 +39,7 @@ static NSString *cellString=@"HMWtheWalletListTableViewCell";
     [self defultWhite];
     [self setBackgroundImg:@""];
     self.title=NSLocalizedString(@"钱包列表", nil);
-    
+    WYLog(@"Selecting wallet");
     [self.baseTableView reloadData];
 }
 -(NSArray *)walletIDListArray{
@@ -97,6 +97,7 @@ static NSString *cellString=@"HMWtheWalletListTableViewCell";
 //        HMWtheWalletListTableViewCell *cell=[tableView cellForRowAtIndexPath:self.selectIndex];
 //        cell.selectView.alpha=0.f;
 //    }
+    WYLog(@"Wallet selected: %@", indexPath);
     self.selectIndex=indexPath;
 //    HMWtheWalletListTableViewCell *cell=[tableView cellForRowAtIndexPath:self.selectIndex];
 //    cell.selectView.alpha=1.f;

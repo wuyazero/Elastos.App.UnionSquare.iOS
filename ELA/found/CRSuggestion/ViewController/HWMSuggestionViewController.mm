@@ -136,8 +136,8 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         WYLog(@"xxl 943 Code = %@",param[@"Code"]);
-        WYLog(@"xxl 943 _pluginResult = %@",resultDic);
-        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
+//        WYLog(@"xxl 943 _pluginResult = %@",resultDic);
+//        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
         WYLog(@"xxl 943 SignTransaction = %@",resultDic[@"SignTransaction"]);
         WYLog(@"xxl 943 calculateProposalHash = %@",resultDic[@"calculateProposalHash"]);
         

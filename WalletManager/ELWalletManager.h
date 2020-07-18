@@ -235,6 +235,8 @@ typedef std::map<String, IDidManager*> DIDManagerMap;
 - (PluginResult *)CreateImpeachmentCRCTransaction:(invokedUrlCommand *)command;
 
 - (void)resyncChainData:(NSString *)masterWalletID withSubWalletID:(NSString *)subWalletID;
+- (NSString *)stringWithJson:(Json)json;
+- (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString;
 
 @end
 
