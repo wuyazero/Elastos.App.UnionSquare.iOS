@@ -63,7 +63,7 @@
      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"setting_adding_scan"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(scanView)];
     
        self.theAmountOfTextField.placeholder=[NSString stringWithFormat:@"%@%@ %@",NSLocalizedString(@"请输入金额 可用", nil),[[FLTools share]elaScaleConversionWith:self.model.iconBlance],@"ELA"];
-    [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.transferTheAddressTextField withTxt:NSLocalizedString(@"请输入收款人地址", nil)];
+    [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.transferTheAddressTextField withTxt:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
    [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.noteTextField withTxt:NSLocalizedString(@"请输入备注", nil)];
     [[HMWCommView share]makeBordersWithView:self.theNextStepButton];
 //    [[HMWCommView share]makeBordersWithView:self.maxButton];
@@ -156,14 +156,21 @@
     
 }
 - (IBAction)theNextStepEvent:(id)sender {
+    NSDictionary *resultAddr = [WYUtils processAddressOrCryptoName:self.transferTheAddressTextField.text withMasterWalletID:self.currentWallet.masterWalletID];
+    
+    if (resultAddr[@"error"]) {
+        [[FLTools share]showErrorInfo:resultAddr[@"error"]];
+        return;
+    }
+    
     if (self.transferTheAddressTextField.text.length==0) {
-         [[FLTools share]showErrorInfo:NSLocalizedString(@"请输入收款人地址", nil)];
+         [[FLTools share]showErrorInfo:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
         
         return;
     }
     NSString *blance;
     if (self.isMax==NO) {
-        if ([self.theAmountOfTextField.text doubleValue]==0) {
+        if ([self.theAmountOfTextField.text doubleValue]<=0) {
               [[FLTools share]showErrorInfo:NSLocalizedString(@"金额需要大于0", nil)];
               return;
           }
@@ -178,7 +185,7 @@
     }
     NSString *isUtxo=@"1";
     
-    invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",self.transferTheAddressTextField.text,blance,self.noteTextField.text,self.noteTextField.text,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"accessFees"];
+    invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",resultAddr[@"address"],blance,self.noteTextField.text,self.noteTextField.text,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"accessFees"];
     PluginResult * result =[[ELWalletManager share]accessFees:mommand];
     NSString *status=[NSString stringWithFormat:@"%@",result.status];
     if (![status isEqualToString:@"1"]) {
@@ -191,7 +198,7 @@
         [[FLTools share]showErrorInfo:NSLocalizedString(@"余额不足", nil)];
         return;
     }
-    [self.transferDetailsPopupV transferDetailsWithToAddress:self.transferTheAddressTextField.text withTheAmountOf:[NSString stringWithFormat:@"%@ %@",  self.theAmountOfTextField.text,@"ELA"] withFee:[NSString stringWithFormat:@"%@%@",fee,@"ELA"]];
+    [self.transferDetailsPopupV transferDetailsWithToAddress:resultAddr[@"address"] withTheAmountOf:[NSString stringWithFormat:@"%@ %@",  self.theAmountOfTextField.text,@"ELA"] withFee:[NSString stringWithFormat:@"%@%@",fee,@"ELA"]];
     
     UIView *manView=[self mainWindow];
     
@@ -246,6 +253,12 @@
     self.transferDetailsPopupV=nil;
 }
 -(void)pwdAndInfoWithPWD:(NSString *)pwd{
+    NSDictionary *resultAddr = [WYUtils processAddressOrCryptoName:self.transferTheAddressTextField.text withMasterWalletID:self.currentWallet.masterWalletID];
+    
+    if (resultAddr[@"error"]) {
+        [[FLTools share]showErrorInfo:resultAddr[@"error"]];
+        return;
+    }
 
 //    SingleSign=0,
 //    SingleSignReadonly=1,
@@ -261,7 +274,7 @@
     
     if (self.currentWallet.TypeW==0) {
         NSString *isUtxo=@"1";
-        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",self.transferTheAddressTextField.text,blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"accessFees"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",resultAddr[@"address"],blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"accessFees"];
         PluginResult *result = [[ELWalletManager share]CreateTransaction:mommand];
         NSString *statue=[NSString stringWithFormat:@"%@",result.status];
         if ([statue isEqualToString:@"1"]) {
@@ -271,7 +284,7 @@
         }
     }else if (self.currentWallet.TypeW==1){
         NSString *isUtxo=@"1";
-        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",self.transferTheAddressTextField.text,blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"MSignAndReadOnlyCreateTransaction"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",resultAddr[@"address"],blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"MSignAndReadOnlyCreateTransaction"];
         PluginResult *result = [[ELWalletManager share]MSignAndReadOnlyCreateTransaction:mommand];
         NSString *statue=[NSString stringWithFormat:@"%@",result.status];
         if ([statue isEqualToString:@"1"]) {
@@ -284,7 +297,7 @@
         }
     }else if (self.currentWallet.TypeW==2){
         NSString *isUtxo=@"1";
-        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",self.transferTheAddressTextField.text,blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"QrCodeCreateTransaction"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",resultAddr[@"address"],blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"QrCodeCreateTransaction"];
         PluginResult *result = [[ELWalletManager share]QrCodeCreateTransaction:mommand];
         NSString *statue=[NSString stringWithFormat:@"%@",result.status];
         if ([statue isEqualToString:@"1"]) {
@@ -296,7 +309,7 @@
         }
     }else if (self.currentWallet.TypeW==3){
         NSString *isUtxo=@"1";
-        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",self.transferTheAddressTextField.text,blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"QrCodeCreateTransaction"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"",resultAddr[@"address"],blance,self.noteTextField.text,self.noteTextField.text,pwd,isUtxo] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"QrCodeCreateTransaction"];
         PluginResult *result = [[ELWalletManager share]MSignAndReadOnlyCreateTransaction:mommand];
         NSString *statue=[NSString stringWithFormat:@"%@",result.status];
         if ([statue isEqualToString:@"1"]) {

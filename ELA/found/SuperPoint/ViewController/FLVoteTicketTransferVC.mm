@@ -41,7 +41,7 @@
     [self setBackgroundImg:@""];
     self.title=NSLocalizedString(@"转账", nil);
     [self.theNextStepButton setTitle:NSLocalizedString(@"下一步", nil) forState:UIControlStateNormal];
-    [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.transferTheAddressTextField withTxt:NSLocalizedString(@"请输入收款人地址", nil)];
+    [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.transferTheAddressTextField withTxt:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
     
     [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.theAmountOfTextField withTxt:[NSString stringWithFormat:@"%@%@ ELA)",NSLocalizedString(@"请输入金额 可用", nil),[[FLTools share]elaScaleConversionWith:[@(self.walletBalance) stringValue]]]];
     [[HMWCommView share] makeTextFieldPlaceHoTextColorWithTextField:self.noteTextField withTxt:NSLocalizedString(@"请输入备注", nil)];
@@ -102,9 +102,16 @@
     self.theAmountOfTextField.text=[[FLTools share]elaScaleConversionWith:@(self.walletBalance).stringValue];
 }
 - (IBAction)theNextStepEvent:(id)sender {
+    ELWalletManager *manager   =  [ELWalletManager share];
+    NSDictionary *resultAddr = [WYUtils processAddressOrCryptoName:self.transferTheAddressTextField.text withMasterWalletID:manager.currentWallet.masterWalletID];
+    
+    if (resultAddr[@"error"]) {
+        [[FLTools share]showErrorInfo:resultAddr[@"error"]];
+        return;
+    }
     
     if (self.transferTheAddressTextField.text.length==0) {
-        [[FLTools share]showErrorInfo:NSLocalizedString(@"请输入收款人地址", nil)];
+        [[FLTools share]showErrorInfo:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
         return;
     }
     if ([self.theAmountOfTextField.text doubleValue]==0 ) {
