@@ -611,7 +611,7 @@
 //   
 //}
 -(void)showLoading{
-    [[FLTools share]showLoadingView];
+    [[FLTools share] showLoadingView];
     
 }
 -(void)hiddLoading{
