@@ -1026,6 +1026,12 @@
 "提案反馈交易"="Proposal Tracking Transaction";
 "提案资金提取交易"="Proposal Fund Withdrawal Transaction";
 "约"="About";
+"不足 1 分钟"="Less Than 1 Min";
+"1 分钟"="1 Min";
+"分钟"="Mins";
+"1 小时"="1 Hour";
+"小时"="Hours";
+"1 天"="1 Day";
 "天"="Days";
 "发起提案"="Nominate Proposal";
 "发起提案"="Nominate Proposal";

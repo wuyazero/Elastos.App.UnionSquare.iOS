@@ -105,24 +105,46 @@
 + (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs {
     @try {
         if (voteAddrs) {
-            NSMutableDictionary *invalidAddrs = [[NSMutableDictionary alloc] init];
+            __block NSMutableDictionary *invalidAddrs = [[NSMutableDictionary alloc] init];
+            __block BOOL keyErr = NO;
             WYLog(@"dev temp voteAddrs in InvalidAddrs: %@", voteAddrs);
+            
+            [[FLTools share] showLoadingView];
+            dispatch_group_t waitGroup = dispatch_group_create();
+            dispatch_queue_t waitQueue = dispatch_queue_create("elastos.elawallet.LoopQueue", DISPATCH_QUEUE_CONCURRENT);
+            
             for (NSString *key in voteAddrs) {
-                if ([key isEqualToString:@"Delegate"]) {
-                    invalidAddrs[key] = [WYVoteUtils getInvalidDelegates:voteAddrs[key]];
-                } else if ([key isEqualToString:@"CRC"]) {
-                    invalidAddrs[key] = [WYVoteUtils getInvalidCRCs:voteAddrs[key]];
-                } else if ([key isEqualToString:@"CRCProposal"]) {
-                    invalidAddrs[key] = [WYVoteUtils getInvalidProposals:voteAddrs[key]];
-                } else if ([key isEqualToString:@"CRCImpeachment"]) {
-                    invalidAddrs[key] = [WYVoteUtils getInvalidImpeachments:voteAddrs[key]];
-                } else {
-                    invalidAddrs[key] = @[];
-                }
-                if (!invalidAddrs[key]) {
-                    WYLog(@"GetInvalidAddrs error for key: %@", key);
-                    return nil;
-                }
+                dispatch_group_enter(waitGroup);
+                dispatch_async(waitQueue, ^{
+                    if ([key isEqualToString:@"Delegate"]) {
+                        invalidAddrs[key] = [WYVoteUtils getInvalidDelegates:voteAddrs[key]];
+                    } else if ([key isEqualToString:@"CRC"]) {
+                        invalidAddrs[key] = [WYVoteUtils getInvalidCRCs:voteAddrs[key]];
+                    } else if ([key isEqualToString:@"CRCProposal"]) {
+                        invalidAddrs[key] = [WYVoteUtils getInvalidProposals:voteAddrs[key]];
+                    } else if ([key isEqualToString:@"CRCImpeachment"]) {
+                        invalidAddrs[key] = [WYVoteUtils getInvalidImpeachments:voteAddrs[key]];
+                    } else {
+                        invalidAddrs[key] = @[];
+                    }
+                    if (!invalidAddrs[key]) {
+                        WYLog(@"GetInvalidAddrs error for key: %@", key);
+                        keyErr = YES;
+                    }
+                    dispatch_group_leave(waitGroup);
+                });
+            }
+            
+            long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * (WAIT_TIMEOUT + 6)));
+            [[FLTools share] hideLoadingView];
+            
+            if (keyErr) {
+                return nil;
+            }
+            if (status != 0) {
+                WYLog(@"%s: getListProducer timeout!!", __func__);
+                [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+                return nil;
             }
             WYLog(@"GetInvalidAddrs success! invalidAddrs: %@", invalidAddrs);
             return invalidAddrs;
