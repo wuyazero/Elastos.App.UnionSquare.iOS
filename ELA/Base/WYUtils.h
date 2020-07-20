@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)getLogPath;
 + (void)setExceptionHandler;
 + (dispatch_queue_t)getNetworkQueue;
++ (NSDictionary *)syncGET:(NSString *)url headers:(NSDictionary * _Nullable)headers showLoading:(BOOL)show;
++ (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID;
 
 @end
 

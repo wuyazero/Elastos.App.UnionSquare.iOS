@@ -276,6 +276,7 @@ UINib *_nib;
     
     
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     HWMDIDAuthorizationTableViewCell *cell=[_nib instantiateWithOwner:nil options:nil][0];

@@ -24,6 +24,7 @@
 
 #import "WYUtils.h"
 #import "MyUtil.h"
+#import "ELWalletManager.h"
 
 static dispatch_queue_t logQueue = nil;
 static dispatch_queue_t networkQueue = nil;
@@ -131,6 +132,94 @@ static WYUtils *sharedWYUtils = nil;
         nextHandler = NSGetUncaughtExceptionHandler();
     }
     NSSetUncaughtExceptionHandler(&WYExceptionHandler);
+}
+
++ (NSDictionary *)syncGET:(NSString *)url headers:(NSDictionary *)headers showLoading:(BOOL)show {
+    __block NSString *resultStr = nil;
+    __block NSError *resultErr = nil;
+    dispatch_group_t waitGroup = dispatch_group_create();
+    dispatch_queue_t networkQueue = [WYUtils getNetworkQueue];
+    
+    if (show) {
+        [[FLTools share] showLoadingView];
+    }
+    dispatch_group_enter(waitGroup);
+    dispatch_async(networkQueue, ^{
+        
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        manager.completionQueue = networkQueue;
+        [manager.requestSerializer setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        
+        [manager GET:url parameters:nil headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            NSString *responseStr = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+            WYLog(@"SyncGET success: %@", responseStr);
+            resultStr = responseStr;
+            dispatch_group_leave(waitGroup);
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            WYLog(@"SyncGET error: %@", error.localizedDescription);
+            resultErr = error;
+            dispatch_group_leave(waitGroup);
+        }];
+        
+    });
+    long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
+    if (show) {
+        [[FLTools share] hideLoadingView];
+    }
+    
+    if (status != 0) {
+        WYLog(@"SyncGET timeout: ld%", status);
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: NSLocalizedString(@"网络超时", nil),
+            NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"网络超时", nil),
+            NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"请稍后重试", nil)
+        };
+        resultErr = [NSError errorWithDomain:@"elastos.elawallet.SyncGETTimeout" code:status userInfo:userInfo];
+    }
+    
+    return @{
+        @"result": resultStr,
+        @"error": resultErr
+    };
+    
+}
+
++ (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID {
+    NSString *elaAddress = nil;
+    NSString *errMsg = nil;
+    NSString *alphanumRegex = @"[A-Z0-9a-z]+";
+    NSPredicate *testAlphanum = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", alphanumRegex];
+    if (inputStr.length < 1) {
+        errMsg = NSLocalizedString(@"收款地址不能为空", nil);
+    } else if (inputStr.length > 24) {
+        if([[ELWalletManager share] IsAddressValidWithMastID:masterWalletID WithAddress:inputStr]) {
+            elaAddress = inputStr;
+        } else {
+            errMsg = NSLocalizedString(@"收款地址格式错误", nil);
+        }
+    } else if ([testAlphanum evaluateWithObject:inputStr]) {
+        NSString *cryptoName = [inputStr lowercaseString];
+        NSString *cryptoNameUrl = [NSString stringWithFormat:@"https://%@.elastos.name/ela.address", cryptoName];
+        NSDictionary *resultAddr = [WYUtils syncGET:cryptoNameUrl headers:nil showLoading:YES];
+        WYLog(@"CryptoName GET result: %@", resultAddr);
+        if (!resultAddr[@"error"]) {
+            elaAddress = resultAddr[@"result"];
+        } else {
+            NSError *resultErr = resultAddr[@"error"];
+            if ([resultErr.domain isEqualToString:@"elastos.elawallet.SyncGETTimeout"]) {
+                errMsg = NSLocalizedString(@"CryptoName连接超时", nil);
+            } else {
+                errMsg = NSLocalizedString(@"CryptoName地址错误", nil);
+            }
+        }
+    } else {
+        errMsg = NSLocalizedString(@"CryptoName地址错误", nil);
+    }
+    return @{
+        @"address": elaAddress,
+        @"error": errMsg
+    };
 }
 
 @end
