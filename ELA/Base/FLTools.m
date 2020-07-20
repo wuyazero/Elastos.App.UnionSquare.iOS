@@ -2172,19 +2172,80 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
     
 }
 -(NSString*)RemainingTimeFormatting:(NSString*)RemainingString{
-    NSString *showRemainingTimeTest;
-    NSInteger RemainingInt=[RemainingString integerValue];
-    NSInteger hourInt=3600;
-    NSInteger dayInt=3600*24;
-    if (RemainingInt<hourInt) {
-        showRemainingTimeTest=NSLocalizedString(@"不足1小时", nil);
-    }else if (RemainingInt<dayInt&&RemainingInt>hourInt){
-        showRemainingTimeTest=NSLocalizedString(@"约23个小时", nil);
-    }else if (RemainingInt>dayInt){
-        NSInteger dayNumber= RemainingInt/dayInt;
-       
-        showRemainingTimeTest=[NSString stringWithFormat:@"%@ %ld %@", NSLocalizedString(@"约", nil),dayNumber,NSLocalizedString(@"天", nil)];
+    NSString *showRemainingTimeTest = @"";
+    NSInteger RemainingInt = [RemainingString integerValue];
+    NSInteger minuteInt = 60;
+    NSInteger hourInt = 60 * 60;
+    NSInteger dayInt = 60 * 60 * 24;
+    
+    if (RemainingInt < minuteInt) {
+        showRemainingTimeTest = NSLocalizedString(@"不足 1 分钟", nil);
+    } else {
+        NSInteger dayNum = RemainingInt / dayInt;
+        NSInteger dayRem = RemainingInt % dayInt;
+        NSInteger hourNum = dayRem / hourInt;
+        NSInteger hourRem = dayRem % hourInt;
+        NSInteger minuteNum = hourRem / minuteInt;
+        
+        NSString *aboutStr = NSLocalizedString(@"约", nil);
+        NSString *dayLead = @"";
+        NSString *dayStr = @"";
+        NSString *hourLead = @"";
+        NSString *hourStr = @"";
+        NSString *minuteLead = @"";
+        NSString *minuteStr = @"";
+        
+        if (dayNum > 0) {
+            dayLead = @" ";
+            if (dayNum > 1) {
+                dayStr = [NSString stringWithFormat:@"%ld %@", dayNum, NSLocalizedString(@"天", nil)];
+            } else {
+                dayStr = NSLocalizedString(@"1 天", nil);
+            }
+        }
+        
+        if (hourNum > 0 && dayNum < 2) {
+            hourLead = @" ";
+            if (hourNum > 1) {
+                hourStr = [NSString stringWithFormat:@"%ld %@", hourNum, NSLocalizedString(@"小时", nil)];
+            } else {
+                hourStr = NSLocalizedString(@"1 小时", nil);
+            }
+        }
+        
+        if (minuteNum > 0 && dayNum < 1) {
+            minuteLead = @" ";
+            if (minuteNum > 1) {
+                minuteStr = [NSString stringWithFormat:@"%ld %@", minuteNum, NSLocalizedString(@"分钟", nil)];
+            } else {
+                minuteStr = NSLocalizedString(@"1 分钟", nil);
+            }
+        }
+        
+        showRemainingTimeTest = [NSString stringWithFormat:@"%@%@%@%@%@%@%@", aboutStr, dayLead, dayStr, hourLead, hourStr, minuteLead, minuteStr];
     }
+    
+//    if (RemainingInt < minuteInt) {
+//        showRemainingTimeTest = NSLocalizedString(@"不足 1 分钟", nil);
+//    } else if (RemainingInt < minuteInt * 2) {
+//        showRemainingTimeTest = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"约", nil), NSLocalizedString(@"1 分钟", nil)];
+//    } else if (RemainingInt < hourInt) {
+//        NSInteger minuteNumber = RemainingInt / minuteInt;
+//        showRemainingTimeTest = [NSString stringWithFormat:@"%@ %ld %@", NSLocalizedString(@"约", nil), minuteNumber, NSLocalizedString(@"分钟", nil)];
+//    } else if (RemainingInt < hourInt + minuteInt) {
+//        showRemainingTimeTest = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"约", nil), NSLocalizedString(@"1 小时", nil)];
+//    } else if (RemainingInt < hourInt + minuteInt * 2) {
+//        showRemainingTimeTest = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"约", nil), NSLocalizedString(@"1 小时", nil), NSLocalizedString(@"1 分钟", nil)];
+//    } else if (RemainingInt < hourInt * 2) {
+//
+//    }else if (RemainingInt < dayInt&&RemainingInt>hourInt){
+//        showRemainingTimeTest=NSLocalizedString(@"约23个小时", nil);
+//    } else if (RemainingInt > dayInt){
+//        NSInteger dayNumber= RemainingInt / dayInt;
+//
+//        showRemainingTimeTest=[NSString stringWithFormat:@"%@ %ld %@", NSLocalizedString(@"约", nil),dayNumber,NSLocalizedString(@"天", nil)];
+//    }
+        
     return showRemainingTimeTest;
 }
 - (NSString*)isEmptyString:(NSString *)string {

@@ -431,10 +431,6 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
-        //WYDebug
-        NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:self.currentWallet.masterWalletID];
-        WYLog(@"dev temp debug result is %@", voteInfo);
-        
         [self hiddLoading];
     }
 }
