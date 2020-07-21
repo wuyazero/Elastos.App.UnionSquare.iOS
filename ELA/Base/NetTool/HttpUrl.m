@@ -64,34 +64,41 @@ NSInteger timeOut = 60;
     }else{
         stringUrl =host;
     }
+    
+    WYLog(@"%s POST url start: %@", __func__, stringUrl);
     [manage POST:stringUrl parameters:dataDic headers:header progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        WYLog(@"%s POST url responded: %@", __func__, stringUrl);
         if (show) {
-                  [[FLTools share] hideLoadingView];
-              }
-              NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-              
-              NSInteger code = [dic[@"code"] integerValue];
-              
-              if (code==0||code==200) {
-                  successBlock(dic);
-              }else{
-                  NSString *errString=dic[@"exceptionMsg"];
-                  if (isSh) {
-                      [[FLTools share]showErrorInfo:errString];
-                  }
-                  
-                  FailBlock(dic);
-                  
-              }
+            [[FLTools share] hideLoadingView];
+        }
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+        
+        NSInteger code = [dic[@"code"] integerValue];
+        
+        if (code==0||code==200) {
+            WYLog(@"%s POST url success: %@", __func__, stringUrl);
+            successBlock(dic);
+        }else{
+            NSString *errString=dic[@"exceptionMsg"];
+            if (isSh) {
+                [[FLTools share]showErrorInfo:errString];
+            }
+            
+            WYLog(@"%s POST url failed: %@", __func__, stringUrl);
+            FailBlock(dic);
+            
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (isSh) {
-                 [[FLTools share]showErrorInfo:errorString];
-             }
-             FailBlock(error);
+            [[FLTools share]showErrorInfo:errorString];
+        }
+        
+        WYLog(@"%s POST url failed: %@", __func__, stringUrl);
+        FailBlock(error);
     }];
 }
 + (void)NetGETHost:(NSString*)host url:(NSString *)httpUrl header:(NSDictionary*)header body:(NSDictionary *)param showHUD:(BOOL)show WithSuccessBlock:(void(^)(id data))successBlock WithFailBlock:(void(^)(id data))FailBlock{
-        
+    
     
     if (show) {
         [[FLTools share] showLoadingView];
@@ -102,34 +109,41 @@ NSInteger timeOut = 60;
     NSString *stringUrl = [NSString stringWithFormat:@"%@%@",host, httpUrl];
     NSDictionary *dataDic = [self addOtherKey:param];
     
+    WYLog(@"%s GET url start: %@", __func__, stringUrl);
     [manage GET:stringUrl parameters:dataDic headers:header progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        WYLog(@"%s GET url responded: %@", __func__, stringUrl);
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-               if (show) {
-                   [[FLTools share] hideLoadingView];
-               }
-               NSInteger code = [dic[@"code"] integerValue];
-               if (code==0||code==1) {
-                   successBlock(dic);
-               }else{
-                   NSString *errString;
-                   if ([dic objectForKey:@"exceptionMsg"]) {
-                       errString=dic[@"exceptionMsg"];
-                       
-                   }
-                   if (errorString.length==0&&[dic objectForKey:@"message"]) {
-                       errString=dic[@"message"];
-                   }
-                   if (errorString.length==0&&[dic objectForKey:@"error"]) {
-                                 errString=dic[@"error"];
-                             }
-                   [[FLTools share]showErrorInfo:errString];
-                   FailBlock(dic);
-               }
+        if (show) {
+            [[FLTools share] hideLoadingView];
+        }
+        NSInteger code = [dic[@"code"] integerValue];
+        if (code==0||code==1) {
+            WYLog(@"%s GET url success: %@", __func__, stringUrl);
+            successBlock(dic);
+        }else{
+            NSString *errString;
+            if ([dic objectForKey:@"exceptionMsg"]) {
+                errString=dic[@"exceptionMsg"];
+                
+            }
+            if (errorString.length==0&&[dic objectForKey:@"message"]) {
+                errString=dic[@"message"];
+            }
+            if (errorString.length==0&&[dic objectForKey:@"error"]) {
+                errString=dic[@"error"];
+            }
+            [[FLTools share]showErrorInfo:errString];
+            
+            WYLog(@"%s GET url failed: %@", __func__, stringUrl);
+            FailBlock(dic);
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-    if (![httpUrl isEqualToString:@"/api/dposNodeRPC/getProducerNodesList"]&&![httpUrl containsString:@"/api/council/information"]) {
-        [[FLTools share]showErrorInfo:errorString];
-    }
-    FailBlock(error);
+        if (![httpUrl isEqualToString:@"/api/dposNodeRPC/getProducerNodesList"]&&![httpUrl containsString:@"/api/council/information"]) {
+            [[FLTools share]showErrorInfo:errorString];
+        }
+        
+        WYLog(@"%s GET url failed: %@", __func__, stringUrl);
+        FailBlock(error);
     }];
 }
 
@@ -153,44 +167,44 @@ NSInteger timeOut = 60;
     
     NSString *httpStr = [Http_IP stringByAppendingString:@"/api/attachment/upload"];
     [manager POST:httpStr parameters:nil headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-         //对图片大小进行压缩--
-               NSData *data=UIImageJPEGRepresentation(image, 1.0);
-               if (data.length>100*1024) {
-                   if (data.length>1024*1024) {//1M以及以上
-                       data=UIImageJPEGRepresentation(image, 0.1);
-                   }else if (data.length>512*1024) {//0.5M-1M
-                       data=UIImageJPEGRepresentation(image, 0.5);
-                   }else if (data.length>200*1024) {//0.25M-0.5M
-                       data=UIImageJPEGRepresentation(image, 0.9);
-                   }
-               }
-               
-               
-               //上传的参数(上传图片，以文件流的格式)
-               [formData appendPartWithFileData:data
-                                           name:@"files"
-                                       fileName:@"123.jpg"
-                                       mimeType:@"image/jpeg"];
+        //对图片大小进行压缩--
+        NSData *data=UIImageJPEGRepresentation(image, 1.0);
+        if (data.length>100*1024) {
+            if (data.length>1024*1024) {//1M以及以上
+                data=UIImageJPEGRepresentation(image, 0.1);
+            }else if (data.length>512*1024) {//0.5M-1M
+                data=UIImageJPEGRepresentation(image, 0.5);
+            }else if (data.length>200*1024) {//0.25M-0.5M
+                data=UIImageJPEGRepresentation(image, 0.9);
+            }
+        }
+        
+        
+        //上传的参数(上传图片，以文件流的格式)
+        [formData appendPartWithFileData:data
+                                    name:@"files"
+                                fileName:@"123.jpg"
+                                mimeType:@"image/jpeg"];
     } progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-          if (show) {
-                  [[FLTools share] hideLoadingView];
-              }
-              //        DLog(@"上传结果:%@", responseObject);
-              //上传成功
-              NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-              NSInteger code = [dic[@"code"] integerValue];
-              if (code==0) {
-                  successBlock(dic);
-              }else{
-                  NSString *errString=[NSString stringWithFormat:@"%@",dic[@"msg"]];
-                  
-                  [[FLTools share]showErrorInfo:errString];
-              }
+        if (show) {
+            [[FLTools share] hideLoadingView];
+        }
+        //        DLog(@"上传结果:%@", responseObject);
+        //上传成功
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+        NSInteger code = [dic[@"code"] integerValue];
+        if (code==0) {
+            successBlock(dic);
+        }else{
+            NSString *errString=[NSString stringWithFormat:@"%@",dic[@"msg"]];
+            
+            [[FLTools share]showErrorInfo:errString];
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            //        DLog(@"%@", error);
-            //上传失败
-            [[FLTools share]showErrorInfo:errorString];
-            FailBlock(nil);
+        //        DLog(@"%@", error);
+        //上传失败
+        [[FLTools share]showErrorInfo:errorString];
+        FailBlock(nil);
     }];
 }
 + (void)upLoadImage:(NSString*)host Url:(NSString*)url Param:(NSDictionary*)param Images:(NSArray *)images  showHUD:(BOOL)show WithSuccessBlock:(void(^)(id data))successBlock WithFailBlock:(void(^)(id data))FailBlock
@@ -214,28 +228,28 @@ NSInteger timeOut = 60;
     formatter.dateFormat = @"yyyyMMddHHmmss";
     //    NSMutableURLRequest *re = [NSMutableURLRequest  ]
     [manager POST:httpStr parameters:param headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-            int i = 0;
-            for (UIImage *img in images) {
-                
-                NSData *data=UIImageJPEGRepresentation(img, 1.0);
-                if (data.length>100*1024) {
-                    if (data.length>1024*1024) {//1M以及以上
-                        data=UIImageJPEGRepresentation(img, 0.1);
-                    }else if (data.length>512*1024) {//0.5M-1M
-                        data=UIImageJPEGRepresentation(img, 0.5);
-                    }else if (data.length>200*1024) {//0.25M-0.5M
-                        data=UIImageJPEGRepresentation(img, 0.9);
-                    }
+        int i = 0;
+        for (UIImage *img in images) {
+            
+            NSData *data=UIImageJPEGRepresentation(img, 1.0);
+            if (data.length>100*1024) {
+                if (data.length>1024*1024) {//1M以及以上
+                    data=UIImageJPEGRepresentation(img, 0.1);
+                }else if (data.length>512*1024) {//0.5M-1M
+                    data=UIImageJPEGRepresentation(img, 0.5);
+                }else if (data.length>200*1024) {//0.25M-0.5M
+                    data=UIImageJPEGRepresentation(img, 0.9);
                 }
-                //上传的参数(上传图片，以文件流的格式)
-                NSString *fileName = [NSString stringWithFormat:@"%@%d.jpg", [formatter stringFromDate:[NSDate date]],i];
-                [formData appendPartWithFileData:data
-                                            name:@"files"
-                                        fileName:fileName
-                                        mimeType:@"image/jpeg"];
-                
-                i++;
             }
+            //上传的参数(上传图片，以文件流的格式)
+            NSString *fileName = [NSString stringWithFormat:@"%@%d.jpg", [formatter stringFromDate:[NSDate date]],i];
+            [formData appendPartWithFileData:data
+                                        name:@"files"
+                                    fileName:fileName
+                                    mimeType:@"image/jpeg"];
+            
+            i++;
+        }
     } progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (show) {
             [[FLTools share] hideLoadingView];
@@ -253,8 +267,8 @@ NSInteger timeOut = 60;
             
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-         [[FLTools share]showErrorInfo:errorString];
-               FailBlock(nil);
+        [[FLTools share]showErrorInfo:errorString];
+        FailBlock(nil);
     }];
 }
 +(NSDictionary*)addOtherKey:(NSDictionary *)dict{

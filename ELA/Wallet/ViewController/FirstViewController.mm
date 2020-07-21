@@ -43,6 +43,8 @@
 #import "HMWToDeleteTheWalletPopView.h"
 #import "HWMCommentPerioDetailsViewController.h"
 #import "WYVoteUtils.h"
+#import "ELANetwork.h"
+#import "ELACommitteeInfoModel.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -431,9 +433,59 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
+        // WYDebug
+        
+        //        WYLog(@"=== wydebug start ===");
+        //
+        //        WYLog(@"=== wydebug end ===");
+
+        WYSetUseNetworkQueue(YES);
+        NSString *httpIP=[[FLTools share]http_IpFast];
+        [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+            NSDictionary *param = data[@"data"];
+            WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
+        } WithFailBlock:^(id data) {
+            WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
+        }];
+        
+        [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
+            WYLog(@"CRCommittee Info: %@", @{
+                @"data": data,
+                @"error": error
+                                         });
+            if (!error) {
+                ELACommitteeInfoModel *CRCInfo = data;
+                NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
+                if (index) {
+                    [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
+                        WYLog(@"CRCouncil List: %@", @{
+                        @"data": data,
+                        @"error": error
+                                                 });
+                    }];
+                }
+            }
+        }];
+        
+        [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+            NSDictionary *param = data[@"data"];
+            WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
+        } WithFailBlock:^(id data) {
+            WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
+        }];
+        
+        [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
+            WYLog(@"Proposals Info: %@", @{
+                @"data": data,
+                @"error": error
+                                         });
+        }];
+        WYSetUseNetworkQueue(NO);
+        
         [self hiddLoading];
     }
 }
+
 -(void)getBalanceList:(NSArray*)arr{
     if (self.dataSoureArray.count>0) {
         [self.dataSoureArray removeAllObjects];
@@ -542,7 +594,7 @@
 {
     [super viewWillAppear:animated];
     [self firstNav];
-//    [self hiddLoading];
+    //    [self hiddLoading];
     [self performSelector:@selector(hiddLoading) withObject:nil afterDelay:2.0f];
 }
 
