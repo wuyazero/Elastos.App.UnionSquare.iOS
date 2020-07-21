@@ -34,7 +34,7 @@
 #endif
 
 #ifndef WAIT_TIMEOUT
-#define WAIT_TIMEOUT 60
+#define WAIT_TIMEOUT 16
 #endif
 
 #import <Foundation/Foundation.h>
