@@ -30,6 +30,8 @@
 #import "FLCoinPointInfoModel.h"
 #import "ELACouncilAndSecretariatModel.h"
 
+static BOOL networkTimeout = NO;
+
 @implementation WYVoteUtils
 
 + (NSDictionary *)getVoteInfo:(NSString *)masterWalletID {
@@ -105,6 +107,7 @@
 + (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs {
     @try {
         if (voteAddrs) {
+            networkTimeout = NO;
             __block NSMutableDictionary *invalidAddrs = [[NSMutableDictionary alloc] init];
             __block BOOL keyErr = NO;
             WYLog(@"dev temp voteAddrs in InvalidAddrs: %@", voteAddrs);
@@ -135,17 +138,24 @@
                 });
             }
             
-            long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * (WAIT_TIMEOUT + 6)));
+            long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT * 2));
             [[FLTools share] hideLoadingView];
+            
+            if (status != 0) {
+                WYLog(@"%s: getInvalidAddrs timeout!!", __func__);
+                networkTimeout = YES;
+            }
+            
+            if (networkTimeout) {
+                networkTimeout = NO;
+                [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+                return nil;
+            }
             
             if (keyErr) {
                 return nil;
             }
-            if (status != 0) {
-                WYLog(@"%s: getListProducer timeout!!", __func__);
-                [[FLTools share] showErrorInfo:@"Network Timeout!!"];
-                return nil;
-            }
+            
             WYLog(@"GetInvalidAddrs success! invalidAddrs: %@", invalidAddrs);
             return invalidAddrs;
         }
@@ -184,7 +194,7 @@
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
     if (status != 0) {
         WYLog(@"%s: getListProducer timeout!!", __func__);
-        [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+        networkTimeout = YES;
         return nil;
     }
     
@@ -254,8 +264,8 @@
     
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
     if (status != 0) {
-        WYLog(@"%s: getCommitteeInfo timeout!!", __func__);
-        [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+        WYLog(@"%s: getCRCInfo timeout!!", __func__);
+        networkTimeout = YES;
         return nil;
     }
     
@@ -326,7 +336,7 @@
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
     if (status != 0) {
         WYLog(@"%s: getProposalList timeout!!", __func__);
-        [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+        networkTimeout = YES;
         return nil;
     }
     
@@ -399,7 +409,7 @@
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
     if (status != 0) {
         WYLog(@"%s: getCouncilList timeout!!", __func__);
-        [[FLTools share] showErrorInfo:@"Network Timeout!!"];
+        networkTimeout = YES;
         return nil;
     }
     

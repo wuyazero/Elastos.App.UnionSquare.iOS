@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)createCRCVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 + (NSDictionary *)createProposalVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 + (NSDictionary *)createImpeachmentVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
++ (NSInteger)getCurrentCRCIndex:(NSArray *)data;
 
 @end
 
