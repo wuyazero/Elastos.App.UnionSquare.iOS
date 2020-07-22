@@ -657,7 +657,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 }
 -(void)didHadInputVoteTicket:(NSString*)ticketNumer WithIsMax:(BOOL)isMax{
     [self.inputVoteTicketView removeFromSuperview];
-    self.inputVoteTicketView =nil;
+    self.inputVoteTicketView = nil;
     [self showCRProposalConfirmView];
     self.CRProposalConfirmV.type=OpposingVotesType;
     self.votesString=ticketNumer;
