@@ -35,9 +35,6 @@
     dispatch_once(&onceToken, ^{
         
         manager = [AFHTTPSessionManager manager];
-        if (WYUseNetworkQueue()) {
-            manager.completionQueue = [WYUtils getNetworkQueue];
-        }
         
         //网络传输类型
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -53,6 +50,10 @@
         manager.requestSerializer.timeoutInterval = TimeOut;
         [manager.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
+        if (WYUseNetworkQueue()) {
+            manager.completionQueue = [WYUtils getNetworkQueue];
+            manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+        }
         
     });
     

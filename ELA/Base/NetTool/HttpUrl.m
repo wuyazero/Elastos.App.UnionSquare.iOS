@@ -16,9 +16,6 @@ NSInteger timeOut = 60;
 
 +(AFHTTPSessionManager*)getManage{
     AFHTTPSessionManager *manage = [AFHTTPSessionManager manager];
-    if (WYUseNetworkQueue()) {
-        manage.completionQueue = [WYUtils getNetworkQueue];
-    }
     
     //    AFHTTPSessionManager *manage = [[AFHTTPSessionManager manager]initWithBaseURL:[NSURL URLWithString:Http_UpImage]];
     manage.requestSerializer = [AFJSONRequestSerializer serializer];//请求
@@ -40,6 +37,11 @@ NSInteger timeOut = 60;
     securityPolicy.allowInvalidCertificates = YES;
     
     manage.securityPolicy = securityPolicy;
+    
+    if (WYUseNetworkQueue()) {
+        manage.completionQueue = [WYUtils getNetworkQueue];
+        manage.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    }
     
     return manage;
 }
@@ -154,9 +156,6 @@ NSInteger timeOut = 60;
     }
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    if (WYUseNetworkQueue()) {
-        manager.completionQueue = [WYUtils getNetworkQueue];
-    }
     
     //接收类型不一致请替换一致text/html或别的
     manager.requestSerializer = [AFJSONRequestSerializer new];
@@ -164,6 +163,12 @@ NSInteger timeOut = 60;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];//响应
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/plain",@"text/html",nil];
     [manager.requestSerializer setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+    manager.requestSerializer.timeoutInterval = timeOut;
+    
+    if (WYUseNetworkQueue()) {
+        manager.completionQueue = [WYUtils getNetworkQueue];
+        manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    }
     
     NSString *httpStr = [Http_IP stringByAppendingString:@"/api/attachment/upload"];
     [manager POST:httpStr parameters:nil headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -215,17 +220,21 @@ NSInteger timeOut = 60;
     }
     
     AFHTTPSessionManager  *manager = [AFHTTPSessionManager manager];
-    if (WYUseNetworkQueue()) {
-        manager.completionQueue = [WYUtils getNetworkQueue];
-    }
     
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [ manager.requestSerializer setValue:[FLTools share].user.loginToken forHTTPHeaderField:@"x-client-token"];
-    manager.requestSerializer.timeoutInterval = 30;
+    manager.requestSerializer.timeoutInterval = timeOut;
+    
+    if (WYUseNetworkQueue()) {
+        manager.completionQueue = [WYUtils getNetworkQueue];
+        manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    }
+    
     NSString *httpStr = [host stringByAppendingString:url];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"yyyyMMddHHmmss";
+    
     //    NSMutableURLRequest *re = [NSMutableURLRequest  ]
     [manager POST:httpStr parameters:param headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         int i = 0;

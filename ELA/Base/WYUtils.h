@@ -37,6 +37,10 @@
 #define WAIT_TIMEOUT 16
 #endif
 
+#ifndef QUEUE_TIMEOUT
+#define QUEUE_TIMEOUT 10
+#endif
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -46,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)getLogPath;
 + (void)setExceptionHandler;
 + (dispatch_queue_t)getNetworkQueue;
++ (dispatch_queue_t)getTaskQueue;
 + (NSDictionary *)syncGET:(NSString *)url headers:(NSDictionary * _Nullable)headers showLoading:(BOOL)show;
 + (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID;
 

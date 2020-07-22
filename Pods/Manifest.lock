@@ -5,6 +5,9 @@ PODS:
     - AFNetworking/Security (= 4.0.1)
     - AFNetworking/Serialization (= 4.0.1)
     - AFNetworking/UIKit (= 4.0.1)
+  - "AFNetworking+RetryPolicy (2.0.0)":
+    - AFNetworking (~> 4.0)
+    - ObjcAssociatedObjectHelpers (= 2.0.1)
   - AFNetworking/NSURLSession (4.0.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
@@ -17,28 +20,39 @@ PODS:
   - Base64 (1.1.2)
   - JWT (2.2.0):
     - Base64 (~> 1.1.2)
+  - ObjcAssociatedObjectHelpers (2.0.1):
+    - ObjcAssociatedObjectHelpers/Core (= 2.0.1)
+    - "ObjcAssociatedObjectHelpers/NSObject+Dictionary (= 2.0.1)"
+  - ObjcAssociatedObjectHelpers/Core (2.0.1)
+  - "ObjcAssociatedObjectHelpers/NSObject+Dictionary (2.0.1)":
+    - ObjcAssociatedObjectHelpers/Core
   - YYKit (1.0.9):
     - YYKit/no-arc (= 1.0.9)
   - YYKit/no-arc (1.0.9)
 
 DEPENDENCIES:
   - AFNetworking (~> 4.0.1)
+  - "AFNetworking+RetryPolicy (~> 2.0.0)"
   - JWT (~> 2.2.0)
   - YYKit (~> 1.0.9)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
+    - "AFNetworking+RetryPolicy"
     - Base64
     - JWT
+    - ObjcAssociatedObjectHelpers
     - YYKit
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  "AFNetworking+RetryPolicy": d823c39e54178c311931615507a54e401eda5055
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   JWT: cf73c0ab0dac762df3de8a3f1164352089d97780
+  ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
   YYKit: 7cda43304a8dc3696c449041e2cb3107b4e236e7
 
-PODFILE CHECKSUM: 8408a987cd2be83fa6fed7f65a52627f595e26ee
+PODFILE CHECKSUM: 376baea445ca7a7ecbac433550559b9ba9ac47f3
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3
