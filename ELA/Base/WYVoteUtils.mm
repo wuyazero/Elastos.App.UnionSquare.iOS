@@ -109,7 +109,7 @@
             WYLog(@"dev temp voteAddrs in InvalidAddrs: %@", voteAddrs);
             
             dispatch_group_t waitGroup = dispatch_group_create();
-            dispatch_queue_t waitQueue = dispatch_queue_create("elastos.elawallet.LoopQueue", DISPATCH_QUEUE_CONCURRENT);
+            dispatch_queue_t waitQueue = dispatch_queue_create("elastos.elawallet.LoopQueue", DISPATCH_QUEUE_SERIAL);
             
             for (NSString *key in voteAddrs) {
                 dispatch_group_enter(waitGroup);
@@ -133,7 +133,7 @@
                 });
             }
             
-            long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT * 2));
+            long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
             
             if (status != 0) {
                 WYLog(@"%s: getInvalidAddrs timeout!!", __func__);

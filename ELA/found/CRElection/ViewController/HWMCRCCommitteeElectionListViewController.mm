@@ -473,7 +473,7 @@ UINib *_cellCRNib;
 {
     self.isMax=isMax;
     [self.inputVoteTicketView removeFromSuperview];
-    self.inputVoteTicketView= nil;
+    self.inputVoteTicketView = nil;
     self.ticket = [ticketNumer doubleValue];
     [self.view.window addSubview:self.pwdPopupV];
     

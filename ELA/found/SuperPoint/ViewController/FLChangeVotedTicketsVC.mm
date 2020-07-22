@@ -265,7 +265,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
 {
     self.isMax=isMax;
     [self.inputVoteTicketView removeFromSuperview];
-    self.inputVoteTicketView= nil;
+    self.inputVoteTicketView = nil;
     self.ticket = [ticketNumer doubleValue];
     if (self.wallet.TypeW==0) {
         [self.view.window addSubview:self.pwdPopupV];
