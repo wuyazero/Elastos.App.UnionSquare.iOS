@@ -21,13 +21,13 @@
  * SOFTWARE.
  */
 
-
 #import "WYUtils.h"
 #import "MyUtil.h"
 #import "ELWalletManager.h"
 
 static dispatch_queue_t logQueue = nil;
 static dispatch_queue_t networkQueue = nil;
+static dispatch_queue_t taskQueue = nil;
 static BOOL useNetworkQueue = NO;
 static NSString *logPath = nil;
 static NSDateFormatter *dateFormatter = nil;
@@ -48,6 +48,13 @@ static WYUtils *sharedWYUtils = nil;
         networkQueue = dispatch_queue_create("elastos.elawallet.NetworkQueue", DISPATCH_QUEUE_CONCURRENT);
     }
     return networkQueue;
+}
+
++ (dispatch_queue_t)getTaskQueue {
+    if (!taskQueue) {
+        taskQueue = dispatch_queue_create("elastos.elawallet.TaskQueue", DISPATCH_QUEUE_CONCURRENT);
+    }
+    return taskQueue;
 }
 
 + (NSString *)getLogPath {
