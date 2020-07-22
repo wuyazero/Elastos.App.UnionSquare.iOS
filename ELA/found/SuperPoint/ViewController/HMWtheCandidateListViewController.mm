@@ -371,16 +371,13 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
     
     
     if (voteInfo) {
-        [self.inputVoteTicketView removeFromSuperview];
-        self.inputVoteTicketView= nil;
-        
         NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:voteInfo[@"invalidCandidates"]];
         WYLog(@"dev temp === Producer === masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, stringArray, ticket, voteInfo[@"invalidCandidates"], dic);
         self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
         NSArray *DorpVotes=dic[@"DorpVotes"];
         
         if ([self.fee doubleValue]<0) {
-            [self closeTransactionDetailsView];
+//            [self closeTransactionDetailsView];
             NSString *errCode = dic[@"errCode"];
             if ([errCode isEqualToString:@""]) {
                 errCode = @"计算手续费失败";
@@ -389,7 +386,11 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
             WYLog(@"%s : Fee less than zero %@", __func__, errCode);
             return;
         }
-        UIView *mainView =[self mainWindow];
+        
+        [self.inputVoteTicketView removeFromSuperview];
+        self.inputVoteTicketView = nil;
+        
+        UIView *mainView = [self mainWindow];
         if (DorpVotes.count>0) {
             [mainView addSubview:self.moreThan36View];
             self.moreThan36View.deleteType=voteInvalidType;

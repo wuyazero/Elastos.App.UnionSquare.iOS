@@ -155,10 +155,11 @@
 //
 //       };
     
-    [self.view addSubview:self.pwdView];
+    UIView *mainView =[self mainWindow];
+    [mainView addSubview:self.pwdView];
     self.pwdView.BGHeight.constant=400;
     [self.pwdView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.top.bottom.equalTo(self.view);
+        make.left.right.top.bottom.equalTo(mainView);
     }];
   
 }
