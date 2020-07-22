@@ -394,7 +394,7 @@
 
 - (void)getImpeachmentWithNetworkState:(NSString *)hash amount:(NSString *)amount
 {
-    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+//    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
     NSMutableDictionary *votes = [[NSMutableDictionary alloc] init];
 //    if(_producers && _producers.count > 0)
 //    {

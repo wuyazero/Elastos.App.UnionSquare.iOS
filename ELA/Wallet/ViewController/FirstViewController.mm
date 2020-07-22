@@ -438,49 +438,70 @@
         //        WYLog(@"=== wydebug start ===");
         //
         //        WYLog(@"=== wydebug end ===");
+        
+        dispatch_group_t waitGroup = dispatch_group_create();
+        dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
+        
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_async(waitQueue, ^{
 
-        WYSetUseNetworkQueue(YES);
-        NSString *httpIP=[[FLTools share]http_IpFast];
-        [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-            NSDictionary *param = data[@"data"];
-            WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
-        } WithFailBlock:^(id data) {
-            WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
-        }];
-        
-        [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
-            WYLog(@"CRCommittee Info: %@", @{
-                @"data": data,
-                @"error": error
-                                         });
-            if (!error) {
-                ELACommitteeInfoModel *CRCInfo = data;
-                NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
-                if (index) {
-                    [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
-                        WYLog(@"CRCouncil List: %@", @{
-                        @"data": data,
-                        @"error": error
-                                                 });
-                    }];
+            WYSetUseNetworkQueue(YES);
+            NSString *httpIP=[[FLTools share]http_IpFast];
+            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+                NSDictionary *param = data[@"data"];
+                WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
+                dispatch_group_leave(waitGroup);
+            } WithFailBlock:^(id data) {
+                WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
+                dispatch_group_leave(waitGroup);
+            }];
+            
+            [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
+                WYLog(@"CRCommittee Info: %@", @{
+                    @"data": data,
+                    @"error": error
+                                             });
+                if (!error) {
+                    ELACommitteeInfoModel *CRCInfo = data;
+                    NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
+                    if (index) {
+                        [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
+                            WYLog(@"CRCouncil List: %@", @{
+                            @"data": data,
+                            @"error": error
+                                                     });
+                            dispatch_group_leave(waitGroup);
+                        }];
+                    } else {
+                        dispatch_group_leave(waitGroup);
+                    }
+                } else {
+                    dispatch_group_leave(waitGroup);
                 }
-            }
-        }];
-        
-        [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-            NSDictionary *param = data[@"data"];
-            WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
-        } WithFailBlock:^(id data) {
-            WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
-        }];
-        
-        [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
-            WYLog(@"Proposals Info: %@", @{
-                @"data": data,
-                @"error": error
-                                         });
-        }];
-        WYSetUseNetworkQueue(NO);
+            }];
+            
+            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+                NSDictionary *param = data[@"data"];
+                WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
+                dispatch_group_leave(waitGroup);
+            } WithFailBlock:^(id data) {
+                WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
+                dispatch_group_leave(waitGroup);
+            }];
+            
+            [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
+                WYLog(@"Proposals Info: %@", @{
+                    @"data": data,
+                    @"error": error
+                                             });
+                dispatch_group_leave(waitGroup);
+            }];
+            WYSetUseNetworkQueue(NO);
+            
+        });
         
         [self hiddLoading];
     }

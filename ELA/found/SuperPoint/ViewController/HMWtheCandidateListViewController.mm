@@ -336,9 +336,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
     [self selectAllAction:self.selectAllBtn];
 }
 #pragma mark 代理
--(void)didHadInputVoteTicket:(NSString *)ticketNumer WithIsMax:(BOOL)isMax
-{
-    
+-(void)didHadInputVoteTicket:(NSString *)ticketNumer WithIsMax:(BOOL)isMax {
     double ticket=[ticketNumer doubleValue];
     if (isMax==NO) {
         if ([ticketNumer doubleValue]>(self.maxBlance-0.01)) {
@@ -356,8 +354,7 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
         
         //         ticket=-1;
     }
-    [self.inputVoteTicketView removeFromSuperview];
-    self.inputVoteTicketView= nil;
+
     self.isMax=isMax;
     NSMutableArray *stringArray = [NSMutableArray array];
     for (int i= 0; i<self.voteArray.count; i++) {
@@ -369,12 +366,14 @@ static NSString *cellString=@"HMWtheCandidateListTableViewCell";
 //    [[FLTools share]showLoadingView];
     
     // 获取InvalidCandidates，构建Vote
-    [[FLTools share]showLoadingView];
     FLWallet *wallet = [ELWalletManager share].currentWallet;
     NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:wallet.masterWalletID];
-    [[FLTools share]hideLoadingView];
+    
     
     if (voteInfo) {
+        [self.inputVoteTicketView removeFromSuperview];
+        self.inputVoteTicketView= nil;
+        
         NSDictionary *dic =[[ELWalletManager share]DopsVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:stringArray tickets:ticket withInvalidIDArray:voteInfo[@"invalidCandidates"]];
         WYLog(@"dev temp === Producer === masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, stringArray, ticket, voteInfo[@"invalidCandidates"], dic);
         self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];

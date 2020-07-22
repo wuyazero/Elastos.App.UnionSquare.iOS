@@ -36,8 +36,9 @@
 #import "ELAImpeachView.h"
 #import "ELAPasswdView.h"
 #import "ELAVotingProcessUtil.h"
+#import "HMWpwdPopupView.h"
 
-@interface ELACommitteeDetailViewController ()<RPTaggedNavViewDelegate, UIScrollViewDelegate>
+@interface ELACommitteeDetailViewController ()<RPTaggedNavViewDelegate, UIScrollViewDelegate, HMWpwdPopupViewDelegate>
 
 @property (nonatomic, strong) UITableView *contentTableView;
 @property (nonatomic, strong) SYRingProgressView *ringProgress;
@@ -45,6 +46,7 @@
 @property (nonatomic, strong) RPTaggedNavView *taggedNavView;
 @property (nonatomic, strong) ELAImpeachView *impeachView;
 @property (nonatomic, strong) ELAPasswdView *passwdView;
+@property (strong,nonatomic) HMWpwdPopupView *pwdView;
 @property (nonatomic, strong) ELAInformationDetail *model;
 
 @property (nonatomic, strong) NSString *passwdValue;
@@ -103,31 +105,61 @@
     };
        
 }
+
+- (HMWpwdPopupView *)pwdView{
+    
+    if (!_pwdView) {
+        _pwdView=[[HMWpwdPopupView alloc]init];
+        _pwdView.delegate=self;
+    }
+    return _pwdView;
+}
+
+- (void)makeSureWithPWD:(NSString *)pwd {
+    ELAWeakSelf;
+    weakSelf.passwdValue = pwd;
+    BOOL result = [weakSelf toVerifyPayPassword:pwd];
+    if (result) {
+        [weakSelf impeachment];
+    }
+}
+
+-(void)cancelThePWDPageView {
+    [self.pwdView removeFromSuperview];
+    self.pwdView=nil;
+}
+
 - (void)showPasswdView
 {
-    ELAWeakSelf;
-    _passwdView = [[ELAPasswdView alloc] init];
-    [_passwdView showAlertView:self.view];
-       [_passwdView mas_remakeConstraints:^(MASConstraintMaker *make) {
-           make.left.right.equalTo(@(0));
-           make.width.equalTo(@(ScreenWidth));
-           make.height.equalTo(@(ScreenHeight));
-           make.top.bottom.equalTo(@(0));
-       }];
-       _passwdView.valueBlock = ^(NSString *value){
-
-           dispatch_async(dispatch_get_main_queue(), ^{
-
-               weakSelf.passwdValue = value;
-               BOOL result = [weakSelf toVerifyPayPassword:value];
-               if(result)
-               {
-                   [weakSelf impeachment];
-               }
-               
-           });
-
-       };
+//    ELAWeakSelf;
+//    _passwdView = [[ELAPasswdView alloc] init];
+//    [_passwdView showAlertView:self.view];
+//       [_passwdView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//           make.left.right.equalTo(@(0));
+//           make.width.equalTo(@(ScreenWidth));
+//           make.height.equalTo(@(ScreenHeight));
+//           make.top.bottom.equalTo(@(0));
+//       }];
+//       _passwdView.valueBlock = ^(NSString *value){
+//
+//           dispatch_async(dispatch_get_main_queue(), ^{
+//
+//               weakSelf.passwdValue = value;
+//               BOOL result = [weakSelf toVerifyPayPassword:value];
+//               if(result)
+//               {
+//                   [weakSelf impeachment];
+//               }
+//
+//           });
+//
+//       };
+    
+    [self.view addSubview:self.pwdView];
+    self.pwdView.BGHeight.constant=400;
+    [self.pwdView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.top.bottom.equalTo(self.view);
+    }];
   
 }
 - (BOOL)toVerifyPayPassword:(NSString *)passwd
@@ -152,7 +184,7 @@
     NSString *hash = _model.cid;
     
     ELAWeakSelf;
-   _votingProcessUtil = [ELAVotingProcessUtil shareVotingProcess];
+    _votingProcessUtil = [ELAVotingProcessUtil shareVotingProcess];
     _votingProcessUtil.networkStateBlock = ^(BOOL networkState){
         if(networkState)//成功
         {
@@ -185,17 +217,16 @@
                                                                     className:@"Wallet" methodName:@"CreateImpeachmentCRCTransaction"];
     PluginResult *pluginResult = [[ELWalletManager share] CreateImpeachmentCRCTransaction:mommand];
     
-    [_impeachView hideAlertView];
-    [_passwdView hideAlertView];
-    [self hideLoadingView];
+    
     if(pluginResult)
     {
+        [_impeachView hideAlertView];
+        [self cancelThePWDPageView];
+        [self hideLoadingView];
 //        NSDictionary *resultDic = pluginResult.message[@"success"];
         [self showSendSuccessPopuV];
-    }
-    else
-    {
-        [[FLTools share]showErrorInfo:ELALocalizedString(@"发送请求失败")];
+    } else {
+        WYLog(@"%s: 弹劾交易发送失败!!", __func__);
     }
     
 }
