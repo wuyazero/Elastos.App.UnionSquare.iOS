@@ -475,6 +475,21 @@
     return mergedPayloads;
 }
 
++ (NSDictionary *)mergeProposals:(NSDictionary *)curPayloads withPayloads:(NSDictionary *)prevPayloads {
+    NSMutableDictionary *mergedPayloads = [[NSMutableDictionary alloc] init];
+    NSString *curKey = nil;
+    for (NSString *key in curPayloads) {
+        mergedPayloads[key] = curPayloads[key];
+        curKey = key;
+    }
+    for (NSString *key in prevPayloads) {
+        if (!mergedPayloads[key]) {
+            mergedPayloads[key] = curPayloads[curKey];
+        }
+    }
+    return mergedPayloads;
+}
+
 + (NSDictionary *)prepareVoteInfo:(NSString *)masterWalletID {
     NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:masterWalletID];
     if (!voteInfo) {
@@ -536,7 +551,10 @@
     if (!voteInfo) {
         return nil;
     }
-    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
+    
+//    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
+    
+    NSDictionary *votePayloads = [WYVoteUtils mergeProposals:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
     return @{
         @"votePayloads": votePayloads,
         @"invalidCandidates": voteInfo[@"invalidCandidates"]
@@ -548,9 +566,15 @@
     if (!voteInfo) {
         return nil;
     }
-    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCImpeachment"]];
+    
+//    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCImpeachment"]];
+//    return @{
+//        @"votePayloads": votePayloads,
+//        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+//    };
+    
     return @{
-        @"votePayloads": votePayloads,
+        @"votePayloads": votes,
         @"invalidCandidates": voteInfo[@"invalidCandidates"]
     };
 }
