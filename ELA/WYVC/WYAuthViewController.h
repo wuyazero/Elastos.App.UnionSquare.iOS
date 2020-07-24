@@ -21,55 +21,13 @@
  * SOFTWARE.
  */
 
-#ifndef LOG_SIZE_LIMIT
-#define LOG_SIZE_LIMIT 50 * 1024 * 1024
-#endif
 
-#ifndef LOG_FILE_NAME
-#define LOG_FILE_NAME @"walletapp.log"
-#endif
-
-#ifndef CRASH_REPORT
-#define CRASH_REPORT NO
-#endif
-
-#ifndef WAIT_TIMEOUT
-#define WAIT_TIMEOUT 16
-#endif
-
-#ifndef QUEUE_TIMEOUT
-#define QUEUE_TIMEOUT 10
-#endif
-
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WYUtils : NSObject
-
-+ (NSString *)getLogPath;
-+ (void)setExceptionHandler;
-+ (void)setGlobal:(NSString *)key withValue:(id _Nullable)value;
-+ (id)getGlobal:(NSString *)key;
-+ (dispatch_queue_t)getNetworkQueue;
-+ (dispatch_queue_t)getTaskQueue;
-+ (NSDictionary *)syncGET:(NSString *)url headers:(NSDictionary * _Nullable)headers showLoading:(BOOL)show;
-+ (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID;
-+ (UIViewController *)topViewController;
+@interface WYAuthViewController : UIViewController
 
 @end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void WYLog(NSString *fmt, ...);
-void WYExceptionHandler(NSException *exception);
-BOOL WYUseNetworkQueue(void);
-void WYSetUseNetworkQueue(BOOL useFlag);
-
-#ifdef __cplusplus
-}
-#endif
 
 NS_ASSUME_NONNULL_END
