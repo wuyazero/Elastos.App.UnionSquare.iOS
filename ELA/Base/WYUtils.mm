@@ -33,6 +33,7 @@ static NSString *logPath = nil;
 static NSDateFormatter *dateFormatter = nil;
 static NSUncaughtExceptionHandler *nextHandler = nil;
 static WYUtils *sharedWYUtils = nil;
+static NSMutableDictionary *globalDic = nil;
 
 @implementation WYUtils
 
@@ -41,6 +42,20 @@ static WYUtils *sharedWYUtils = nil;
         sharedWYUtils = [[WYUtils alloc] init];
     }
     return sharedWYUtils;
+}
+
++ (void)setGlobal:(NSString *)key withValue:(id _Nullable)value {
+    if (!globalDic) {
+        globalDic = [[NSMutableDictionary alloc] init];
+    }
+    globalDic[key] = value;
+}
+
++ (id)getGlobal:(NSString *)key {
+    if (!globalDic) {
+        return nil;
+    }
+    return globalDic[key];
 }
 
 + (dispatch_queue_t)getNetworkQueue {
@@ -227,6 +242,24 @@ static WYUtils *sharedWYUtils = nil;
         @"address": elaAddress,
         @"error": errMsg
     };
+}
+
++ (UIViewController *)topViewController {
+    UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (true) {
+        if (topViewController.presentedViewController) {
+            topViewController = topViewController.presentedViewController;
+        } else if ([topViewController isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)topViewController;
+            topViewController = nav.topViewController;
+        } else if ([topViewController isKindOfClass:[UITabBarController class]]) {
+            UITabBarController *tab = (UITabBarController *)topViewController;
+            topViewController = tab.selectedViewController;
+        } else {
+            break;
+        }
+    }
+    return topViewController;
 }
 
 @end

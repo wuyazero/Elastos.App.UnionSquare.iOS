@@ -12,6 +12,8 @@
 		1D60589B0D05DD56006BFB54 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; };
 		380233A424ABBF42001DAD52 /* WYUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 380233A324ABBF42001DAD52 /* WYUtils.mm */; };
 		380233A824ADD413001DAD52 /* WYCrashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 380233A724ADD413001DAD52 /* WYCrashViewController.m */; };
+		3821892C24C8FD1F00CA4BCC /* WYLockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3821892B24C8FD1E00CA4BCC /* WYLockViewController.m */; };
+		3821892F24C9712900CA4BCC /* WYAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3821892E24C9712900CA4BCC /* WYAuthViewController.m */; };
 		383EFE2B249727D00087BA01 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 383EFE2A249727B50087BA01 /* libresolv.tbd */; };
 		383EFE2F249736FA0087BA01 /* WYResyncChainDataViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */; };
 		383EFE30249736FA0087BA01 /* WYResyncChainDataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 383EFE2E249736FA0087BA01 /* WYResyncChainDataViewController.xib */; };
@@ -713,6 +715,10 @@
 		380233A324ABBF42001DAD52 /* WYUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYUtils.mm; sourceTree = "<group>"; };
 		380233A624ADD413001DAD52 /* WYCrashViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYCrashViewController.h; sourceTree = "<group>"; };
 		380233A724ADD413001DAD52 /* WYCrashViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYCrashViewController.m; sourceTree = "<group>"; };
+		3821892A24C8FD1E00CA4BCC /* WYLockViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYLockViewController.h; sourceTree = "<group>"; };
+		3821892B24C8FD1E00CA4BCC /* WYLockViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYLockViewController.m; sourceTree = "<group>"; };
+		3821892D24C9712900CA4BCC /* WYAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYAuthViewController.h; sourceTree = "<group>"; };
+		3821892E24C9712900CA4BCC /* WYAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYAuthViewController.m; sourceTree = "<group>"; };
 		383EFE2A249727B50087BA01 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		383EFE2C249736FA0087BA01 /* WYResyncChainDataViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYResyncChainDataViewController.h; sourceTree = "<group>"; };
 		383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYResyncChainDataViewController.mm; sourceTree = "<group>"; };
@@ -2171,13 +2177,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		380233A524ADD3B3001DAD52 /* CrashVC */ = {
+		380233A524ADD3B3001DAD52 /* WYVC */ = {
 			isa = PBXGroup;
 			children = (
 				380233A624ADD413001DAD52 /* WYCrashViewController.h */,
 				380233A724ADD413001DAD52 /* WYCrashViewController.m */,
+				3821892A24C8FD1E00CA4BCC /* WYLockViewController.h */,
+				3821892B24C8FD1E00CA4BCC /* WYLockViewController.m */,
+				3821892D24C9712900CA4BCC /* WYAuthViewController.h */,
+				3821892E24C9712900CA4BCC /* WYAuthViewController.m */,
 			);
-			path = CrashVC;
+			path = WYVC;
 			sourceTree = "<group>";
 		};
 		38FAB635249472DD003E7C58 /* SSZipArchive */ = {
@@ -2232,7 +2242,7 @@
 		4202C7D321F6EF28009E5932 /* ELA */ = {
 			isa = PBXGroup;
 			children = (
-				380233A524ADD3B3001DAD52 /* CrashVC */,
+				380233A524ADD3B3001DAD52 /* WYVC */,
 				4202C7D421F6EF28009E5932 /* ThirdSDK */,
 				4202C88121F6EF28009E5932 /* MeVC */,
 				4202C8A121F6EF29009E5932 /* voteTicket */,
@@ -5285,6 +5295,7 @@
 				4202CABA21F6EF2B009E5932 /* BaseNavigationVC.m in Sources */,
 				42B57ABB22150C1C004CF089 /* NSString+WOCrash.m in Sources */,
 				42B691A6242706E400E38993 /* HWMImportDocumentsTableViewCell.m in Sources */,
+				3821892F24C9712900CA4BCC /* WYAuthViewController.m in Sources */,
 				425A5F392463AACB00C44104 /* HWMSuggestionSionTableViewCell.m in Sources */,
 				42EAEFD7238BB54F00D6A912 /* AddressPickerView.m in Sources */,
 				42B57AC222150C1C004CF089 /* NSMutableArray+WOCrash.m in Sources */,
@@ -5402,6 +5413,7 @@
 				4202CA0921F6EF2A009E5932 /* UIImage+SGImageSize.m in Sources */,
 				42D1060E23A336240063AADC /* NENSinglePinger.m in Sources */,
 				4210E858239F8A07001D82F3 /* MASLayoutConstraint.m in Sources */,
+				3821892C24C8FD1F00CA4BCC /* WYLockViewController.m in Sources */,
 				42EAEFF2238BB69C00D6A912 /* HWMImportTheMnemonicWordViewController.mm in Sources */,
 				427D8DDA244FE74500B167F5 /* HWMTheMessageSettingViewController.m in Sources */,
 				428B4D8622CB0B12004AE7D0 /* HWMSignThePurseViewController.mm in Sources */,

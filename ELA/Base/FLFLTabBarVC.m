@@ -51,6 +51,7 @@
     //选中字体颜色
     
     [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:RGBA(255, 255, 255, 0.85)} forState:UIControlStateSelected];
+    
 }
 
 //-(void)onTxPublish:(NSNotification*)notice{

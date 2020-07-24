@@ -257,7 +257,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
         nlohmann::json CRinfo = mainchainSubWallet->GetRegisteredCRInfo();
         NSString *CRdataStr = [NSString stringWithUTF8String:CRinfo.dump().c_str()];
         CRparam = [NSJSONSerialization JSONObjectWithData:[CRdataStr   dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-    } catch (const std:: exception & e ){
+    } catch (const std:: exception &e ){
     }
     NSDictionary *param = [NSJSONSerialization JSONObjectWithData:[dataStr  dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
     NSString *Status = param[@"Status"];
