@@ -23,6 +23,7 @@
 
 
 #import "WYAuthViewController.h"
+#import "ELAUtils.h"
 
 @interface WYAuthViewController ()
 
@@ -36,19 +37,25 @@
     self.view.backgroundColor = [UIColor clearColor];
     
     UILayoutGuide *margin = self.view.layoutMarginsGuide;
+    CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
+    WYLog(@"=== dev temp === vc height is: %f", viewHeight);
     
     UIButton *buttonView = [[UIButton alloc] init];
     buttonView.translatesAutoresizingMaskIntoConstraints = NO;
-    [buttonView setTitle:@"开始验证" forState:UIControlStateNormal];
+    [buttonView setTitle:NSLocalizedString(@"重新验证", nil) forState:UIControlStateNormal];
     [buttonView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    buttonView.titleLabel.font = [UIFont systemFontOfSize:26 weight:UIFontWeightBold];
-    [buttonView setBackgroundColor:[UIColor clearColor]];
+    buttonView.titleLabel.font = PingFangRegular(14);
+    [buttonView setBackgroundColor:ELARGB(63, 93, 101)];
+    [buttonView.layer setBorderWidth:1.f];
+    [buttonView.layer setBorderColor:[UIColor whiteColor].CGColor];
     [self.view addSubview:buttonView];
+    
     
     [NSLayoutConstraint activateConstraints:@[
         [buttonView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
-        [buttonView.centerYAnchor constraintEqualToAnchor:margin.centerYAnchor constant:0.f],
-        [buttonView.widthAnchor constraintEqualToAnchor:margin.widthAnchor multiplier:0.5f]
+        [buttonView.centerYAnchor constraintEqualToAnchor:margin.centerYAnchor constant:(viewHeight / 5.f)],
+        [buttonView.widthAnchor constraintEqualToConstant:250.f],
+        [buttonView.heightAnchor constraintEqualToConstant:40.f]
     ]];
     
     [buttonView addTarget:self action:@selector(authPressed:) forControlEvents:UIControlEventTouchUpInside];
