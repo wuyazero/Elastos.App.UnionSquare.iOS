@@ -28,8 +28,6 @@
 
 @interface WYLockViewController ()
 
-@property (nonatomic, strong) UIButton *buttonView;
-
 @end
 
 @implementation WYLockViewController
@@ -39,24 +37,6 @@
     self.view = [[UIView alloc] initWithFrame:rect];
     self.view.backgroundColor = [UIColor clearColor];
     
-    UILayoutGuide *margin = self.view.layoutMarginsGuide;
-    
-    self.buttonView = [[UIButton alloc] init];
-    self.buttonView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.buttonView setTitle:@"正在验证..." forState:UIControlStateNormal];
-    [self.buttonView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.buttonView.titleLabel.font = [UIFont systemFontOfSize:26 weight:UIFontWeightBold];
-    [self.buttonView setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:self.buttonView];
-    
-    [NSLayoutConstraint activateConstraints:@[
-        [self.buttonView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
-        [self.buttonView.centerYAnchor constraintEqualToAnchor:margin.centerYAnchor constant:0.f],
-        [self.buttonView.widthAnchor constraintEqualToAnchor:margin.widthAnchor multiplier:0.5f]
-    ]];
-    
-    [self.buttonView addTarget:self action:@selector(authPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
 }
 
 - (void)authPressed:(UIButton *)sender {
@@ -65,7 +45,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setBackgroundImg:@"LimageEN"];
+    [self setBackgroundImg:@""];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -73,7 +53,6 @@
 }
 
 - (void)systemAuth {
-    [self.buttonView setTitle:@"正在验证..." forState:UIControlStateNormal];
     LAContext *authContext = [[LAContext alloc] init];
     NSError *authError = nil;
     NSString *authLocalizedReasonString = NSLocalizedString(@"手机用户验证", nil);
@@ -84,15 +63,13 @@
             if (success) {
                 WYLog(@"=== Auth Success ===");
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
-                    [self.buttonView setTitle:@"验证通过" forState:UIControlStateNormal];
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
-                        [self dismissViewControllerAnimated:YES completion:nil];
+                        [self dismissViewControllerAnimated:NO completion:nil];
                     });
                 });
             } else {
                 WYLog(@"=== Auth Failed === : %@", error.localizedDescription);
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
-                    [self.buttonView setTitle:@"验证失败" forState:UIControlStateNormal];
                     WYAuthViewController *authVC = [[WYAuthViewController alloc] init];
                     authVC.modalPresentationStyle = UIModalPresentationFullScreen;
                     [self presentViewController:authVC animated:NO completion:nil];
@@ -104,7 +81,7 @@
         NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
         [prefs setBool:NO forKey:@"authOn"];
         [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     }
 }
 
