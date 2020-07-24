@@ -45,6 +45,7 @@
 #import "WYVoteUtils.h"
 #import "ELANetwork.h"
 #import "ELACommitteeInfoModel.h"
+#import "WYLockViewController.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -114,6 +115,17 @@
 @implementation FirstViewController
 
 - (void)viewDidLoad {
+    if ([[WYUtils getGlobal:@"APPStart"] isEqual:@YES]) {
+        NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+        BOOL authOn = [prefs boolForKey:@"authOn"];
+        if (authOn) {
+            UIViewController *lockVC = [[WYLockViewController alloc] init];
+            lockVC.modalPresentationStyle = UIModalPresentationFullScreen;
+            [self.navigationController presentViewController:lockVC animated:NO completion:nil];
+        }
+    }
+    [WYUtils setGlobal:@"APPStart" withValue:@NO];
+    
     [super viewDidLoad];
     [self setBackgroundImg:@""];
     self.walletIDListArray=[NSArray arrayWithArray:[[HMWFMDBManager sharedManagerType:walletType] allRecordWallet]];
@@ -447,7 +459,7 @@
         dispatch_group_enter(waitGroup);
         dispatch_group_enter(waitGroup);
         dispatch_async(waitQueue, ^{
-
+            
             WYSetUseNetworkQueue(YES);
             NSString *httpIP=[[FLTools share]http_IpFast];
             [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
@@ -463,16 +475,16 @@
                 WYLog(@"CRCommittee Info: %@", @{
                     @"data": data,
                     @"error": error
-                                             });
+                                               });
                 if (!error) {
                     ELACommitteeInfoModel *CRCInfo = data;
                     NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
                     if (index) {
                         [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
                             WYLog(@"CRCouncil List: %@", @{
-                            @"data": data,
-                            @"error": error
-                                                     });
+                                @"data": data,
+                                @"error": error
+                                                         });
                             dispatch_group_leave(waitGroup);
                         }];
                     } else {

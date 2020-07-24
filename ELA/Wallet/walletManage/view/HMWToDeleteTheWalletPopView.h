@@ -41,7 +41,8 @@ typedef NS_ENUM(NSInteger, HMWToDeleteType) {
     CloseChainIDType,
     CoverCommitteeMembersListType,
     ResyncChainDataType,
-    ResyncChainDataPromptType
+    ResyncChainDataPromptType,
+    AuthSwitchOffType
 };
 
 
