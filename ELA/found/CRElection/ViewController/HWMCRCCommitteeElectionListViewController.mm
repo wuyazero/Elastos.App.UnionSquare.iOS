@@ -18,6 +18,7 @@
 #import "HWMTransactionDetailsView.h"
 #import "HWMSignatureTradingSingleQrCodeViewController.h"
 #import "HMWCRCommitteeMemberListViewController.h"
+#import "WYVoteUtils.h"
 
 
 
@@ -115,7 +116,7 @@ UINib *_cellCRNib;
     self.progress.progress = proFlo;
     self.TheRemainingAvailable=@"0";
     self.invalidDopsArray=[NSArray array];
-    [self LoadInvalidDops];
+//    [self LoadInvalidDops];
     
     
 }
@@ -472,7 +473,7 @@ UINib *_cellCRNib;
 {
     self.isMax=isMax;
     [self.inputVoteTicketView removeFromSuperview];
-    self.inputVoteTicketView= nil;
+    self.inputVoteTicketView = nil;
     self.ticket = [ticketNumer doubleValue];
     [self.view.window addSubview:self.pwdPopupV];
     
@@ -800,12 +801,26 @@ UINib *_cellCRNib;
     if (CRDic==NULL) {
         return;
     }
-    NSDictionary *dic =[[ELWalletManager share]CRVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:CRDic tickets: 0 withInvalidIDArray:self.invalidDopsArray];
+    
+    NSDictionary *voteInfo = [WYVoteUtils prepareVoteInfo:self.wallet.masterWalletID];
+    if (!voteInfo) {
+        [self closeTransactionDetailsView];
+        return;
+    }
+    NSDictionary *dic =[[ELWalletManager share]CRVoteFeeCRMainchainSubWallet:self.wallet.masterWalletID ToVote:CRDic tickets: 0 withInvalidIDArray:voteInfo[@"invalidCandidates"]];
+    WYLog(@"dev temp === CRC === masterID: %@, stringArray: %@, ticket %f, invalids: %@, dic: %@", self.wallet.masterWalletID, CRDic, 0.f, voteInfo[@"invalidCandidates"], dic);
+    
     self.fee=[[FLTools share]elaScaleConversionWith:[NSString stringWithFormat:@"%@",dic[@"fee"]]];
     self.jsonString=dic[@"JSON"];
     NSArray *DorpVotes=dic[@"DorpVotes"];
     if ([self.fee doubleValue]<0) {
         [self closeTransactionDetailsView];
+        NSString *errCode = dic[@"errCode"];
+        if ([errCode isEqualToString:@""]) {
+            errCode = @"计算手续费失败";
+        }
+        [[FLTools share] showErrorInfo:NSLocalizedString(errCode, nil)];
+        WYLog(@"%s : Fee less than zero %@", __func__, errCode);
         return;
     }
     UIView *mainView =[self mainWindow];

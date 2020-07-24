@@ -96,18 +96,18 @@ void ElaSubWalletCallback::OnTxPublished(const std::string &hash, const nlohmann
     NSString *hashString = [NSString stringWithCString:hash.c_str() encoding:NSUTF8StringEncoding];
     NSString *resultString = [NSString stringWithCString:result.dump().c_str() encoding:NSUTF8StringEncoding];
     
-    NSLog(@"xxl 943 1 ElaSubWalletCallback " );
+    WYLog(@"xxl 943 1 ElaSubWalletCallback " );
     NSDictionary *dic=[[FLTools share]dictionaryWithJsonString:resultString];
-    NSLog(@"%@",dic);
+    WYLog(@"%@",dic);
     if (dic) {
         int code= [dic[@"Code"] intValue];
         //if (code==0||(code==18&& [dic[@"Reason"] isEqualToString:@"uplicate"])){
         if (code==0 && [dic[@"Reason"] isEqualToString:@"success"]){
-            NSLog(@"xxl 943 1 OK ElaSubWalletCallback %@",dic);
+            WYLog(@"xxl 943 1 OK ElaSubWalletCallback %@",dic);
             [[NSNotificationCenter defaultCenter] postNotificationName:OnTxPublishedResult object:dic];
 
         }else if(code != 0){
-            NSLog(@"xxl 943 1 error ElaSubWalletCallback %@",dic);
+            WYLog(@"xxl 943 1 error ElaSubWalletCallback %@",dic);
             
             NSString *walletInfo= [NSString stringWithCString:_callBackInfo.c_str() encoding:NSUTF8StringEncoding];
             NSArray *infoArray=[[FLTools share]stringToArray:walletInfo];

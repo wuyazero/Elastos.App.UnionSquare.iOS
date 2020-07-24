@@ -89,6 +89,8 @@
 //
     _sureButton = [[UIButton alloc] init];
     [_sureButton setTitle:ELALocalizedString(@"确定") forState:UIControlStateNormal];
+//    [_sureButton setTitle:@"不可用" forState:(UIControlStateDisabled)];
+    
     _sureButton.titleLabel.font = PingFangRegular(15);
     [_sureButton setBackgroundColor:ELARGB(54, 54, 54)];
     _sureButton.layer.cornerRadius = 5;
@@ -214,7 +216,7 @@
     gl.colors = @[(__bridge id)fclolr.CGColor,(__bridge id)tcolor.CGColor];
     gl.locations = @[@(0.0),@(1.0f)];
     [view.layer addSublayer:gl];
-
+ 
 }
 
 - (void)setTitle:(NSString *)title
@@ -238,7 +240,11 @@
 {
     if(_valueBlock)
     {
-        _valueBlock(_textField.text);
+        self.sureButton.userInteractionEnabled = NO;
+        self.sureButton.enabled = NO;
+        self.valueBlock(self.textField.text);
+        self.sureButton.userInteractionEnabled = YES;
+        self.sureButton.enabled = YES;
     }
 }
 

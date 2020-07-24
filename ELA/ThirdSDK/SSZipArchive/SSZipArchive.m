@@ -477,7 +477,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                     success = NO;
                     break;
                 }
-                NSLog(@"[SSZipArchive] Error: %@", err.localizedDescription);
+                WYLog(@"[SSZipArchive] Error: %@", err.localizedDescription);
             }
             
             if ([fileManager fileExistsAtPath:fullPath] && !isDirectory && !overwrite) {
@@ -499,7 +499,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                             if (0 == fwrite(buffer, readBytes, 1, fp)) {
                                 if (ferror(fp)) {
                                     NSString *message = [NSString stringWithFormat:@"Failed to write file (check your free space)"];
-                                    NSLog(@"[SSZipArchive] %@", message);
+                                    WYLog(@"[SSZipArchive] %@", message);
                                     success = NO;
                                     unzippingError = [NSError errorWithDomain:@"SSZipArchiveErrorDomain" code:SSZipArchiveErrorCodeFailedToWriteFile userInfo:@{NSLocalizedDescriptionKey: message}];
                                     break;
@@ -543,7 +543,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                                 if (attr) {
                                     if (![fileManager setAttributes:attr ofItemAtPath:fullPath error:nil]) {
                                         // Can't set attributes
-                                        NSLog(@"[SSZipArchive] Failed to set attributes - whilst setting modification date");
+                                        WYLog(@"[SSZipArchive] Failed to set attributes - whilst setting modification date");
                                     }
                                 }
                             }
@@ -563,7 +563,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                                 // Update attributes
                                 if (![fileManager setAttributes:attrs ofItemAtPath:fullPath error:nil]) {
                                     // Unable to set the permissions attribute
-                                    NSLog(@"[SSZipArchive] Failed to set attributes - whilst setting permissions");
+                                    WYLog(@"[SSZipArchive] Failed to set attributes - whilst setting permissions");
                                 }
                             }
                         }
@@ -594,7 +594,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                                 NSError *errorObject = [NSError errorWithDomain:NSPOSIXErrorDomain
                                                                            code:errnoSave
                                                                        userInfo:nil];
-                                NSLog(@"[SSZipArchive] Failed to open file on unzipping.(%@)", errorObject);
+                                WYLog(@"[SSZipArchive] Failed to open file on unzipping.(%@)", errorObject);
                             }
                                 break;
                         }
@@ -606,7 +606,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                                                              userInfo:nil];
                             unzCloseCurrentFile(zip);
                             // Log the error
-                            NSLog(@"[SSZipArchive] Failed to open file on unzipping.(%@)", unzippingError);
+                            WYLog(@"[SSZipArchive] Failed to open file on unzipping.(%@)", unzippingError);
 
                             // Break unzipping
                             success = NO;
@@ -647,7 +647,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                         if (!removeSuccess)
                         {
                             NSString *message = [NSString stringWithFormat:@"Failed to delete existing symbolic link at \"%@\"", localError.localizedDescription];
-                            NSLog(@"[SSZipArchive] %@", message);
+                            WYLog(@"[SSZipArchive] %@", message);
                             success = NO;
                             unzippingError = [NSError errorWithDomain:SSZipArchiveErrorDomain code:localError.code userInfo:@{NSLocalizedDescriptionKey: message}];
                         }
@@ -662,7 +662,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 {
                     // Bubble the error up to the completion handler
                     NSString *message = [NSString stringWithFormat:@"Failed to create symbolic link at \"%@\" to \"%@\" - symlink() error code: %d", fullPath, destinationPath, errno];
-                    NSLog(@"[SSZipArchive] %@", message);
+                    WYLog(@"[SSZipArchive] %@", message);
                     success = NO;
                     unzippingError = [NSError errorWithDomain:NSPOSIXErrorDomain code:symlinkError userInfo:@{NSLocalizedDescriptionKey: message}];
                 }
@@ -702,10 +702,10 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         NSError * err = nil;
         for (NSDictionary * d in directoriesModificationDates) {
             if (![[NSFileManager defaultManager] setAttributes:@{NSFileModificationDate: [d objectForKey:@"modDate"]} ofItemAtPath:[d objectForKey:@"path"] error:&err]) {
-                NSLog(@"[SSZipArchive] Set attributes failed for directory: %@.", [d objectForKey:@"path"]);
+                WYLog(@"[SSZipArchive] Set attributes failed for directory: %@.", [d objectForKey:@"path"]);
             }
             if (err) {
-                NSLog(@"[SSZipArchive] Error setting directory file modification date attribute: %@", err.localizedDescription);
+                WYLog(@"[SSZipArchive] Error setting directory file modification date attribute: %@", err.localizedDescription);
             }
         }
     }
@@ -818,7 +818,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         for (__strong NSString *fileName in allObjects) {
             NSString *fullFilePath = [directoryPath stringByAppendingPathComponent:fileName];
             if ([fullFilePath isEqualToString:path]) {
-                NSLog(@"[SSZipArchive] the archive path and the file path: %@ are the same, which is forbidden.", fullFilePath);
+                WYLog(@"[SSZipArchive] the archive path and the file path: %@ are the same, which is forbidden.", fullFilePath);
                 continue;
             }
 			

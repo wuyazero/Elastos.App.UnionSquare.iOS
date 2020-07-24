@@ -42,6 +42,9 @@
 #import "HWMSecretaryGeneralAndMembersInfo.h"
 #import "HMWToDeleteTheWalletPopView.h"
 #import "HWMCommentPerioDetailsViewController.h"
+#import "WYVoteUtils.h"
+#import "ELANetwork.h"
+#import "ELACommitteeInfoModel.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -429,9 +432,81 @@
         self.currentWallet.M=[baseDic[@"M"] integerValue];
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
+        
+        // WYDebug
+        
+        //        WYLog(@"=== wydebug start ===");
+        //
+        //        WYLog(@"=== wydebug end ===");
+        
+        dispatch_group_t waitGroup = dispatch_group_create();
+        dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
+        
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_group_enter(waitGroup);
+        dispatch_async(waitQueue, ^{
+
+            WYSetUseNetworkQueue(YES);
+            NSString *httpIP=[[FLTools share]http_IpFast];
+            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+                NSDictionary *param = data[@"data"];
+                WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
+                dispatch_group_leave(waitGroup);
+            } WithFailBlock:^(id data) {
+                WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
+                dispatch_group_leave(waitGroup);
+            }];
+            
+            [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
+                WYLog(@"CRCommittee Info: %@", @{
+                    @"data": data,
+                    @"error": error
+                                             });
+                if (!error) {
+                    ELACommitteeInfoModel *CRCInfo = data;
+                    NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
+                    if (index) {
+                        [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
+                            WYLog(@"CRCouncil List: %@", @{
+                            @"data": data,
+                            @"error": error
+                                                     });
+                            dispatch_group_leave(waitGroup);
+                        }];
+                    } else {
+                        dispatch_group_leave(waitGroup);
+                    }
+                } else {
+                    dispatch_group_leave(waitGroup);
+                }
+            }];
+            
+            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+                NSDictionary *param = data[@"data"];
+                WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
+                dispatch_group_leave(waitGroup);
+            } WithFailBlock:^(id data) {
+                WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
+                dispatch_group_leave(waitGroup);
+            }];
+            
+            [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
+                WYLog(@"Proposals Info: %@", @{
+                    @"data": data,
+                    @"error": error
+                                             });
+                dispatch_group_leave(waitGroup);
+            }];
+            WYSetUseNetworkQueue(NO);
+            
+        });
+        
         [self hiddLoading];
     }
 }
+
 -(void)getBalanceList:(NSArray*)arr{
     if (self.dataSoureArray.count>0) {
         [self.dataSoureArray removeAllObjects];
@@ -516,7 +591,7 @@
     WCQRCodeScanningVC *WCQRCode=[[WCQRCodeScanningVC alloc]init];
     WCQRCode.frVC=self;
     WCQRCode.scanBack=^(NSString *addr){
-        NSLog(@"扫二维码 获取到的数据---%@",addr);
+        WYLog(@"扫二维码 获取到的数据---%@",addr);
         [weakSelf SweepCodeProcessingResultsWithQRCodeString:addr];
         
     };
@@ -540,7 +615,7 @@
 {
     [super viewWillAppear:animated];
     [self firstNav];
-//    [self hiddLoading];
+    //    [self hiddLoading];
     [self performSelector:@selector(hiddLoading) withObject:nil afterDelay:2.0f];
 }
 
@@ -792,7 +867,7 @@
     [[HWMQrCodeSignatureManager shareTools]QrCodeDataWithData:QRCodeString withDidString:self.currentWallet.didString withmastWalletID:self.currentWallet.masterWalletID withComplete:^(QrCodeSignatureType type, id  _Nonnull data) {
         if (data !=NULL) {
             
-            NSLog(@"data is %@",data);
+            WYLog(@"data is %@",data);
             
             
             
@@ -821,7 +896,7 @@
     }
     switch (type) {
         case CreadDIDType:
-            NSLog(@"%s : wallet did invalid 1st CDID", __func__);
+            WYLog(@"%s : wallet did invalid 1st CDID", __func__);
             [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
             break;
         case DIDTimePassType:
@@ -867,7 +942,7 @@
             [[FLTools share]showErrorInfo:NSLocalizedString(@"二维码已过期", nil)];
             break;
         case AuthenticationDID:
-            NSLog(@"%s : wallet did invalid 1st ADID", __func__);
+            WYLog(@"%s : wallet did invalid 1st ADID", __func__);
             [[FLTools share]showErrorInfo:NSLocalizedString(@"钱包DID不匹配", nil)];
             break;
         default:
@@ -1104,7 +1179,7 @@
 -(void)parsingQRCodeDataWithType:(QrCodeSignatureType)type withDicData:(id)data withQRString:(NSString*)qrString{
     HWMCommentPerioDetailsViewController *CommentPerioDetailsVC=[[HWMCommentPerioDetailsViewController alloc]init];
     
-    //NSLog(@"xxl 943 create CommentPerioDetailsVC %@",CommentPerioDetailsVC.view);
+    //WYLog(@"xxl 943 create CommentPerioDetailsVC %@",CommentPerioDetailsVC.view);
     
     
     if (type==reviewPropalQrCodeType) {

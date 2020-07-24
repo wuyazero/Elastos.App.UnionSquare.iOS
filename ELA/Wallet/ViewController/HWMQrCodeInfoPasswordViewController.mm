@@ -312,7 +312,7 @@
 -(void)onTxPublish:(NSNotification*)notice{
 
     NSDictionary *param =notice.object;
-    NSLog(@"xxl 943 2 onTxPublish %@ 2",param);
+    WYLog(@"xxl 943 2 onTxPublish %@ 2",param);
     
     //xxl 943 createProposal
     _votingProcessUtil = [ELAVotingProcessUtil shareVotingProcess];
@@ -363,7 +363,7 @@
 {
     
     
-    NSLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
+    WYLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
     
     String = [String stringByReplacingOccurrencesOfString:@"\"" withString:@""];
     NSDictionary *FLDic = @{
@@ -382,7 +382,7 @@
 {
     
     
-    NSLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
+    WYLog(@"proposalhashRequestFileWithString rep %@",self.jwtString);
     
     String = [String stringByReplacingOccurrencesOfString:@"\"" withString:@""];
     NSDictionary *FLDic = @{
@@ -400,11 +400,11 @@
 
 - (void)updaeJWTInfoWithDic:(NSDictionary*)pare
 {
-    NSLog(@"xxl %s pare %@", __func__, pare);
+    WYLog(@"xxl %s pare %@", __func__, pare);
     if(_type != suggestionQrCodeType && _type != Updatemilestone && _type != AuthenticationDID) {
         [self showSendSuccessOrFial:sendDealType];
     } else {
-        NSLog(@"calback url %@",self.PayLoadDic[@"callbackurl"]);
+        WYLog(@"calback url %@",self.PayLoadDic[@"callbackurl"]);
         
         [self showLoading];
         [HttpUrl NetPOSTHost:self.PayLoadDic[@"callbackurl"] url:@"" header:nil body:pare showHUD:NO WithSuccessBlock:^(id data) {
@@ -412,7 +412,7 @@
             [self showSendSuccessOrFial:SignatureSuccessType];
         } WithFailBlock:^(id data) {
             
-            NSLog(@"error --- %@",data);
+            WYLog(@"error --- %@",data);
             [self showSendSuccessOrFial:SignatureFailureType];
         }];
     }

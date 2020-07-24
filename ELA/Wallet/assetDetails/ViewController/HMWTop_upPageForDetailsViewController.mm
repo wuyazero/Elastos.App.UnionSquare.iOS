@@ -57,18 +57,18 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"setting_adding_scan"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(scanView)];
     self.toUpNameLabel.text=[NSString stringWithFormat:@"%@：%@",NSLocalizedString(@"充值到", nil),@"IDChain"];
 //     self.toUpNameLabel.text=[NSString stringWithFormat:@"%@：%@",NSLocalizedString(@"充值到", nil),@"ELA"];
-    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入主链提现地址", nil)];
+    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
     [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.enterTheAmountTextField withTxt:[NSString stringWithFormat:@"%@：%@ %@",NSLocalizedString(@"请输入金额 可用", nil),[[FLTools share] elaScaleConversionWith:self.fromModel.iconBlance],@"ELA"]];
     [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.noteTextField withTxt:NSLocalizedString(@"请输入备注", nil)];
     [[HMWCommView share] makeBordersWithView:self.theNextStepButton];
     [self.theNextStepButton setTitle:NSLocalizedString(@"下一步", nil) forState:UIControlStateNormal];    
     if (self.type==mainChainWithdrawalType) {
-        [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入主链提现地址", nil)];
+        [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
         self.BGViewHeight.constant=0.f;
         self.assetIconImageView.alpha=0.f;
     }else{
         
-         [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入侧链充值地址", nil)];
+         [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.addressTextField withTxt:NSLocalizedString(@"请输入收款地址或CryptoName", nil)];
         
     }
     self.enterTheAmountTextField.delegate=self;
@@ -87,11 +87,11 @@
 -(void)SweepCodeProcessingResultsWithQRCodeString:(NSString*)QRCodeString{
     self.enterTheAmountTextField.text=@"";
     self.addressTextField.text=@"";
-//    //NSLog(@"解析前%@",QRCodeString);
+//    //WYLog(@"解析前%@",QRCodeString);
 //
 //    NSDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:[[FLTools share]QrCodeImageFromDic:QRCodeString fromVC:self oldQrCodeDic:nil]];
 //
-//    //NSLog(@"解析后%@",dic);
+//    //WYLog(@"解析后%@",dic);
 //  if ([[FLTools share]SCanQRCodeWithDicCode:dic]){
 //    if ([dic[@"extra"][@"Type"] integerValue]==4) {
 //
@@ -179,10 +179,17 @@
 - (IBAction)maxEvent:(id)sender {
 }
 - (IBAction)theNextStepEvent:(id)sender {
+    NSDictionary *resultAddr = [WYUtils processAddressOrCryptoName:self.addressTextField.text withMasterWalletID:self.currentWallet.masterWalletID];
+    
+    if (resultAddr[@"error"]) {
+        [[FLTools share]showErrorInfo:resultAddr[@"error"]];
+        return;
+    }
+    
     if (self.addressTextField.text.length==0) {
         return;
     }
-    if ([self.enterTheAmountTextField.text doubleValue]==0 ) {
+    if ([self.enterTheAmountTextField.text doubleValue]<=0) {
          [[FLTools share]showErrorInfo:NSLocalizedString(@"金额需要大于0", nil)];
         return;
     }
@@ -194,14 +201,14 @@
    
     PluginResult * result;
     if (self.type==sideChainTop_upType) {
-            invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.selectmModel.iconName,@"",self.addressTextField.text,[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,@"0"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_UpFee"];
+            invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.selectmModel.iconName,@"",resultAddr[@"address"],[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,@"0"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_UpFee"];
         
   result=[[ELWalletManager share]sideChainTop_UpFee:mommand];
         
       
     }
     if (self.type==mainChainWithdrawalType) {
-            invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.substringAddress,self.addressTextField.text,[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_UpFee"];
+            invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.substringAddress,resultAddr[@"address"],[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_UpFee"];
   result=[[ELWalletManager share]mainChainWithdrawalFee:mommand];
        
         
@@ -221,7 +228,7 @@
         return;
     }
     
-    [self.transferDetailsPopupV transferDetailsWithToAddress:self.addressTextField.text withTheAmountOf:[NSString stringWithFormat:@"%@%@",  self.enterTheAmountTextField.text,@"ELA"] withFee:[NSString stringWithFormat:@"%@%@",fee,@"ELA"]];
+    [self.transferDetailsPopupV transferDetailsWithToAddress:resultAddr[@"address"] withTheAmountOf:[NSString stringWithFormat:@"%@%@",  self.enterTheAmountTextField.text,@"ELA"] withFee:[NSString stringWithFormat:@"%@%@",fee,@"ELA"]];
     
     
 
@@ -280,9 +287,15 @@
     self.transferDetailsPopupV=nil;
 }
 -(void)pwdAndInfoWithPWD:(NSString *)pwd{
+    NSDictionary *resultAddr = [WYUtils processAddressOrCryptoName:self.addressTextField.text withMasterWalletID:self.currentWallet.masterWalletID];
+    
+    if (resultAddr[@"error"]) {
+        [[FLTools share]showErrorInfo:resultAddr[@"error"]];
+        return;
+    }
     
     if (self.type==sideChainTop_upType) {
-            invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.selectmModel.iconName,self.addressArray.firstObject,self.addressTextField.text,[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,pwd,@"1"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_Up"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,self.selectmModel.iconName,self.addressArray.firstObject,resultAddr[@"address"],[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,pwd,@"1"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"sideChainTop_Up"];
         
             PluginResult *result = [[ELWalletManager share]sideChainTop_Up:mommand];
             NSString *statue=[NSString stringWithFormat:@"%@",result.status];
@@ -297,7 +310,7 @@
         
     }
     if (self.type==mainChainWithdrawalType) {
-        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,@"",self.addressTextField.text,[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,pwd,@"0"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"mainChainWithdrawal"];
+        invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.fromModel.iconName,@"",resultAddr[@"address"],[[FLTools share]elsToSela:self.enterTheAmountTextField.text],self.noteTextField.text,self.noteTextField.text,pwd,@"0"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"mainChainWithdrawal"];
         
         PluginResult *result = [[ELWalletManager share]mainChainWithdrawal:mommand];
         NSString *statue=[NSString stringWithFormat:@"%@",result.status];

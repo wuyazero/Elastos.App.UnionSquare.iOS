@@ -88,9 +88,9 @@ static HMWLocalNotice *tool;
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
             for (UNNotificationRequest *req in requests){
-                NSLog(@"存在的ID:%@\n",req.identifier);
+                WYLog(@"存在的ID:%@\n",req.identifier);
             }
-            NSLog(@"移除currentID:%@",noticeId);
+            WYLog(@"移除currentID:%@",noticeId);
         }];
         
         [center removePendingNotificationRequestsWithIdentifiers:@[noticeId]];
@@ -123,19 +123,19 @@ static HMWLocalNotice *tool;
         [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             if (settings.notificationCenterSetting == UNNotificationSettingEnabled) {
                 isOn = YES;
-                NSLog(@"打开了通知");
+                WYLog(@"打开了通知");
             }else {
                 isOn = NO;
-                NSLog(@"关闭了通知");
+                WYLog(@"关闭了通知");
                 [self showAlertView];
             }
         }];
     }else {
         if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone){
-            NSLog(@"关闭了通知");
+            WYLog(@"关闭了通知");
             [self showAlertView];
         }else {
-            NSLog(@"打开了通知");
+            WYLog(@"打开了通知");
         }
     }
 }

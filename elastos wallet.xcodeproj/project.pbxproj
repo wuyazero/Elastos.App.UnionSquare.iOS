@@ -10,11 +10,14 @@
 		0377F67DC70B4CEFBD787502 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FEFE2C15307426D819C2CA3 /* libz.tbd */; };
 		1D3623260D0F684500981E51 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.mm */; };
 		1D60589B0D05DD56006BFB54 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; };
+		380233A424ABBF42001DAD52 /* WYUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 380233A324ABBF42001DAD52 /* WYUtils.mm */; };
+		380233A824ADD413001DAD52 /* WYCrashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 380233A724ADD413001DAD52 /* WYCrashViewController.m */; };
 		383EFE2B249727D00087BA01 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 383EFE2A249727B50087BA01 /* libresolv.tbd */; };
 		383EFE2F249736FA0087BA01 /* WYResyncChainDataViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */; };
 		383EFE30249736FA0087BA01 /* WYResyncChainDataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 383EFE2E249736FA0087BA01 /* WYResyncChainDataViewController.xib */; };
 		383EFE3424975C8C0087BA01 /* WYResyncChainDataTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 383EFE3224975C8C0087BA01 /* WYResyncChainDataTableViewCell.m */; };
 		383EFE3524975C8C0087BA01 /* WYResyncChainDataTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 383EFE3324975C8C0087BA01 /* WYResyncChainDataTableViewCell.xib */; };
+		3867938824C14E5F00E32B83 /* WYVoteUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3867938724C14E5E00E32B83 /* WYVoteUtils.mm */; };
 		38BFD809249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 38BFD808249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m */; };
 		38FAB659249472DE003E7C58 /* mz_strm_os_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FAB638249472DD003E7C58 /* mz_strm_os_posix.c */; };
 		38FAB65A249472DE003E7C58 /* mz_strm_pkcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FAB639249472DD003E7C58 /* mz_strm_pkcrypt.c */; };
@@ -706,6 +709,10 @@
 		1D6058910D05DD3D006BFB54 /* ELA WalletPreNet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ELA WalletPreNet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		29B97316FDCFA39411CA2CEA /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* elastos wallet-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "elastos wallet-Prefix.pch"; sourceTree = "<group>"; };
+		380233A224ABBF42001DAD52 /* WYUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYUtils.h; sourceTree = "<group>"; };
+		380233A324ABBF42001DAD52 /* WYUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYUtils.mm; sourceTree = "<group>"; };
+		380233A624ADD413001DAD52 /* WYCrashViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYCrashViewController.h; sourceTree = "<group>"; };
+		380233A724ADD413001DAD52 /* WYCrashViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYCrashViewController.m; sourceTree = "<group>"; };
 		383EFE2A249727B50087BA01 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		383EFE2C249736FA0087BA01 /* WYResyncChainDataViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYResyncChainDataViewController.h; sourceTree = "<group>"; };
 		383EFE2D249736FA0087BA01 /* WYResyncChainDataViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYResyncChainDataViewController.mm; sourceTree = "<group>"; };
@@ -713,6 +720,8 @@
 		383EFE3124975C8C0087BA01 /* WYResyncChainDataTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYResyncChainDataTableViewCell.h; sourceTree = "<group>"; };
 		383EFE3224975C8C0087BA01 /* WYResyncChainDataTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYResyncChainDataTableViewCell.m; sourceTree = "<group>"; };
 		383EFE3324975C8C0087BA01 /* WYResyncChainDataTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WYResyncChainDataTableViewCell.xib; sourceTree = "<group>"; };
+		3867938624C14E5E00E32B83 /* WYVoteUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYVoteUtils.h; sourceTree = "<group>"; };
+		3867938724C14E5E00E32B83 /* WYVoteUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYVoteUtils.mm; sourceTree = "<group>"; };
 		38BFD807249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYLocalizedOrdinalNumber.h; sourceTree = "<group>"; };
 		38BFD808249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYLocalizedOrdinalNumber.m; sourceTree = "<group>"; };
 		38FAB636249472DD003E7C58 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
@@ -2162,6 +2171,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		380233A524ADD3B3001DAD52 /* CrashVC */ = {
+			isa = PBXGroup;
+			children = (
+				380233A624ADD413001DAD52 /* WYCrashViewController.h */,
+				380233A724ADD413001DAD52 /* WYCrashViewController.m */,
+			);
+			path = CrashVC;
+			sourceTree = "<group>";
+		};
 		38FAB635249472DD003E7C58 /* SSZipArchive */ = {
 			isa = PBXGroup;
 			children = (
@@ -2214,6 +2232,7 @@
 		4202C7D321F6EF28009E5932 /* ELA */ = {
 			isa = PBXGroup;
 			children = (
+				380233A524ADD3B3001DAD52 /* CrashVC */,
 				4202C7D421F6EF28009E5932 /* ThirdSDK */,
 				4202C88121F6EF28009E5932 /* MeVC */,
 				4202C8A121F6EF29009E5932 /* voteTicket */,
@@ -3150,6 +3169,10 @@
 				CBD48D6B21FEA22400BF3B11 /* FLNotePointDBManager.h */,
 				CBD48D6C21FEA22400BF3B11 /* FLNotePointDBManager.m */,
 				42B7AD97221BAA61006959B8 /* Localizable.strings */,
+				380233A224ABBF42001DAD52 /* WYUtils.h */,
+				380233A324ABBF42001DAD52 /* WYUtils.mm */,
+				3867938624C14E5E00E32B83 /* WYVoteUtils.h */,
+				3867938724C14E5E00E32B83 /* WYVoteUtils.mm */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -5058,6 +5081,7 @@
 				42B263B422DD741800B19F2C /* HWMSignatureTradingSingleQrCodeViewControlle.mm in Sources */,
 				70E32D14247B3CC900120817 /* ELACommitteeDetailViewController.mm in Sources */,
 				42DFCC50246BF658006848B3 /* HWMStatProposalSectionHeadView.m in Sources */,
+				380233A824ADD413001DAD52 /* WYCrashViewController.m in Sources */,
 				38FAB667249472DE003E7C58 /* mz_strm_split.c in Sources */,
 				42EAEFF7238BB69C00D6A912 /* HWMAddThePrivateKeyViewController.m in Sources */,
 				4202CA0D21F6EF2A009E5932 /* SGQRCodeGenerateManager.m in Sources */,
@@ -5333,10 +5357,12 @@
 				42D1060023A3344D0063AADC /* MJRefreshStateHeader.m in Sources */,
 				4279CAD924796C3100B503A4 /* ELACouncilAndSecretariatModel.m in Sources */,
 				422D609721FC405000DD07FF /* HMWChooseTheCountryAreasModel.m in Sources */,
+				380233A424ABBF42001DAD52 /* WYUtils.mm in Sources */,
 				4279CADB24796C3100B503A4 /* ELABaseModel.m in Sources */,
 				42EAEFE3238BB60700D6A912 /* HWMVoteTheEditorialBoardTableViewCell.m in Sources */,
 				4279CAE224796C3100B503A4 /* ELANetwork.m in Sources */,
 				42A767952314FE50005FC764 /* HMWCRCommitteeMemberListViewController.mm in Sources */,
+				3867938824C14E5F00E32B83 /* WYVoteUtils.mm in Sources */,
 				4202CA4921F6EF2A009E5932 /* FLVersionAlert.m in Sources */,
 				426B0503246E74D700B6FAB9 /* HWMadviceModel.m in Sources */,
 				4202CAA121F6EF2B009E5932 /* FLdoubleWalletVC.mm in Sources */,

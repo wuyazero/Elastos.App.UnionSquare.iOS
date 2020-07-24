@@ -35,6 +35,7 @@
     dispatch_once(&onceToken, ^{
         
         manager = [AFHTTPSessionManager manager];
+        
         //网络传输类型
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -49,6 +50,10 @@
         manager.requestSerializer.timeoutInterval = TimeOut;
         [manager.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
+        if (WYUseNetworkQueue()) {
+            manager.completionQueue = [WYUtils getNetworkQueue];
+            manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+        }
         
     });
     
@@ -60,11 +65,14 @@
 {
     AFHTTPSessionManager *manager = [ELANetworkManager getManager];
     
+    WYLog(@"%s POST url start: %@", __func__, url);
     NSURLSessionDataTask *task =[manager POST:url parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        WYLog(@"%s POST url success: %@", __func__, url);
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
         block(dic, nil);
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        WYLog(@"%s POST url failed: %@", __func__, url);
         block(nil, error);
     }];
     
@@ -77,11 +85,14 @@
     
     AFHTTPSessionManager *manager = [ELANetworkManager getManager];
     
+    WYLog(@"%s GET url start: %@", __func__, url);
     NSURLSessionDataTask *task =[manager GET:url parameters:parameters headers:headers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        WYLog(@"%s GET url success: %@", __func__, url);
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
         block(dic, nil);
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        WYLog(@"%s GET url failed: %@", __func__, url);
         block(nil, error);
     }];
     return task;

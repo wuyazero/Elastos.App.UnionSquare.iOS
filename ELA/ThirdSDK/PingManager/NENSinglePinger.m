@@ -52,7 +52,7 @@
 /// stop ping service
 - (void)stop
 {
-    //NSLog(@"%@ stop",self.hostName);
+    //WYLog(@"%@ stop",self.hostName);
     [self cleanWithStatus:NENSinglePingStatusDidFinished];
 }
 
@@ -60,7 +60,7 @@
 - (void)timeOut
 {
     if (self.sendTimer) {
-        //NSLog(@"%@ timeout",self.hostName);
+        //WYLog(@"%@ timeout",self.hostName);
         self.receivedOrDelayCount++;
         NENPingItem *pingItem = [[NENPingItem alloc] init];
         pingItem.hostName = self.hostName;
@@ -75,7 +75,7 @@
 /// ping failure
 - (void)fail
 {
-    //NSLog(@"%@ fail",self.hostName);
+    //WYLog(@"%@ fail",self.hostName);
     [self cleanWithStatus:NENSinglePingStatusDidError];
 }
 
@@ -123,7 +123,7 @@
 #pragma mark - Ping Delegate
 - (void)simplePing:(SimplePing *)pinger didStartWithAddress:(NSData *)address
 {
-    //NSLog(@"start ping %@",self.hostName);
+    //WYLog(@"start ping %@",self.hostName);
     [self sendPing];
     NSAssert(self.sendTimer == nil, @"timer can't be nil");
     self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:0.4 target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
@@ -138,20 +138,20 @@
 - (void)simplePing:(SimplePing *)pinger didFailWithError:(NSError *)error
 {
     [self cancelRunLoopPerformTimeOut];
-    //NSLog(@"%@ %@",self.hostName, error.localizedDescription);
+    //WYLog(@"%@ %@",self.hostName, error.localizedDescription);
     [self fail];
 }
 
 - (void)simplePing:(SimplePing *)pinger didSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber
 {
     [self cancelRunLoopPerformTimeOut];
-    //NSLog(@"%@ %hu send packet success",self.hostName, sequenceNumber);
+    //WYLog(@"%@ %hu send packet success",self.hostName, sequenceNumber);
 }
 
 - (void)simplePing:(SimplePing *)pinger didFailToSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber error:(NSError *)error
 {
     [self cancelRunLoopPerformTimeOut];
-    //NSLog(@"%@ %hu send packet failed: %@",self.hostName, sequenceNumber, error.localizedDescription);
+    //WYLog(@"%@ %hu send packet failed: %@",self.hostName, sequenceNumber, error.localizedDescription);
     [self cleanWithStatus:NENSinglePingStatusDidFailToSendPacket];
 }
 
@@ -166,7 +166,7 @@
     }
     self.dateSendIndex++;
     self.receivedOrDelayCount++;
-    //NSLog(@"%@ %hu received, size=%lu time=%.2f",self.hostName, sequenceNumber, (unsigned long)packet.length, millSecondsDelay);
+    //WYLog(@"%@ %hu received, size=%lu time=%.2f",self.hostName, sequenceNumber, (unsigned long)packet.length, millSecondsDelay);
     NENPingItem *pingItem = [[NENPingItem alloc] init];
     pingItem.hostName = self.hostName;
     pingItem.status = NENSinglePingStatusDidReceivePacket;

@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ELACouncilModel : ELABaseModel
 
+@property (nonatomic, strong) NSString *cid;
 @property (nonatomic, strong) NSString *did;
 @property (nonatomic, strong) NSString *didName;
 @property (nonatomic, strong) NSString *avatar;

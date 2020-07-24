@@ -27,6 +27,7 @@
 #import "ELAUtils.h"
 #import "HWMCRSuggestionNetWorkManger.h"
 #import "ELWalletManager.h"
+#import "WYVoteUtils.h"
 
 @interface ELAVotingProcessUtil ()
 
@@ -59,8 +60,14 @@
 {
     FLWallet *wallet = [ELWalletManager share].currentWallet;
     _masterWalletID = wallet.masterWalletID;
-    [self CRCImpeachment];
-    [self asyncGetData];
+    
+    if(_networkStateBlock)
+    {
+        _networkStateBlock(YES);
+    }
+    
+//    [self CRCImpeachment];
+//    [self asyncGetData];
     
 }
 - (void)CRCImpeachment
@@ -279,7 +286,7 @@
     dispatch_group_enter(group);
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-        NSLog(@"request CRC");
+        WYLog(@"request CRC");
         //CRC
         NSArray *CRC = [[ELWalletManager share] getVoteInfoList:weakSelf.masterWalletID :@"CRC"];
         if(CRC.count < 0)
@@ -321,7 +328,7 @@
     dispatch_group_enter(group);
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-        NSLog(@"request proposal");
+        WYLog(@"request proposal");
         NSArray *CRCProposal = [[ELWalletManager share] getVoteInfoList:weakSelf.masterWalletID :@"CRCProposal"];
         if(CRCProposal.count < 0)
         {
@@ -387,72 +394,77 @@
 
 - (void)getImpeachmentWithNetworkState:(NSString *)hash amount:(NSString *)amount
 {
-    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+//    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
     NSMutableDictionary *votes = [[NSMutableDictionary alloc] init];
-    if(_producers && _producers.count > 0)
-    {
-        
-//        NSDictionary *voteDic = _producers[@"votes"];
-        NSDictionary *candidatesDic = _producers[@"inCandidates"];
-        
-        if ([candidatesDic count] > 0) {
-            [invalidCandidates addObject:candidatesDic];
-        }
-        
-    }
-    else
-    {
-        
-    }
+//    if(_producers && _producers.count > 0)
+//    {
+//
+////        NSDictionary *voteDic = _producers[@"votes"];
+//        NSDictionary *candidatesDic = _producers[@"inCandidates"];
+//
+//        if ([candidatesDic count] > 0) {
+//            [invalidCandidates addObject:candidatesDic];
+//        }
+//
+//    }
+//    else
+//    {
+//
+//    }
+//
+//    if(_CRCValueDic && _CRCValueDic.count > 0)
+//    {
+//
+////        NSDictionary *voteDic = _CRCValueDic[@"votes"];
+//        NSDictionary *candidatesDic = _CRCValueDic[@"inCandidates"];
+//        if ([candidatesDic count] > 0) {
+//        [invalidCandidates addObject:candidatesDic];
+//        }
+//
+//    }
+//    else
+//    {
+//
+//    }
+//
+//    if(_ProposalValueDic && _ProposalValueDic.count > 0)
+//    {
+//
+////        NSDictionary *voteDic = _ProposalValueDic[@"votes"];
+//        NSDictionary *candidatesDic = _ProposalValueDic[@"inCandidates"];
+//        if ([candidatesDic count] > 0) {
+//        [invalidCandidates addObject:candidatesDic];
+//        }
+//
+//    }
+//    else
+//    {
+//
+//    }
+//    if(_CRCImpeachmentDic && _CRCImpeachmentDic.count > 0)
+//    {
+//        NSDictionary *voteDic = _CRCImpeachmentDic[@"votes"];
+//        NSDictionary *candidatesDic = _CRCImpeachmentDic[@"inCandidates"];
+//        if ([candidatesDic count] > 0) {
+//        [invalidCandidates addObject:candidatesDic];
+//        }
+//        [votes addEntriesFromDictionary:voteDic];
+//
+//        [votes setValue:amount forKey:hash];
+//
+//    }
+//    else
+//    {
+//        [votes setValue:amount forKey:hash];
+//    }
     
-    if(_CRCValueDic && _CRCValueDic.count > 0)
-    {
-        
-//        NSDictionary *voteDic = _CRCValueDic[@"votes"];
-        NSDictionary *candidatesDic = _CRCValueDic[@"inCandidates"];
-        if ([candidatesDic count] > 0) {
-        [invalidCandidates addObject:candidatesDic];
-        }
-        
-    }
-    else
-    {
-        
-    }
+    [votes setValue:amount forKey:hash];
     
-    if(_ProposalValueDic && _ProposalValueDic.count > 0)
+    NSDictionary *voteInfo = [WYVoteUtils createImpeachmentVote:votes withWallet:self.masterWalletID];
+    
+    if(voteInfo && _getImpeachmentBlock)
     {
-        
-//        NSDictionary *voteDic = _ProposalValueDic[@"votes"];
-        NSDictionary *candidatesDic = _ProposalValueDic[@"inCandidates"];
-        if ([candidatesDic count] > 0) {
-        [invalidCandidates addObject:candidatesDic];
-        }
-        
-    }
-    else
-    {
-        
-    }
-    if(_CRCImpeachmentDic && _CRCImpeachmentDic.count > 0)
-    {
-        NSDictionary *voteDic = _CRCImpeachmentDic[@"votes"];
-        NSDictionary *candidatesDic = _CRCImpeachmentDic[@"inCandidates"];
-        if ([candidatesDic count] > 0) {
-        [invalidCandidates addObject:candidatesDic];
-        }
-        [votes addEntriesFromDictionary:voteDic];
-        
-        [votes setValue:amount forKey:hash];
-        
-    }
-    else
-    {
-        [votes setValue:amount forKey:hash];
-    }
-    if(_getImpeachmentBlock)
-    {
-        _getImpeachmentBlock(votes, invalidCandidates);
+        _getImpeachmentBlock(voteInfo[@"votePayloads"], voteInfo[@"invalidCandidates"]);
     }
 }
 
