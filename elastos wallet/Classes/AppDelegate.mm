@@ -41,6 +41,7 @@
 #import "IQKeyboardManager.h"
 #import "WYCrashViewController.h"
 #import "WYLockViewController.h"
+#import "WYAuthViewController.h"
 
 @interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
@@ -259,7 +260,7 @@
     if (inactiveTime > 60.f && authOn) {
         UIViewController *topVC = [WYUtils topViewController];
         WYLog(@"=== dev temp === Top Class is: %@", [topVC class]);
-        if (![topVC isKindOfClass:[WYLockViewController class]]) {
+        if (!([topVC isKindOfClass:[WYLockViewController class]] || [topVC isKindOfClass:[WYAuthViewController class]])) {
             WYLockViewController *lockVC = [[WYLockViewController alloc] init];
             lockVC.modalPresentationStyle = UIModalPresentationFullScreen;
             WYLog(@"=== dev temp === Lock nav is: %@", topVC.navigationController);
