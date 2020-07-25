@@ -8,9 +8,6 @@
 
 @interface HMWmyContactListTableViewCell ()
 
-@property (weak, nonatomic) IBOutlet UIView *BGView;
-
-
 @end
 
 @implementation HMWmyContactListTableViewCell
