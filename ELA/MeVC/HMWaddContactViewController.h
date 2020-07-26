@@ -5,6 +5,8 @@
 
 #import <UIKit/UIKit.h>
 #import "friendsModel.h"
+#import "HMWtheContactInformationViewController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, updateOrChangeInfo) {
    updateInfo = 0,
@@ -24,6 +26,8 @@ typedef NS_ENUM(NSInteger, updateOrChangeInfo) {
  *<# #>
  */
 @property(copy,nonatomic)NSString *addressString;
+
+@property (nonatomic, weak) HMWtheContactInformationViewController *contactInfoVC;
 
 @end
 

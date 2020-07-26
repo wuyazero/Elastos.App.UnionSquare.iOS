@@ -84,6 +84,10 @@
     model.email=self.emailTextField.text;
     model.note=self.noteTextField.text;
     
+    if (self.contactInfoVC) {
+        self.contactInfoVC.model = model;
+    }
+    
     if (self.model.nameString.length==0) {
         if ([[HMWFMDBManager sharedManagerType:friendsModelType]addRecord:model]){
             [[FLTools share]showErrorInfo:NSLocalizedString(@"添加成功！", nil)];

@@ -186,7 +186,9 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 - (NSMutableArray *)theContactMutableArray {
     
     if (!_theContactMutableArray) {
-        _theContactMutableArray =[[NSMutableArray alloc]initWithArray:[[HMWFMDBManager sharedManagerType:friendsModelType]allRecord]];
+        NSSortDescriptor *localizedSortWithName = [NSSortDescriptor sortDescriptorWithKey:@"nameString" ascending:YES selector:@selector(localizedCompare:)];
+        NSArray *sortedContacts =[[[HMWFMDBManager sharedManagerType:friendsModelType] allRecord] sortedArrayUsingDescriptors:@[localizedSortWithName]];
+        _theContactMutableArray =[[NSMutableArray alloc]initWithArray:sortedContacts];
     }
     return _theContactMutableArray;
 }
