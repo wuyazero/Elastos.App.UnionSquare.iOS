@@ -40,6 +40,15 @@
     CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
     WYLog(@"=== dev temp === vc height is: %f", viewHeight);
     
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wallet_ela_logo_noborder"]];
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:imageView];
+    
+    [NSLayoutConstraint activateConstraints:@[
+        [imageView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
+        [imageView.topAnchor constraintEqualToAnchor:margin.centerYAnchor constant:-(viewHeight * 0.3f)]
+    ]];
+    
     UIButton *buttonView = [[UIButton alloc] init];
     buttonView.translatesAutoresizingMaskIntoConstraints = NO;
     [buttonView setTitle:NSLocalizedString(@"重新验证", nil) forState:UIControlStateNormal];
@@ -53,7 +62,7 @@
     
     [NSLayoutConstraint activateConstraints:@[
         [buttonView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
-        [buttonView.centerYAnchor constraintEqualToAnchor:margin.centerYAnchor constant:(viewHeight / 5.f)],
+        [buttonView.topAnchor constraintEqualToAnchor:margin.centerYAnchor constant:(viewHeight * 0.2f)],
         [buttonView.widthAnchor constraintEqualToConstant:250.f],
         [buttonView.heightAnchor constraintEqualToConstant:40.f]
     ]];
@@ -68,7 +77,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setBackgroundImg:@"LimageEN"];
+    [self setBackgroundImg:@""];
 }
 
 /*

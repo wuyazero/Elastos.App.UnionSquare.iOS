@@ -274,7 +274,8 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     return cell;
 }
 
-- (void) viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [self.table reloadData];
 }
 
@@ -299,7 +300,7 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     LAContext *authContext = [[LAContext alloc] init];
     NSError *authError = nil;
-    NSString *authLocalizedReasonString = NSLocalizedString(@"手机用户验证", nil);
+    NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
     if (![authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
         [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
         authOn = NO;
@@ -340,7 +341,7 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 -(void)sureToDeleteViewWithPWD:(NSString *)pwd {
     LAContext *authContext = [[LAContext alloc] init];
     NSError *authError = nil;
-    NSString *authLocalizedReasonString = NSLocalizedString(@"手机用户验证", nil);
+    NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
     if (![authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
         [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
         [self toCancelOrCloseDelegate];

@@ -141,11 +141,8 @@ self.theWalletAddressTextField.enabled=NO;
     if ([[HMWFMDBManager sharedManagerType:friendsModelType] delectRecord:self.model]){
        [[FLTools share]showErrorInfo:NSLocalizedString(@"删除成功", nil)];
        [self toCancelOrCloseDelegate];
-       [self.navigationController popToRootViewControllerAnimated:YES];
-    
-      
+       [self.navigationController popViewControllerAnimated:YES];
     }
-    
     
 }
 @end
