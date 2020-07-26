@@ -28,6 +28,7 @@
 #import "friendsModel.h"
 #import "HMWtheContactInformationViewController.h"
 #import "HMWaddContactViewController.h"
+#import "ELAUtils.h"
 
 static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 
@@ -35,7 +36,10 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 
 @property (nonatomic, strong) UITableView *table;
 
-@property(strong,nonatomic)NSMutableArray *theContactMutableArray;
+@property (nonatomic, strong) NSMutableArray *theContactMutableArray;
+@property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIButton *buttonView;
+@property (nonatomic, strong) UILabel *labelView;
 
 @end
 
@@ -62,14 +66,86 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self defultWhite];
-    if (self.theContactMutableArray.count > 0) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"add_contact"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(addContact)];
-    }
     [self setBackgroundImg:@""];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(myfriendNeedUpdateInfo) name:myfriendNeedUpdate object:nil];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+-(void)myfriendNeedUpdateInfo {
+    [self.theContactMutableArray removeAllObjects];
+    self.theContactMutableArray=nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    WYLog(@"=== dev temp === Contact list View Will Appear!!");
     [self.table reloadData];
+    
+    if (self.theContactMutableArray.count > 0) {
+        if (self.imageView) {
+            [self.imageView removeFromSuperview];
+            self.imageView = nil;
+        }
+        if (self.labelView) {
+            [self.labelView removeFromSuperview];
+            self.labelView = nil;
+        }
+        if (self.buttonView) {
+            [self.buttonView removeFromSuperview];
+            self.buttonView = nil;
+        }
+        
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"add_contact"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(addContact)];
+    } else {
+        self.navigationItem.rightBarButtonItem = nil;
+        
+        UILayoutGuide *margin = self.view.layoutMarginsGuide;
+        CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
+        WYLog(@"=== dev temp === vc height is: %f", viewHeight);
+        
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"no_contact"]];
+        imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.view addSubview:imageView];
+        self.imageView = imageView;
+        
+        [NSLayoutConstraint activateConstraints:@[
+            [imageView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
+            [imageView.topAnchor constraintEqualToAnchor:margin.centerYAnchor constant:-(viewHeight * 0.3f)]
+        ]];
+        
+        UILabel *labelView = [[UILabel alloc] init];
+        labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        [labelView setText:NSLocalizedString(@"暂无联系人", nil)];
+        [labelView setTextColor:ELARGB(202, 213, 226)];
+        [labelView setBackgroundColor:[UIColor clearColor]];
+        [labelView setFont:PingFangRegular(18)];
+        [self.view addSubview:labelView];
+        self.labelView = labelView;
+        
+        [NSLayoutConstraint activateConstraints:@[
+            [labelView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
+            [labelView.topAnchor constraintEqualToAnchor:imageView.bottomAnchor constant:20.f]
+        ]];
+        
+        UIButton *buttonView = [[UIButton alloc] init];
+        buttonView.translatesAutoresizingMaskIntoConstraints = NO;
+        [buttonView setTitle:NSLocalizedString(@"添加联系人", nil) forState:UIControlStateNormal];
+        [buttonView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        buttonView.titleLabel.font = PingFangRegular(14);
+        [buttonView setBackgroundColor:ELARGB(63, 93, 101)];
+        [buttonView.layer setBorderWidth:1.f];
+        [buttonView.layer setBorderColor:[UIColor whiteColor].CGColor];
+        [self.view addSubview:buttonView];
+        self.buttonView = buttonView;
+        
+        [NSLayoutConstraint activateConstraints:@[
+            [buttonView.centerXAnchor constraintEqualToAnchor:margin.centerXAnchor],
+            [buttonView.topAnchor constraintEqualToAnchor:margin.centerYAnchor constant:(viewHeight * 0.2f)],
+            [buttonView.widthAnchor constraintEqualToConstant:250.f],
+            [buttonView.heightAnchor constraintEqualToConstant:40.f]
+        ]];
+        
+        [buttonView addTarget:self action:@selector(addContact) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 - (void)addContact {

@@ -49,13 +49,14 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [self systemAuth];
 }
 
 - (void)systemAuth {
     LAContext *authContext = [[LAContext alloc] init];
     NSError *authError = nil;
-    NSString *authLocalizedReasonString = NSLocalizedString(@"手机用户验证", nil);
+    NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
     if ([authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
         [authContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication
                   localizedReason:authLocalizedReasonString
