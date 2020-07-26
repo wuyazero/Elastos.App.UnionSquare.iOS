@@ -19,8 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)sureToDeleteViewWithPWD:(NSString*)pwd;
 -(void)toCancelOrCloseDelegate;
+
+@optional
 -(void)CancelEvent;
-    
 
 @end
 

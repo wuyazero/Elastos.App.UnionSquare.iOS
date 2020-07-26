@@ -36,27 +36,32 @@
     [super viewDidLoad];
     [self defultWhite];
     [self setBackgroundImg:@""];
-   self.nickNameTextField.enabled=NO;
-self.theWalletAddressTextField.enabled=NO;
+    self.nickNameTextField.enabled=NO;
+    self.theWalletAddressTextField.enabled=NO;
     self.mobilePhoneNOTextField.enabled=NO;
     self.emailTextField.enabled=NO;
     self.noteTextField.enabled=NO;
     self.title=NSLocalizedString(@"联系人信息", nil);
-  [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.nickNameTextField withTxt:NSLocalizedString(@"请输入姓名（必填）", nil)];
-   [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.theWalletAddressTextField withTxt:NSLocalizedString(@"请输入钱包地址（必填）", nil)];
-   
-[[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.mobilePhoneNOTextField withTxt:NSLocalizedString(@"请输入手机号码", nil)];
- [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.emailTextField withTxt:NSLocalizedString(@"请输入邮箱", nil)];
+    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.nickNameTextField withTxt:NSLocalizedString(@"请输入姓名（必填）", nil)];
+    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.theWalletAddressTextField withTxt:NSLocalizedString(@"请输入钱包地址（必填）", nil)];
+    
+    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.mobilePhoneNOTextField withTxt:NSLocalizedString(@"请输入手机号码", nil)];
+    [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.emailTextField withTxt:NSLocalizedString(@"请输入邮箱", nil)];
     [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.noteTextField withTxt:NSLocalizedString(@"请输入备注", nil)];
     [[HMWCommView share]makeBordersWithView:self.deleteFrButton];
-     [[HMWCommView share]makeBordersWithView:self.theEditorFrButton];
+    [[HMWCommView share]makeBordersWithView:self.theEditorFrButton];
+    
+    [self.theEditorFrButton setTitle:NSLocalizedString(@"编辑", nil) forState:UIControlStateNormal];
+    [self.deleteFrButton setTitle:NSLocalizedString(@"删除", nil) forState:UIControlStateNormal];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.nickNameTextField.text=self.model.nameString;
-   self.theWalletAddressTextField.text=self.model.address;
+    self.theWalletAddressTextField.text=self.model.address;
     self.mobilePhoneNOTextField.text=self.model.mobilePhoneNo;
     self.emailTextField.text=self.model.email;
     self.noteTextField.text=self.model.note;
-    [self.theEditorFrButton setTitle:NSLocalizedString(@"编辑", nil) forState:UIControlStateNormal];
-    [self.deleteFrButton setTitle:NSLocalizedString(@"删除", nil) forState:UIControlStateNormal];
 }
 
 - (IBAction)editTheContactEvent:(id)sender {
@@ -64,6 +69,7 @@ self.theWalletAddressTextField.enabled=NO;
     addContactVC.title=NSLocalizedString(@"编辑联系人", nil);
     addContactVC.model=self.model;
     addContactVC.typeInfo=ChangeInfo;
+    addContactVC.contactInfoVC = self;
     [self.navigationController pushViewController:addContactVC animated:YES];
 }
 - (IBAction)deleteTheContactEvent:(id)sender {
@@ -97,11 +103,11 @@ self.theWalletAddressTextField.enabled=NO;
     
     if ([[HMWFMDBManager sharedManagerType:friendsModelType]delectRecord:self.model]){
         [[FLTools share]showErrorInfo:NSLocalizedString(@"添加成功！", nil)];
-         [self toCancelOrCloseDelegate];
+        [self toCancelOrCloseDelegate];
         
     }
     
-   
+    
     
 }
 -(void)toCancelOrCloseDelegate{
@@ -112,7 +118,7 @@ self.theWalletAddressTextField.enabled=NO;
 - (IBAction)accordingToQRCodeEvent:(id)sender {
     UIView *manView =[self mainWindow];
     [manView addSubview:self.QrCodePopupWindowV];
-  
+    
     [self.QrCodePopupWindowV mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.top.bottom.equalTo(manView);
     }];
@@ -139,9 +145,9 @@ self.theWalletAddressTextField.enabled=NO;
 -(void)sureToDeleteViewWithPWD:(NSString*)pwd{
     
     if ([[HMWFMDBManager sharedManagerType:friendsModelType] delectRecord:self.model]){
-       [[FLTools share]showErrorInfo:NSLocalizedString(@"删除成功", nil)];
-       [self toCancelOrCloseDelegate];
-       [self.navigationController popViewControllerAnimated:YES];
+        [[FLTools share]showErrorInfo:NSLocalizedString(@"删除成功", nil)];
+        [self toCancelOrCloseDelegate];
+        [self.navigationController popViewControllerAnimated:YES];
     }
     
 }
