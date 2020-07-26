@@ -59,12 +59,14 @@
     if (self.deleteType==CoverCommitteeMembersListType) {
         if ([self.delegate respondsToSelector:@selector(CancelEvent)]) {
             [self.delegate CancelEvent];
+        } else if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
+            [self.delegate toCancelOrCloseDelegate];
         }
         
     }else{
-    if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
-        [self.delegate toCancelOrCloseDelegate];
-    }
+        if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
+            [self.delegate toCancelOrCloseDelegate];
+        }
         
     }
 }
