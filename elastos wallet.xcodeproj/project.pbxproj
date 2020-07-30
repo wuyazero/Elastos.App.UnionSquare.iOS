@@ -22,6 +22,10 @@
 		383EFE3524975C8C0087BA01 /* WYResyncChainDataTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 383EFE3324975C8C0087BA01 /* WYResyncChainDataTableViewCell.xib */; };
 		3867938824C14E5F00E32B83 /* WYVoteUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3867938724C14E5E00E32B83 /* WYVoteUtils.mm */; };
 		38BFD809249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 38BFD808249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m */; };
+		38EC5AD724D19EFC00E016AE /* WYDIDUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EC5AD624D19EFC00E016AE /* WYDIDUtils.m */; };
+		38EC5ADA24D1FC2600E016AE /* WYDIDInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EC5AD924D1FC2500E016AE /* WYDIDInfoViewController.m */; };
+		38EC5AE824D2065200E016AE /* WYDIDInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38EC5AE724D2065100E016AE /* WYDIDInfoViewController.xib */; };
+		38EC5AEC24D27C2600E016AE /* WYDIDChainInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EC5AEB24D27C2600E016AE /* WYDIDChainInfoModel.m */; };
 		38FAB659249472DE003E7C58 /* mz_strm_os_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FAB638249472DD003E7C58 /* mz_strm_os_posix.c */; };
 		38FAB65A249472DE003E7C58 /* mz_strm_pkcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FAB639249472DD003E7C58 /* mz_strm_pkcrypt.c */; };
 		38FAB65B249472DE003E7C58 /* mz_strm_zlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FAB63C249472DD003E7C58 /* mz_strm_zlib.c */; };
@@ -60,7 +64,7 @@
 		4202CA1B21F6EF2A009E5932 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C87A21F6EF28009E5932 /* FMDatabase.m */; };
 		4202CA1C21F6EF2A009E5932 /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C87E21F6EF28009E5932 /* FMDatabasePool.m */; };
 		4202CA1D21F6EF2A009E5932 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C87F21F6EF28009E5932 /* FMResultSet.m */; };
-		4202CA1F21F6EF2A009E5932 /* HMWaddContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C88221F6EF28009E5932 /* HMWaddContactViewController.m */; };
+		4202CA1F21F6EF2A009E5932 /* HMWaddContactViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4202C88221F6EF28009E5932 /* HMWaddContactViewController.mm */; };
 		4202CA2021F6EF2A009E5932 /* HMWaddContactViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4202C88321F6EF28009E5932 /* HMWaddContactViewController.xib */; };
 		4202CA2121F6EF2A009E5932 /* HMWtheContactInformationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C88421F6EF28009E5932 /* HMWtheContactInformationViewController.m */; };
 		4202CA2221F6EF2A009E5932 /* HMWmyContactListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4202C88721F6EF28009E5932 /* HMWmyContactListTableViewCell.m */; };
@@ -733,6 +737,13 @@
 		3867938724C14E5E00E32B83 /* WYVoteUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WYVoteUtils.mm; sourceTree = "<group>"; };
 		38BFD807249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYLocalizedOrdinalNumber.h; sourceTree = "<group>"; };
 		38BFD808249BBC7E00CDBE6A /* WYLocalizedOrdinalNumber.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYLocalizedOrdinalNumber.m; sourceTree = "<group>"; };
+		38EC5AD524D19EFC00E016AE /* WYDIDUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYDIDUtils.h; sourceTree = "<group>"; };
+		38EC5AD624D19EFC00E016AE /* WYDIDUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYDIDUtils.m; sourceTree = "<group>"; };
+		38EC5AD824D1FC2500E016AE /* WYDIDInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYDIDInfoViewController.h; sourceTree = "<group>"; };
+		38EC5AD924D1FC2500E016AE /* WYDIDInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYDIDInfoViewController.m; sourceTree = "<group>"; };
+		38EC5AE724D2065100E016AE /* WYDIDInfoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WYDIDInfoViewController.xib; sourceTree = "<group>"; };
+		38EC5AEA24D27C2600E016AE /* WYDIDChainInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYDIDChainInfoModel.h; sourceTree = "<group>"; };
+		38EC5AEB24D27C2600E016AE /* WYDIDChainInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYDIDChainInfoModel.m; sourceTree = "<group>"; };
 		38FAB636249472DD003E7C58 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
 		38FAB638249472DD003E7C58 /* mz_strm_os_posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mz_strm_os_posix.c; sourceTree = "<group>"; };
 		38FAB639249472DD003E7C58 /* mz_strm_pkcrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mz_strm_pkcrypt.c; sourceTree = "<group>"; };
@@ -832,7 +843,7 @@
 		4202C87D21F6EF28009E5932 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
 		4202C87E21F6EF28009E5932 /* FMDatabasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabasePool.m; sourceTree = "<group>"; };
 		4202C87F21F6EF28009E5932 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
-		4202C88221F6EF28009E5932 /* HMWaddContactViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMWaddContactViewController.m; sourceTree = "<group>"; };
+		4202C88221F6EF28009E5932 /* HMWaddContactViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HMWaddContactViewController.mm; sourceTree = "<group>"; };
 		4202C88321F6EF28009E5932 /* HMWaddContactViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HMWaddContactViewController.xib; sourceTree = "<group>"; };
 		4202C88421F6EF28009E5932 /* HMWtheContactInformationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMWtheContactInformationViewController.m; sourceTree = "<group>"; };
 		4202C88521F6EF28009E5932 /* FLMyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLMyVC.h; sourceTree = "<group>"; };
@@ -2193,6 +2204,15 @@
 			path = WYVC;
 			sourceTree = "<group>";
 		};
+		38EC5AE924D21A6300E016AE /* WYModels */ = {
+			isa = PBXGroup;
+			children = (
+				38EC5AEA24D27C2600E016AE /* WYDIDChainInfoModel.h */,
+				38EC5AEB24D27C2600E016AE /* WYDIDChainInfoModel.m */,
+			);
+			path = WYModels;
+			sourceTree = "<group>";
+		};
 		38FAB635249472DD003E7C58 /* SSZipArchive */ = {
 			isa = PBXGroup;
 			children = (
@@ -2431,7 +2451,7 @@
 				42186FDE22BCADBB0063A28D /* AboutELAWalletViewController.mm */,
 				42186FDF22BCADBB0063A28D /* AboutELAWalletViewController.xib */,
 				4202C89621F6EF28009E5932 /* HMWaddContactViewController.h */,
-				4202C88221F6EF28009E5932 /* HMWaddContactViewController.m */,
+				4202C88221F6EF28009E5932 /* HMWaddContactViewController.mm */,
 				4202C88321F6EF28009E5932 /* HMWaddContactViewController.xib */,
 				4202C89F21F6EF29009E5932 /* HMWtheContactInformationViewController.h */,
 				4202C88421F6EF28009E5932 /* HMWtheContactInformationViewController.m */,
@@ -2450,6 +2470,9 @@
 				4202C89A21F6EF28009E5932 /* view */,
 				3821893024CB90DE00CA4BCC /* WYContactListViewController.h */,
 				3821893124CB90DF00CA4BCC /* WYContactListViewController.m */,
+				38EC5AD824D1FC2500E016AE /* WYDIDInfoViewController.h */,
+				38EC5AD924D1FC2500E016AE /* WYDIDInfoViewController.m */,
+				38EC5AE724D2065100E016AE /* WYDIDInfoViewController.xib */,
 			);
 			path = MeVC;
 			sourceTree = "<group>";
@@ -3184,8 +3207,11 @@
 				CBD48D6B21FEA22400BF3B11 /* FLNotePointDBManager.h */,
 				CBD48D6C21FEA22400BF3B11 /* FLNotePointDBManager.m */,
 				42B7AD97221BAA61006959B8 /* Localizable.strings */,
+				38EC5AE924D21A6300E016AE /* WYModels */,
 				380233A224ABBF42001DAD52 /* WYUtils.h */,
 				380233A324ABBF42001DAD52 /* WYUtils.mm */,
+				38EC5AD524D19EFC00E016AE /* WYDIDUtils.h */,
+				38EC5AD624D19EFC00E016AE /* WYDIDUtils.m */,
 				3867938624C14E5E00E32B83 /* WYVoteUtils.h */,
 				3867938724C14E5E00E32B83 /* WYVoteUtils.mm */,
 			);
@@ -4936,6 +4962,7 @@
 				4202CA8421F6EF2B009E5932 /* HMWToDeleteTheWalletPopView.xib in Resources */,
 				4202CA7721F6EF2B009E5932 /* HMWTop_upPageForDetailsViewController.xib in Resources */,
 				4202CA5621F6EF2A009E5932 /* FLAssetManageTableCell.xib in Resources */,
+				38EC5AE824D2065200E016AE /* WYDIDInfoViewController.xib in Resources */,
 				4202CA9821F6EF2B009E5932 /* FLCreatAcountVC.xib in Resources */,
 				42D7DC6523F68C1F002F5A9A /* HWMTheImportDocumentsViewController.xib in Resources */,
 				4202CACA21F6EF2B009E5932 /* HMWnoCandidateNodesView.xib in Resources */,
@@ -5199,7 +5226,7 @@
 				4202CA1A21F6EF2A009E5932 /* FMDatabaseAdditions.m in Sources */,
 				38FAB669249472DE003E7C58 /* SSZipArchive.m in Sources */,
 				42D105F223A3344D0063AADC /* UIScrollView+MJRefresh.m in Sources */,
-				4202CA1F21F6EF2A009E5932 /* HMWaddContactViewController.m in Sources */,
+				4202CA1F21F6EF2A009E5932 /* HMWaddContactViewController.mm in Sources */,
 				425A5F862466AB1600C44104 /* HWMImplementationScheduleView.m in Sources */,
 				421BABD4242963EA000FB026 /* HWMallDocumentsListTableViewCell.m in Sources */,
 				428B4D9A22CB35B6004AE7D0 /* HWMaddSignThePursefootView.m in Sources */,
@@ -5226,6 +5253,7 @@
 				424910F42271BFCF00C41E50 /* SDImageCacheConfig.m in Sources */,
 				4202CA2221F6EF2A009E5932 /* HMWmyContactListTableViewCell.m in Sources */,
 				424910EF2271BFCF00C41E50 /* SDImageCache.m in Sources */,
+				38EC5ADA24D1FC2600E016AE /* WYDIDInfoViewController.m in Sources */,
 				424910ED2271BFCF00C41E50 /* SDWebImageCompat.m in Sources */,
 				422D609621FC405000DD07FF /* FLJoinVoteInfoModel.m in Sources */,
 				70D802412481584D00C9E192 /* IQBarButtonItem.m in Sources */,
@@ -5414,9 +5442,11 @@
 				4279CACE24796C3100B503A4 /* NSObject+MJClass.m in Sources */,
 				4202CA9B21F6EF2B009E5932 /* FLSetMenmoryWordPassView.m in Sources */,
 				4279CAD424796C3100B503A4 /* SYLineProgressView.m in Sources */,
+				38EC5AEC24D27C2600E016AE /* WYDIDChainInfoModel.m in Sources */,
 				4202CA0421F6EF2A009E5932 /* SVProgressAnimatedView.m in Sources */,
 				4202CA9221F6EF2B009E5932 /* HMWModifyTheWalletNameViewController.m in Sources */,
 				4202CA0921F6EF2A009E5932 /* UIImage+SGImageSize.m in Sources */,
+				38EC5AD724D19EFC00E016AE /* WYDIDUtils.m in Sources */,
 				42D1060E23A336240063AADC /* NENSinglePinger.m in Sources */,
 				4210E858239F8A07001D82F3 /* MASLayoutConstraint.m in Sources */,
 				3821892C24C8FD1F00CA4BCC /* WYLockViewController.m in Sources */,
