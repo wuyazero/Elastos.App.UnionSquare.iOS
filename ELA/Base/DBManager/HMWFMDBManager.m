@@ -26,7 +26,7 @@ static HMWFMDBManager * _manager =nil;
     }
     dataBaseName=@"friends.db";
     if (type ==friendsModelType) {
-        sql =@"create table if not exists Person(ID integer primary key AUTOINCREMENT,nameString text,address text,mobilePhoneNo text,email text,note text)";
+        sql =@"create table if not exists Person(ID integer primary key AUTOINCREMENT,nameString text,address text, did text, mobilePhoneNo text,email text,note text)";
     }else if (type==walletType){
         sql =@"create table if not exists wallet(ID integer primary key AUTOINCREMENT,walletID text,walletAddress text,walletName text)";
     }else if (type==sideChain){
@@ -56,7 +56,13 @@ static HMWFMDBManager * _manager =nil;
     });
     
     
-    if (  [_manager executeUpdate:sql]) {
+    if ([_manager executeUpdate:sql]) {
+
+        if (type ==friendsModelType) {
+            if (![_manager columnExists:@"did" inTableWithName:@"Person"]) {
+                [_manager executeUpdate:@"ALTER TABLE Person ADD COLUMN did TEXT"];
+            }
+        }
         
     }else{
         
@@ -126,8 +132,8 @@ static HMWFMDBManager * _manager =nil;
 //增加
 
 -(BOOL)addRecord:(friendsModel *)person{
-    NSString *sql =@"insert into Person (nameString,address,mobilePhoneNo,email,note) values(?,?,?,?,?)";
-    if ([self executeUpdate:sql,person.nameString,person.address,person.mobilePhoneNo,person.email,person.note]) {
+    NSString *sql =@"insert into Person (nameString,address,did,mobilePhoneNo,email,note) values(?,?,?,?,?,?)";
+    if ([self executeUpdate:sql,person.nameString,person.address,person.did,person.mobilePhoneNo,person.email,person.note]) {
         //        DLog(@"完成!");
         [[NSNotificationCenter defaultCenter]postNotificationName:myfriendNeedUpdate object:nil];
         return YES;
@@ -220,6 +226,7 @@ static HMWFMDBManager * _manager =nil;
         p.ID=[set objectForColumn:@"ID"];
         p.nameString =[set objectForColumn:@"nameString"];
         p.address=[set objectForColumn:@"address"];
+        p.did = [set objectForColumn:@"did"];
         p.mobilePhoneNo=[set objectForColumn:@"mobilePhoneNo"];
         p.email=[set objectForColumn:@"email"];
         p.note=[set objectForColumn:@"note"];
@@ -302,13 +309,14 @@ static HMWFMDBManager * _manager =nil;
     NSString *Nsql =@"Update Person set nameString=? where ID=? ";
     
     NSString *Asql =@"Update Person set address=? where ID=? ";
+    NSString *DIDSql = @"Update Person set did=? where ID=? ";
     NSString *msql =@"Update Person set mobilePhoneNo=? where ID=? ";
     NSString *esql =@"Update Person set email=? where ID=? ";
     NSString *notesql =@"Update Person set note=? where ID=? ";
     
     if ([self executeUpdate:Nsql,person.nameString,
          //         person.address,person.mobilePhoneNo,person.email,person.note,
-         person.ID]&&[self executeUpdate:Asql,person.address,person.ID]&&[self executeUpdate:msql,person.mobilePhoneNo,person.ID]&&[self executeUpdate:msql,person.mobilePhoneNo,person.ID]&&[self executeUpdate:esql,person.email,person.ID]&&[self executeUpdate:notesql,person.note,person.ID]) {
+         person.ID]&&[self executeUpdate:Asql,person.address,person.ID]&& [self executeUpdate:DIDSql, person.did, person.ID] &&[self executeUpdate:msql,person.mobilePhoneNo,person.ID]&&[self executeUpdate:msql,person.mobilePhoneNo,person.ID]&&[self executeUpdate:esql,person.email,person.ID]&&[self executeUpdate:notesql,person.note,person.ID]) {
         
         
         [[NSNotificationCenter defaultCenter]postNotificationName:myfriendNeedUpdate object:nil];

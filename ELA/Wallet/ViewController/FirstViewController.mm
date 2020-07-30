@@ -46,6 +46,7 @@
 #import "ELANetwork.h"
 #import "ELACommitteeInfoModel.h"
 #import "WYLockViewController.h"
+#import "WYDIDUtils.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -445,12 +446,6 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
-        // WYDebug
-        
-        //        WYLog(@"=== wydebug start ===");
-        //
-        //        WYLog(@"=== wydebug end ===");
-        
         dispatch_group_t waitGroup = dispatch_group_create();
         dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
         
@@ -516,6 +511,14 @@
         });
         
         [self hiddLoading];
+        
+        // WYDebug
+        
+        WYLog(@"=== wydebug start ===");
+        
+        WYLog(@"DID Info: %@", [WYDIDUtils getDIDInfoFromString:@"did:elastos:imnP8SJsFJfFb5mUrc6qLe9qyf18KAGH1Y"]);
+        
+        WYLog(@"=== wydebug end ===");
     }
 }
 

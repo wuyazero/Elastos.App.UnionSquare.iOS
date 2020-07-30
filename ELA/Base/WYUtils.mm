@@ -207,6 +207,11 @@ static NSMutableDictionary *globalDic = nil;
     
 }
 
++ (BOOL)matchString:(NSString *)inputStr withRegex:(NSString *)regexStr {
+    NSPredicate *testRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regexStr];
+    return [testRegex evaluateWithObject:inputStr];
+}
+
 + (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID {
     NSString *elaAddress = nil;
     NSString *errMsg = nil;
