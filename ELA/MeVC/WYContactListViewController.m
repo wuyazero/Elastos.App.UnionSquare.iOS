@@ -77,7 +77,7 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    WYLog(@"=== dev temp === Contact list View Will Appear!!");
+    
     [self.table reloadData];
     
     if (self.theContactMutableArray.count > 0) {

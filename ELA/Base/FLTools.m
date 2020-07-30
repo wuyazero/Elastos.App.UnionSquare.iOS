@@ -194,7 +194,7 @@ static FLTools *tool;
         NSString *monthString=[NSString stringWithFormat:@"m%ld",(long)comp.month];
         timeS=[NSString stringWithFormat:@"%@ %02d %ld",NSLocalizedString(monthString,nil),(int)comp.day,comp.year];
     }else if ([languageString  containsString:@"zh"]){
-        timeS =[NSString stringWithFormat:@"%ld-%02d-%02d ",comp.year,(int)comp.month,(int)comp.day ];
+        timeS =[NSString stringWithFormat:@"%ld.%02d.%02d ",comp.year,(int)comp.month,(int)comp.day ];
     }
     return timeS;
     
