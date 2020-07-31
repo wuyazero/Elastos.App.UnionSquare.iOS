@@ -61,11 +61,18 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+    [pStyle setAlignment:NSTextAlignmentRight];
+    [pStyle setLineBreakMode:NSLineBreakByTruncatingMiddle];
+    
     if (self.model.didName) {
         self.nameTextField.text = self.model.didName;
     }
     if (self.model.didAddress) {
-        self.DIDAddressTextField.text = self.model.didAddress;
+        NSMutableAttributedString *didText = [[NSMutableAttributedString alloc] initWithString:self.model.didAddress];
+        [didText addAttribute:NSParagraphStyleAttributeName value:pStyle range:NSMakeRange(0, didText.length)];
+        self.DIDAddressTextField.attributedText = didText;
+        //        self.DIDAddressTextField.text = self.model.didAddress;
     }
     if (self.model.expireTime) {
         self.expireTimeTextField.text = [NSString stringWithFormat:@"%@ %@",NSLocalizedString(@"至", nil),[[FLTools share]YMDCommunityTimeConversionTimeFromTimesTamp:self.model.expireTime]];
@@ -94,13 +101,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end
