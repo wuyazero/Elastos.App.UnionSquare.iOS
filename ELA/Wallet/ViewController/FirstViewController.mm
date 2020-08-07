@@ -516,7 +516,7 @@
         
         WYLog(@"=== wydebug start ===");
         
-        WYLog(@"DID Info: %@", [WYDIDUtils getDIDInfoFromString:@"did:elastos:imnP8SJsFJfFb5mUrc6qLe9qyf18KAGH1Y"]);
+        WYLog(@"VoteInfo: %@", [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID]);
         
         WYLog(@"=== wydebug end ===");
     }
