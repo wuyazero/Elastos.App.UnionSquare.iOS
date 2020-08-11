@@ -78,6 +78,26 @@
     return nil;
 }
 
++ (NSDictionary *)getVoteTimestamps:(NSDictionary *)voteInfo {
+    @try {
+        if (voteInfo) {
+            NSMutableDictionary *voteTimestamps = [[NSMutableDictionary alloc] init];
+            for (id item in voteInfo) {
+                voteTimestamps[item[@"Type"]] = item[@"Timestamp"];
+            }
+            WYLog(@"GetVoteTimestamps success! voteTimestamps: %@", voteTimestamps);
+            return voteTimestamps;
+        }
+        WYLog(@"GetVoteTimestamps failed! voteInfo: %@", voteInfo);
+        return nil;
+    } @catch (NSException *exception) {
+        WYLog(@"GetVoteTimestamps Exception: %@", exception.reason);
+        [[FLTools share] showErrorInfo:exception.reason];
+        return nil;
+    }
+    return nil;
+}
+
 + (NSDictionary *)getVoteAddrs:(NSDictionary *)votePayloads {
     @try {
         if (votePayloads) {
@@ -101,7 +121,7 @@
     return nil;
 }
 
-+ (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs {
++ (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs withVoteTimestamps:(NSDictionary *)voteTimestamps {
     @try {
         if (voteAddrs) {
             __block NSMutableDictionary *invalidAddrs = [[NSMutableDictionary alloc] init];
@@ -109,19 +129,20 @@
             WYLog(@"dev temp voteAddrs in InvalidAddrs: %@", voteAddrs);
             
             dispatch_group_t waitGroup = dispatch_group_create();
-            dispatch_queue_t waitQueue = dispatch_queue_create("elastos.elawallet.LoopQueue", DISPATCH_QUEUE_SERIAL);
+            dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
             
+            WYSetUseNetworkQueue(YES);
             for (NSString *key in voteAddrs) {
                 dispatch_group_enter(waitGroup);
                 dispatch_async(waitQueue, ^{
                     if ([key isEqualToString:@"Delegate"]) {
                         invalidAddrs[key] = [WYVoteUtils getInvalidDelegates:voteAddrs[key]];
                     } else if ([key isEqualToString:@"CRC"]) {
-                        invalidAddrs[key] = [WYVoteUtils getInvalidCRCs:voteAddrs[key]];
+                        invalidAddrs[key] = [WYVoteUtils getInvalidCRCs:voteAddrs[key] withTimestamp:voteTimestamps[key]];
                     } else if ([key isEqualToString:@"CRCProposal"]) {
                         invalidAddrs[key] = [WYVoteUtils getInvalidProposals:voteAddrs[key]];
                     } else if ([key isEqualToString:@"CRCImpeachment"]) {
-                        invalidAddrs[key] = [WYVoteUtils getInvalidImpeachments:voteAddrs[key]];
+                        invalidAddrs[key] = [WYVoteUtils getInvalidImpeachments:voteAddrs[key] withTimestamp:voteTimestamps[key]];
                     } else {
                         invalidAddrs[key] = @[];
                     }
@@ -134,6 +155,7 @@
             }
             
             long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
+            WYSetUseNetworkQueue(NO);
             
             if (status != 0) {
                 WYLog(@"%s: getInvalidAddrs timeout!!", __func__);
@@ -167,7 +189,6 @@
     dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
         NSString *httpIP=[[FLTools share]http_IpFast];
-        WYSetUseNetworkQueue(YES);
         [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
             NSDictionary *param = data[@"data"];
             DposDataList =[NSArray modelArrayWithClass:FLCoinPointInfoModel.class json:param[@"result"][@"producers"]];
@@ -177,7 +198,6 @@
             networkErr = YES;
             dispatch_group_leave(waitGroup);
         }];
-        WYSetUseNetworkQueue(NO);
     });
     
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
@@ -210,11 +230,10 @@
         }
         return invalidDelegates;
     }
-    
     return delegates;
 }
 
-+ (NSArray *)getInvalidCRCs:(NSArray *)crcs {
++ (NSArray *)getInvalidCRCs:(NSArray *)crcs withTimestamp:(NSString *)timestamp {
     dispatch_group_t waitGroup = dispatch_group_create();
     dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
     
@@ -222,33 +241,32 @@
     __block NSArray *CRCDataList = nil;
     __block BOOL networkErr = NO;
     dispatch_group_enter(waitGroup);
-    dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
-        WYSetUseNetworkQueue(YES);
         [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
             if (error) {
                 WYLog(@"%s: getCommitteeInfo failed with error code %ld", __func__, error.code);
                 [[FLTools share] showErrorInfo:error.localizedDescription];
                 networkErr = YES;
+                dispatch_group_leave(waitGroup);
             } else {
                 CRCVotingInfo = data;
+                NSInteger startDate = [WYVoteUtils getCurrentCRCStartDate:CRCVotingInfo.data];
+                if ([WYVoteUtils isCRCVoting:CRCVotingInfo.data] && [timestamp integerValue] >= startDate) {
+                    NSString *httpIP=[[FLTools share]http_IpFast];
+                    [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
+                        NSDictionary *param = data[@"data"];
+                        CRCDataList = [NSArray modelArrayWithClass:HWMCRListModel.class json:param[@"result"][@"crcandidatesinfo"]];
+                        dispatch_group_leave(waitGroup);
+                    } WithFailBlock:^(id data) {
+                        WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
+                        networkErr = YES;
+                        dispatch_group_leave(waitGroup);
+                    }];
+                } else {
+                    dispatch_group_leave(waitGroup);
+                }
             }
-            dispatch_group_leave(waitGroup);
         }];
-        WYSetUseNetworkQueue(NO);
-        
-        NSString *httpIP=[[FLTools share]http_IpFast];
-        WYSetUseNetworkQueue(YES);
-        [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-            NSDictionary *param = data[@"data"];
-            CRCDataList = [NSArray modelArrayWithClass:HWMCRListModel.class json:param[@"result"][@"crcandidatesinfo"]];
-            dispatch_group_leave(waitGroup);
-        } WithFailBlock:^(id data) {
-            WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
-            networkErr = YES;
-            dispatch_group_leave(waitGroup);
-        }];
-        WYSetUseNetworkQueue(NO);
     });
     
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
@@ -282,9 +300,6 @@
             }
             return invalidCRCs;
         }
-        return crcs;
-    } else {
-        WYLog(@"%s: CRCVotingInfo Empty!!", __func__);
     }
     return crcs;
 }
@@ -306,7 +321,6 @@
     __block BOOL networkErr = NO;
     dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
-        WYSetUseNetworkQueue(YES);
         [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
             if (error) {
                 WYLog(@"%s: getProposalDataList failed with error code %ld", __func__, error.code);
@@ -319,7 +333,6 @@
             }
             dispatch_group_leave(waitGroup);
         }];
-        WYSetUseNetworkQueue(NO);
     });
     
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
@@ -355,7 +368,7 @@
     return proposals;
 }
 
-+ (NSArray *)getInvalidImpeachments:(NSArray *)impeachments {
++ (NSArray *)getInvalidImpeachments:(NSArray *)impeachments withTimestamp:(NSString *)timestamp {
     dispatch_group_t waitGroup = dispatch_group_create();
     dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
     
@@ -363,7 +376,6 @@
     __block BOOL networkErr = NO;
     dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
-        WYSetUseNetworkQueue(YES);
         [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
             if (error) {
                 WYLog(@"%s: getCommitteeInfo failed with error code %ld", __func__, error.code);
@@ -373,8 +385,8 @@
             } else {
                 ELACommitteeInfoModel *CRCInfo = data;
                 NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
-                if (index) {
-                    WYSetUseNetworkQueue(YES);
+                NSInteger startDate = [WYVoteUtils getCurrentCRCStartDate:CRCInfo.data];
+                if (index && [timestamp integerValue] >= startDate) {
                     [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
                         if (error) {
                             WYLog(@"%s: getCouncilList failed with error code %ld", __func__, error.code);
@@ -386,13 +398,11 @@
                         }
                         dispatch_group_leave(waitGroup);
                     }];
-                    WYSetUseNetworkQueue(NO);
                 } else {
                     dispatch_group_leave(waitGroup);
                 }
             }
         }];
-        WYSetUseNetworkQueue(NO);
     });
     
     long status = dispatch_group_wait(waitGroup, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * WAIT_TIMEOUT));
@@ -435,6 +445,15 @@
         }
     }
     return NO;
+}
+
++ (NSInteger)getCurrentCRCStartDate:(NSArray *)data {
+    for(ELACommitteeInfoModel *item in data) {
+        if(item.status && [item.status isEqualToString:@"CURRENT"]) {
+            return [item.startDate integerValue];
+        }
+    }
+    return 0;
 }
 
 + (NSDictionary *)getValidPayloads:(NSDictionary *)payloads withInvalidAddrs:(NSDictionary *)invalidAddrs {
@@ -499,11 +518,15 @@
     if (!votePayloads) {
         return nil;
     }
+    NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+    if (!voteTimestamps) {
+        return nil;
+    }
     NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];
     if (!voteAddrs) {
         return nil;
     }
-    NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs];
+    NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs withVoteTimestamps:voteTimestamps];
     if (!invalidAddrs) {
         return nil;
     }
@@ -529,9 +552,28 @@
     if (!voteInfo) {
         return nil;
     }
+    
+    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in voteInfo[@"invalidCandidates"]) {
+        if (![item[@"Type"] isEqualToString:@"Delegate"]) {
+            [invalidCandidates addObject:item];
+        } else {
+            NSMutableArray *invalidDelegates = [item[@"Candidates"] mutableCopy];
+            for (NSString *voteKey in votes) {
+                if ([invalidDelegates containsObject:voteKey]) {
+                    [invalidDelegates removeObject:voteKey];
+                }
+            }
+            [invalidCandidates addObject:@{
+                @"Type": @"Delegate",
+                @"Candidates": invalidDelegates
+            }];
+        }
+    }
+    
     return @{
         @"votePayloads": votes,
-        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+        @"invalidCandidates": invalidCandidates
     };
 }
 
@@ -540,9 +582,28 @@
     if (!voteInfo) {
         return nil;
     }
+    
+    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in voteInfo[@"invalidCandidates"]) {
+        if (![item[@"Type"] isEqualToString:@"CRC"]) {
+            [invalidCandidates addObject:item];
+        } else {
+            NSMutableArray *invalidCRCs = [item[@"Candidates"] mutableCopy];
+            for (NSString *voteKey in votes) {
+                if ([invalidCRCs containsObject:voteKey]) {
+                    [invalidCRCs removeObject:voteKey];
+                }
+            }
+            [invalidCandidates addObject:@{
+                @"Type": @"CRC",
+                @"Candidates": invalidCRCs
+            }];
+        }
+    }
+    
     return @{
         @"votePayloads": votes,
-        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+        @"invalidCandidates": invalidCandidates
     };
 }
 
@@ -552,12 +613,31 @@
         return nil;
     }
     
-//    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
+    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
     
-    NSDictionary *votePayloads = [WYVoteUtils mergeProposals:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
+    //    NSDictionary *votePayloads = [WYVoteUtils mergeProposals:votes withPayloads:voteInfo[@"validPayloads"][@"CRCProposal"]];
+    
+    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in voteInfo[@"invalidCandidates"]) {
+        if (![item[@"Type"] isEqualToString:@"CRCProposal"]) {
+            [invalidCandidates addObject:item];
+        } else {
+            NSMutableArray *invalidProposals = [item[@"Candidates"] mutableCopy];
+            for (NSString *voteKey in votePayloads) {
+                if ([invalidProposals containsObject:voteKey]) {
+                    [invalidProposals removeObject:voteKey];
+                }
+            }
+            [invalidCandidates addObject:@{
+                @"Type": @"CRCProposal",
+                @"Candidates": invalidProposals
+            }];
+        }
+    }
+    
     return @{
         @"votePayloads": votePayloads,
-        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+        @"invalidCandidates": invalidCandidates
     };
 }
 
@@ -567,15 +647,33 @@
         return nil;
     }
     
-//    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCImpeachment"]];
-//    return @{
-//        @"votePayloads": votePayloads,
-//        @"invalidCandidates": voteInfo[@"invalidCandidates"]
-//    };
+    //    NSDictionary *votePayloads = [WYVoteUtils mergePayloads:votes withPayloads:voteInfo[@"validPayloads"][@"CRCImpeachment"]];
+    //    return @{
+    //        @"votePayloads": votePayloads,
+    //        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+    //    };
+    
+    NSMutableArray *invalidCandidates = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in voteInfo[@"invalidCandidates"]) {
+        if (![item[@"Type"] isEqualToString:@"CRCImpeachment"]) {
+            [invalidCandidates addObject:item];
+        } else {
+            NSMutableArray *invalidImpeachments = [item[@"Candidates"] mutableCopy];
+            for (NSString *voteKey in votes) {
+                if ([invalidImpeachments containsObject:voteKey]) {
+                    [invalidImpeachments removeObject:voteKey];
+                }
+            }
+            [invalidCandidates addObject:@{
+                @"Type": @"CRCImpeachment",
+                @"Candidates": invalidImpeachments
+            }];
+        }
+    }
     
     return @{
         @"votePayloads": votes,
-        @"invalidCandidates": voteInfo[@"invalidCandidates"]
+        @"invalidCandidates": invalidCandidates
     };
 }
 
