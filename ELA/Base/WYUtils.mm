@@ -25,29 +25,26 @@
 #import "MyUtil.h"
 #import "ELWalletManager.h"
 
-static dispatch_queue_t logQueue = nil;
-static dispatch_queue_t networkQueue = nil;
-static dispatch_queue_t taskQueue = nil;
 static BOOL useNetworkQueue = NO;
-static NSString *logPath = nil;
-static NSDateFormatter *dateFormatter = nil;
 static NSUncaughtExceptionHandler *nextHandler = nil;
-static WYUtils *sharedWYUtils = nil;
 static NSMutableDictionary *globalDic = nil;
 
 @implementation WYUtils
 
 + (WYUtils *)shared {
-    if (!sharedWYUtils) {
+    static WYUtils *sharedWYUtils = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         sharedWYUtils = [[WYUtils alloc] init];
-    }
+    });
     return sharedWYUtils;
 }
 
 + (void)setGlobal:(NSString *)key withValue:(id _Nullable)value {
-    if (!globalDic) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         globalDic = [[NSMutableDictionary alloc] init];
-    }
+    });
     globalDic[key] = value;
 }
 
@@ -59,16 +56,20 @@ static NSMutableDictionary *globalDic = nil;
 }
 
 + (dispatch_queue_t)getNetworkQueue {
-    if (!networkQueue) {
+    static dispatch_queue_t networkQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         networkQueue = dispatch_queue_create("elastos.elawallet.NetworkQueue", DISPATCH_QUEUE_CONCURRENT);
-    }
+    });
     return networkQueue;
 }
 
 + (dispatch_queue_t)getTaskQueue {
-    if (!taskQueue) {
+    static dispatch_queue_t taskQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         taskQueue = dispatch_queue_create("elastos.elawallet.TaskQueue", DISPATCH_QUEUE_CONCURRENT);
-    }
+    });
     return taskQueue;
 }
 
@@ -270,17 +271,25 @@ static NSMutableDictionary *globalDic = nil;
 @end
 
 void WYLog(NSString *fmt, ...) {
-    if (!logQueue) {
+    static dispatch_queue_t logQueue = nil;
+    static dispatch_once_t onceQueue;
+    dispatch_once(&onceQueue, ^{
         logQueue = dispatch_queue_create("elastos.elawallet.LogQueue", DISPATCH_QUEUE_SERIAL);
-    }
-    if (!logPath) {
+    });
+    
+    static NSString *logPath = nil;
+    static dispatch_once_t oncePath;
+    dispatch_once(&oncePath, ^{
         NSString *rootPath = [MyUtil getRootPath];
         logPath = [rootPath stringByAppendingPathComponent:LOG_FILE_NAME];
-    }
-    if (!dateFormatter) {
+    });
+    
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceFormatter;
+    dispatch_once(&onceFormatter, ^{
         dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
-    }
+    });
     
     @autoreleasepool {
         va_list args;
