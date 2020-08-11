@@ -446,77 +446,24 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
-        dispatch_group_t waitGroup = dispatch_group_create();
-        dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
-        
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_async(waitQueue, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            WYSetUseNetworkQueue(YES);
-            NSString *httpIP=[[FLTools share]http_IpFast];
-            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-                NSDictionary *param = data[@"data"];
-                WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
-                dispatch_group_leave(waitGroup);
-            } WithFailBlock:^(id data) {
-                WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
-                dispatch_group_leave(waitGroup);
-            }];
-            
-            [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
-                WYLog(@"CRCommittee Info: %@", @{
-                    @"data": data,
-                    @"error": error
-                                               });
-                if (!error) {
-                    ELACommitteeInfoModel *CRCInfo = data;
-                    NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
-                    if (index) {
-                        [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
-                            WYLog(@"CRCouncil List: %@", @{
-                                @"data": data,
-                                @"error": error
-                                                         });
-                            dispatch_group_leave(waitGroup);
-                        }];
-                    } else {
-                        dispatch_group_leave(waitGroup);
-                    }
-                } else {
-                    dispatch_group_leave(waitGroup);
-                }
-            }];
-            
-            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-                NSDictionary *param = data[@"data"];
-                WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
-                dispatch_group_leave(waitGroup);
-            } WithFailBlock:^(id data) {
-                WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
-                dispatch_group_leave(waitGroup);
-            }];
-            
-            [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
-                WYLog(@"Proposals Info: %@", @{
-                    @"data": data,
-                    @"error": error
-                                             });
-                dispatch_group_leave(waitGroup);
-            }];
-            WYSetUseNetworkQueue(NO);
+            NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
+            NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
+            NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+            NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];
+            NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs withVoteTimestamps:voteTimestamps];
+            WYLog(@"Vote Info: %@", voteInfo);
+            WYLog(@"Vote Payloads: %@", votePayloads);
+            WYLog(@"Vote Addrs: %@", voteAddrs);
+            WYLog(@"Invalid Addrs: %@", invalidAddrs);
             
         });
         
         [self hiddLoading];
         
         // WYDebug
-        
         WYLog(@"=== wydebug start ===");
-        
-        WYLog(@"VoteInfo: %@", [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID]);
         
         WYLog(@"=== wydebug end ===");
     }

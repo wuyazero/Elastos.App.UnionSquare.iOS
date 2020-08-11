@@ -30,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)getVoteInfo:(NSString *)masterWalletID;
 + (NSDictionary *)getVotePayloads:(NSDictionary *)voteInfo;
 + (NSDictionary *)getVoteAddrs:(NSDictionary *)votePayloads;
-+ (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs;
++ (NSDictionary *)getVoteTimestamps:(NSDictionary *)voteInfo;
++ (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs withVoteTimestamps:(NSDictionary *)voteTimestamps;
 + (NSDictionary *)getValidPayloads:(NSDictionary *)payloads withInvalidAddrs:(NSDictionary *)invalidAddrs;
 + (NSDictionary *)prepareVoteInfo:(NSString *)masterWalletID;
 + (NSDictionary *)createDelegateVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
@@ -38,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)createProposalVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 + (NSDictionary *)createImpeachmentVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 + (NSInteger)getCurrentCRCIndex:(NSArray *)data;
++ (NSInteger)getCurrentCRCStartDate:(NSArray *)data;
 
 @end
 
