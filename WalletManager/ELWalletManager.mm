@@ -3362,7 +3362,10 @@ void *ReverseByteOrder(void *p, unsigned int len)
         
         Json utxo = [self jsonWithString:[utxoDic jsonStringEncoded]];
         
-        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(recipient, amount, utxo, payloadJson);
+//        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(recipient, amount, utxo, payloadJson);
+        
+        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(payloadJson);
+        
         json = resultJson;
     }
     catch (const std:: exception &e) {
