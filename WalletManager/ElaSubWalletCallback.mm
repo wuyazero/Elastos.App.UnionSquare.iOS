@@ -143,4 +143,9 @@ void ElaSubWalletCallback::OnConnectStatusChanged(const std::string &status){
     [[NSNotificationCenter defaultCenter] postNotificationName:ConnectStatusChanged object:dic];
     
 }
+
+void ElaSubWalletCallback::OnETHSCEventHandled(const nlohmann::json &event) {
+    
+}
+
 //@end
