@@ -451,9 +451,11 @@
             NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
             NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
             NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+            NSInteger voteAmount = [WYVoteUtils getTotalAmount:voteInfo];
             NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];
             NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs withVoteTimestamps:voteTimestamps];
             WYLog(@"Vote Info: %@", voteInfo);
+            WYLog(@"Vote Amount: %ld", voteAmount);
             WYLog(@"Vote Payloads: %@", votePayloads);
             WYLog(@"Vote Addrs: %@", voteAddrs);
             WYLog(@"Invalid Addrs: %@", invalidAddrs);
