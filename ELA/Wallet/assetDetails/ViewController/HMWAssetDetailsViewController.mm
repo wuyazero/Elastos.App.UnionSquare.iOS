@@ -20,7 +20,8 @@
 #import "HWMTransactionDetailsView.h"
 //#import "HMWpwdPopupView.h"
 #import "HMWSendSuccessPopuView.h"
-
+#import "WYVoteUtils.h"
+#import "WYVoteDetailsViewController.h"
 
 
 static NSString *cellString=@"HMWAssetDetailsTableViewCell";
@@ -100,6 +101,39 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
 @property (weak, nonatomic) IBOutlet UIButton *anyChangeInTheWholeButton;
 @property (weak, nonatomic) IBOutlet UIButton *transactionRecordsBtton;
 @property (weak, nonatomic) IBOutlet UIButton *EarningsRecordButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *voteStatusButton;
+@property (weak, nonatomic) IBOutlet UIView *voteStatusView;
+
+@property (weak, nonatomic) IBOutlet UIView *voteOverviewView;
+@property (weak, nonatomic) IBOutlet UIView *voteSepView;
+@property (weak, nonatomic) IBOutlet UIView *voteDPoSView;
+@property (weak, nonatomic) IBOutlet UIView *voteCRCView;
+@property (weak, nonatomic) IBOutlet UIView *voteImpeachView;
+@property (weak, nonatomic) IBOutlet UIView *voteProposalView;
+
+@property (weak, nonatomic) IBOutlet UIButton *DPoSInvalidButton;
+@property (weak, nonatomic) IBOutlet UIButton *CRCInvalidButton;
+@property (weak, nonatomic) IBOutlet UIButton *impeachInvalidButton;
+@property (weak, nonatomic) IBOutlet UIButton *proposalInvalidButton;
+
+@property (weak, nonatomic) IBOutlet UILabel *voteAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *voteTimeLabel;
+@property (weak, nonatomic) IBOutlet UIButton *voteDetailsButton;
+
+@property (weak, nonatomic) IBOutlet UIImageView *DPoSIconImage;
+@property (weak, nonatomic) IBOutlet UILabel *DPoSAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *DPoSTitleLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *CRCIconImage;
+@property (weak, nonatomic) IBOutlet UILabel *CRCAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *CRCTitleLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *impeachIconImage;
+@property (weak, nonatomic) IBOutlet UILabel *impeachAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *impeachTitleLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *proposalIconImage;
+@property (weak, nonatomic) IBOutlet UILabel *proposalAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *proposalTitleLabel;
+
 /*
  *<# #>
  */
@@ -126,6 +160,8 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
  */
 @property(copy,nonatomic)NSString *JSONString;
 
+@property (strong, nonatomic) NSDictionary *voteData;
+
 @end
 
 @implementation HMWAssetDetailsViewController
@@ -145,10 +181,45 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     [self.collectionButton setTitle:NSLocalizedString(@"收款", nil) forState:UIControlStateNormal];
     [self.transactionRecordsBtton setTitle:NSLocalizedString(@"交易记录", nil) forState:UIControlStateNormal];
     [self.EarningsRecordButton setTitle:NSLocalizedString(@"收益记录", nil) forState:UIControlStateNormal];
+    [self.voteStatusButton setTitle:NSLocalizedString(@"投票状态", nil) forState:UIControlStateNormal];
+    
+    self.DPoSInvalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.DPoSInvalidButton.titleLabel.minimumScaleFactor = 0.5f;
+    [self.DPoSInvalidButton.titleLabel sizeToFit];
+    self.DPoSInvalidButton.layer.masksToBounds = YES;
+    self.DPoSInvalidButton.layer.cornerRadius = self.DPoSInvalidButton.bounds.size.height / 2;
+    
+    self.CRCInvalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.CRCInvalidButton.titleLabel.minimumScaleFactor = 0.5f;
+    [self.CRCInvalidButton.titleLabel sizeToFit];
+    self.CRCInvalidButton.layer.masksToBounds = YES;
+    self.CRCInvalidButton.layer.cornerRadius = self.CRCInvalidButton.bounds.size.height / 2;
+    
+    self.impeachInvalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.impeachInvalidButton.titleLabel.minimumScaleFactor = 0.5f;
+    [self.impeachInvalidButton.titleLabel sizeToFit];
+    self.impeachInvalidButton.layer.masksToBounds = YES;
+    self.impeachInvalidButton.layer.cornerRadius = self.impeachInvalidButton.bounds.size.height / 2;
+    
+    self.proposalInvalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.proposalInvalidButton.titleLabel.minimumScaleFactor = 0.5f;
+    [self.proposalInvalidButton.titleLabel sizeToFit];
+    self.proposalInvalidButton.layer.masksToBounds = YES;
+    self.proposalInvalidButton.layer.cornerRadius = self.proposalInvalidButton.bounds.size.height / 2;
+    
+    self.voteDetailsButton.layer.borderWidth = 1.f;
+    self.voteDetailsButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+    
+    self.DPoSTitleLabel.text = NSLocalizedString(@"DPoS节点选举", nil);
+    self.CRCTitleLabel.text = NSLocalizedString(@"CR委员选举", nil);
+    self.impeachTitleLabel.text = NSLocalizedString(@"CR委员弹劾", nil);
+    self.proposalTitleLabel.text = NSLocalizedString(@"社区提案反对票", nil);
+    
     self.topUpButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     [self.anyChangeInTheWholeButton setTitle:NSLocalizedString(@"零钱换整", nil) forState:UIControlStateNormal];
     [self transactionRecordsAction:nil];
     [self.baseTableView setBackgroundColor:RGB(107, 133, 135)];
+    [self.voteStatusView setBackgroundColor:RGB(107, 133, 135)];
     self.leftOrRight=@"0";
     if ([self.model.iconName isEqualToString:@"ELA"]) {
         [self GetRegisteredProducerInfo];
@@ -173,6 +244,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(iconInfoUpdate:) name:progressBarcallBackInfo object:nil];
     
 }
+
 -(void)currentWalletAccountBalanceChanges:(NSNotification *)notification{
     
     NSDictionary *dic=[[NSDictionary alloc]initWithDictionary:notification.object];
@@ -188,6 +260,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             self.currencyNameLabel.text=@"ELA";
         }});
 }
+
 -(void)iconInfoUpdate:(NSNotification *)notification{
     
     
@@ -213,6 +286,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             }
         }}];
 }
+
 -(void)DetectionOfTheBalance{
     invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"GetAllUTXOs"];
     PluginResult * result =[[ELWalletManager share]GetAllUTXOs:mommand];
@@ -224,6 +298,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
         }
     }
 }
+
 -(void)AnyChangeInTheWholeWithUTXOs:(NSString*)UTXOs{
     UIView *mainView=[self mainWindow];
     [mainView addSubview:self.utxoTheWalletPopV];
@@ -233,6 +308,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     }];
     
 }
+
 -(HMWToDeleteTheWalletPopView *)utxoTheWalletPopV{
     if (!_utxoTheWalletPopV) {
         _utxoTheWalletPopV =[[HMWToDeleteTheWalletPopView alloc]init];
@@ -242,6 +318,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     
     return _utxoTheWalletPopV;
 }
+
 -(void)GetRegisteredProducerInfo{
     ELWalletManager *manager   =  [ELWalletManager share];
     
@@ -263,7 +340,6 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     NSString *Status = param[@"Status"];
     
     //    if (self.EarningsRecordButton.alpha==0) {
-    
     
     NSString *CRStatus = CRparam[@"Status"];
     
@@ -414,6 +490,11 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     self.leftOrRight=@"0";
     [self selecttState:self.transactionRecordsBtton];
     [self theNormalState:self.EarningsRecordButton];
+    [self theNormalState:self.voteStatusButton];
+    
+    self.baseTableView.alpha = 1.f;
+    self.voteStatusView.alpha = 0.f;
+    
     [self.baseTableView reloadData];
     if (self.allListArray.count==0) {
         self.noDataSourceTextLabel.alpha=1.f;
@@ -424,14 +505,19 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     }
     
 }
+
 - (IBAction)EarningsRecordAction:(id)sender {
     self.leftOrRight=@"1";
     if (self.NodeReturnsMutableArray.count==1) {
         [self loadGetAllCoinBaseTransactionWithIndex:0];
     }
     [self selecttState:self.EarningsRecordButton];
-    [self theNormalState:
-     self.transactionRecordsBtton];
+    [self theNormalState:self.transactionRecordsBtton];
+    [self theNormalState:self.voteStatusButton];
+    
+    self.baseTableView.alpha = 1.f;
+    self.voteStatusView.alpha = 0.f;
+    
     [self.baseTableView reloadData];
     if (self.NodeReturnsMutableArray.count==1) {
         self.noDataSourceTextLabel.text=NSLocalizedString(@"暂无收益记录", nil);
@@ -440,6 +526,220 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
         self.noDataSourceTextLabel.alpha=0.f;
     }
 }
+
+- (IBAction)voteStatusPressed:(id)sender {
+    
+    // 投票记录
+    [self selecttState:self.voteStatusButton];
+    [self theNormalState:self.transactionRecordsBtton];
+    [self theNormalState:self.EarningsRecordButton];
+    
+    
+    self.noDataSourceTextLabel.alpha = 0.f;
+    self.baseTableView.alpha = 0.f;
+    self.voteStatusView.alpha = 1.f;
+    
+    NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
+    NSDictionary *voteAmounts = [WYVoteUtils getVoteAmounts:voteInfo];
+    NSInteger totalAmount = [WYVoteUtils getTotalAmount:voteAmounts];
+    
+    if (voteInfo.count < 1 || totalAmount < 1) {
+        self.voteOverviewView.alpha = 0.f;
+        self.voteSepView.alpha = 0.f;
+        self.voteDPoSView.alpha = 0.f;
+        self.voteCRCView.alpha = 0.f;
+        self.voteImpeachView.alpha = 0.f;
+        self.voteProposalView.alpha = 0.f;
+        
+        self.noDataSourceTextLabel.text=NSLocalizedString(@"暂无投票记录", nil);
+        self.noDataSourceTextLabel.alpha = 1.f;
+        return;
+    }
+    
+    NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+    NSInteger lastTimestamp = [WYVoteUtils getLastTimestamp:voteTimestamps];
+    
+    NSString *amountStr = [[FLTools share] elaScaleConversionWith:[NSString stringWithFormat:@"%ld", totalAmount]];
+    NSString *timeStr = [[FLTools share] YMDHMSgetTimeFromTimesTamp:[NSString stringWithFormat:@"%ld", lastTimestamp]];
+    
+    self.voteAmountLabel.text = [NSString stringWithFormat:@"%@: %@ ELA", NSLocalizedString(@"金额总计", nil), amountStr];
+    self.voteTimeLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"最新投票时间", nil), timeStr];
+    
+    NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
+    NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];
+    
+    self.voteDetailsButton.alpha = 0.5f;
+    self.voteDetailsButton.userInteractionEnabled = NO;
+    [[FLTools share] showLoadingView];
+    
+    dispatch_async([WYUtils getTaskQueue], ^{
+        
+        NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs withVoteTimestamps:voteTimestamps];
+        NSDictionary *validPayloads = [WYVoteUtils getValidPayloads:votePayloads withInvalidAddrs:invalidAddrs];
+        
+        self.voteData = @{
+            @"voteInfo": voteInfo,
+            @"votePayloads": votePayloads,
+            @"voteAmounts": voteAmounts,
+            @"totalAmount": amountStr,
+            @"voteTimestamps": voteTimestamps,
+            @"lastTimestamp": timeStr,
+            @"voteAddrs": voteAddrs,
+            @"invalidAddrs": invalidAddrs,
+            @"validPayloads": validPayloads
+        };
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (voteAmounts[@"Delegate"]) {
+                self.DPoSIconImage.image = [UIImage imageNamed:@"asset_vote_node"];
+                NSString *DPoSAmount = [[FLTools share] elaScaleConversionWith:voteAmounts[@"Delegate"]];
+                self.DPoSAmountLabel.text = [NSString stringWithFormat:@"%@ ELA", DPoSAmount];
+                self.DPoSAmountLabel.alpha = 1.f;
+                
+                NSArray *invalidDPoS = invalidAddrs[@"Delegate"];
+                NSDictionary *validDPoS = validPayloads[@"Delegate"];
+                if (invalidDPoS.count > 0) {
+                    self.DPoSInvalidButton.alpha = 1.f;
+                    if (validDPoS.count > 0) {
+                        self.DPoSInvalidButton.titleLabel.text = NSLocalizedString(@"部分失效", nil);
+                    } else {
+                        self.DPoSInvalidButton.titleLabel.text = NSLocalizedString(@"已失效", nil);
+                    }
+                } else {
+                    self.DPoSInvalidButton.alpha = 0.f;
+                }
+            } else {
+                self.DPoSIconImage.image = [UIImage imageNamed:@"asset_vote_node_unchecked"];
+                self.DPoSAmountLabel.text = @"--";
+                self.DPoSAmountLabel.alpha = 0.6f;
+                self.DPoSInvalidButton.alpha = 0.f;
+            }
+            
+            if (voteAmounts[@"CRC"]) {
+                self.CRCIconImage.image = [UIImage imageNamed:@"asset_vote_cr"];
+                NSString *CRCAmount = [[FLTools share] elaScaleConversionWith:voteAmounts[@"CRC"]];
+                self.CRCAmountLabel.text = [NSString stringWithFormat:@"%@ ELA", CRCAmount];
+                self.CRCAmountLabel.alpha = 1.f;
+                
+                NSArray *invalidCRC = invalidAddrs[@"CRC"];
+                NSDictionary *validCRC = validPayloads[@"CRC"];
+                if (invalidCRC.count > 0) {
+                    self.CRCInvalidButton.alpha = 1.f;
+                    if (validCRC.count > 0) {
+                        self.CRCInvalidButton.titleLabel.text = NSLocalizedString(@"部分失效", nil);
+                    } else {
+                        self.CRCInvalidButton.titleLabel.text = NSLocalizedString(@"已失效", nil);
+                    }
+                } else {
+                    self.CRCInvalidButton.alpha = 0.f;
+                }
+            } else {
+                self.CRCIconImage.image = [UIImage imageNamed:@"asset_vote_cr_unchecked"];
+                self.CRCAmountLabel.text = @"--";
+                self.CRCAmountLabel.alpha = 0.6f;
+                self.CRCInvalidButton.alpha = 0.f;
+            }
+            
+            if (voteAmounts[@"CRCImpeachment"]) {
+                self.impeachIconImage.image = [UIImage imageNamed:@"asset_vote_judgement"];
+                NSString *impeachAmount = [[FLTools share] elaScaleConversionWith:voteAmounts[@"CRCImpeachment"]];
+                self.impeachAmountLabel.text = [NSString stringWithFormat:@"%@ ELA", impeachAmount];
+                self.impeachAmountLabel.alpha = 1.f;
+                
+                NSArray *invalidImpeach = invalidAddrs[@"CRCImpeachment"];
+                NSDictionary *validImpeach = validPayloads[@"CRCImpeachment"];
+                if (invalidImpeach.count > 0) {
+                    self.impeachInvalidButton.alpha = 1.f;
+                    if (validImpeach.count > 0) {
+                        self.impeachInvalidButton.titleLabel.text = NSLocalizedString(@"部分失效", nil);
+                    } else {
+                        self.impeachInvalidButton.titleLabel.text = NSLocalizedString(@"已失效", nil);
+                    }
+                } else {
+                    self.impeachInvalidButton.alpha = 0.f;
+                }
+            } else {
+                self.impeachIconImage.image = [UIImage imageNamed:@"asset_vote_judgement_unchecked"];
+                self.impeachAmountLabel.text = @"--";
+                self.impeachAmountLabel.alpha = 0.6f;
+                self.impeachInvalidButton.alpha = 0.f;
+            }
+            
+            if (voteAmounts[@"CRCProposal"]) {
+                self.proposalIconImage.image = [UIImage imageNamed:@"cr_vote_nay"];
+                NSString *proposalAmount = [[FLTools share] elaScaleConversionWith:voteAmounts[@"CRCProposal"]];
+                self.proposalAmountLabel.text = [NSString stringWithFormat:@"%@ ELA", proposalAmount];
+                self.proposalAmountLabel.alpha = 1.f;
+                
+                NSArray *invalidProposal = invalidAddrs[@"CRCProposal"];
+                NSDictionary *validProposal = validPayloads[@"CRCProposal"];
+                if (invalidProposal.count > 0) {
+                    self.proposalInvalidButton.alpha = 1.f;
+                    if (validProposal.count > 0) {
+                        self.proposalInvalidButton.titleLabel.text = NSLocalizedString(@"部分失效", nil);
+                    } else {
+                        self.proposalInvalidButton.titleLabel.text = NSLocalizedString(@"已失效", nil);
+                    }
+                } else {
+                    self.proposalInvalidButton.alpha = 0.f;
+                }
+            } else {
+                self.proposalIconImage.image = [UIImage imageNamed:@"cr_vote_nay_unchecked"];
+                self.proposalAmountLabel.text = @"--";
+                self.proposalAmountLabel.alpha = 0.6f;
+                self.proposalInvalidButton.alpha = 0.f;
+            }
+            
+            [[FLTools share] hideLoadingView];
+            self.voteDetailsButton.alpha = 1.f;
+            self.voteDetailsButton.userInteractionEnabled = YES;
+            
+        });
+        
+    });
+    
+}
+
+
+- (IBAction)voteDetailsPressed:(id)sender {
+    
+    self.voteDetailsButton.alpha = 0.5f;
+    self.voteDetailsButton.userInteractionEnabled = NO;
+    
+    NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
+    NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+    
+    [[FLTools share] showLoadingView];
+    
+    dispatch_async([WYUtils getTaskQueue], ^{
+        
+        NSDictionary *allInfo = [WYVoteUtils getAllInfo:voteTimestamps];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [[FLTools share] hideLoadingView];
+            self.voteDetailsButton.alpha = 1.0f;
+            self.voteDetailsButton.userInteractionEnabled = YES;
+            
+            if (!allInfo) {
+                [[FLTools share] showErrorInfo:NSLocalizedString(@"网络错误", nil)];
+                return;
+            }
+            
+            WYVoteDetailsViewController *voteDetailsVC = [[WYVoteDetailsViewController alloc] init];
+            NSMutableDictionary *voteDataInfo = [self.voteData mutableCopy];
+            voteDataInfo[@"allInfo"] = allInfo;
+            voteDetailsVC.voteData = voteDataInfo;
+            
+            [self.navigationController pushViewController:voteDetailsVC animated:YES];
+            
+        });
+        
+    });
+    
+}
+
 - (IBAction)transferEvent:(id)sender {
     self.transferButton.userInteractionEnabled=NO;
     HMWtransferViewController *transferVC=[[HMWtransferViewController alloc]init];
@@ -456,6 +756,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     self.transferButton.userInteractionEnabled=YES;
     
 }
+
 - (IBAction)top_upEvent:(id)sender {
     
     if (![self.title isEqualToString:@"ELA"]) {
@@ -482,6 +783,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
         
     }
 }
+
 - (IBAction)collectionEvent:(id)sender {
     self.collectionButton.userInteractionEnabled=NO;
     invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"createAddress"];
@@ -503,6 +805,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     
     self.collectionButton.userInteractionEnabled=YES;
 }
+
 -(NSArray *)allAddressAaary{
     if (!_allAddressAaary) {
         
@@ -511,6 +814,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     
     return _allAddressAaary;
 }
+
 -(NSArray*)loadAddress{
     
     invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"0",@"100"] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"getAllSubWalletAddress"];
@@ -590,16 +894,19 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     [self.baseTableView registerNib:[UINib nibWithNibName:showOwnerAddressCellString bundle:nil] forCellReuseIdentifier:showOwnerAddressCellString];
     self.baseTableView.tableFooterView=[[UIView alloc]initWithFrame:CGRectZero];
 }
+
 -(void)baseTableViewEndRF{
     [self.baseTableView.mj_header endRefreshing];
     [self.baseTableView.mj_footer endRefreshing];
 }
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if ([self.leftOrRight isEqualToString:@"0"]) {
         return self.allListArray.count;
     }
     return  self.NodeReturnsMutableArray.count;
 }
+
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (![self.leftOrRight isEqualToString:@"0"]&&indexPath.row==0) {
         showOwnerAddressTableViewCell *showCell=[tableView dequeueReusableCellWithIdentifier:showOwnerAddressCellString];
@@ -623,6 +930,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     return cell;
     
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if ([self.leftOrRight isEqualToString:@"0"]) {
         [self loadTheOrderDetailsWithIndex:indexPath.row];
@@ -633,11 +941,8 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
         [self loadGetAllCoinBaseTransactionDetailsWithIndex:indexPath.row];
     }
     
-    
-    
-    
-    
 }
+
 -(void)loadGetAllCoinBaseTransactionDetailsWithIndex:(NSInteger)index{
     assetDetailsModel *model= self.NodeReturnsMutableArray[index];
     invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"0",@"20",model.TxHash] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"getAllTransaction"];
@@ -676,6 +981,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     [self.navigationController pushViewController:transferTransactionDetailsVC animated:YES];
     
 }
+
 -(void)loadTheOrderDetailsWithIndex:(NSInteger)index{
     assetDetailsModel *model= self.allListArray[index];
     invokedUrlCommand *mommand=[[invokedUrlCommand alloc]initWithArguments:@[self.currentWallet.masterWalletID,self.model.iconName,@"0",@"20",model.TxHash] callbackId:self.currentWallet.walletID className:@"Wallet" methodName:@"getAllTransaction"];
@@ -807,30 +1113,35 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     [self.navigationController pushViewController:transferTransactionDetailsVC animated:YES];
     
 }
+
 -(void)setModel:(assetsListModel *)model{
     
     
     _model=model;
     
 }
+
 -(void)setCurrentWallet:(FLWallet *)currentWallet{
     _currentWallet=currentWallet;
 }
+
 -(void)setElaModel:(assetsListModel *)elaModel{
     _elaModel=elaModel;
 }
+
 -(void)theNormalState:(UIButton*)button{
     [button setTitleColor:RGB(160, 175, 177) forState:UIControlStateNormal];
     [button setBackgroundColor:[UIColor clearColor]];
     
-    
 }
+
 -(void)selecttState:(UIButton*)button{
     
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button setBackgroundColor:RGB(107, 133, 135)];
     
 }
+
 -(HMWSendSuccessPopuView *)sendSuccessPopuV{
     if (!_sendSuccessPopuV) {
         _sendSuccessPopuV =[[HMWSendSuccessPopuView alloc]init];
@@ -838,6 +1149,7 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     
     return _sendSuccessPopuV;
 }
+
 #pragma mark ---------HMWToDeleteTheWalletPopViewDelegate----------
 -(void)sureToDeleteViewWithPWD:(NSString *)pwd{
     [self loadAnyChangeInTheWhole];

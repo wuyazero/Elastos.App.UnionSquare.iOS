@@ -22,6 +22,8 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "HWMDetailsProposalModel.h"
+#import "ELAInformationDetail.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)getVotePayloads:(NSDictionary *)voteInfo;
 + (NSDictionary *)getVoteAddrs:(NSDictionary *)votePayloads;
 + (NSDictionary *)getVoteTimestamps:(NSDictionary *)voteInfo;
++ (NSInteger)getLastTimestamp:(NSDictionary *)voteTimestamps;
++ (NSDictionary *)getVoteAmounts:(NSDictionary *)voteInfo;
++ (NSInteger)getTotalAmount:(NSDictionary *)voteAmounts;
 + (NSDictionary *)getInvalidAddrs:(NSDictionary *)voteAddrs withVoteTimestamps:(NSDictionary *)voteTimestamps;
 + (NSDictionary *)getValidPayloads:(NSDictionary *)payloads withInvalidAddrs:(NSDictionary *)invalidAddrs;
 + (NSDictionary *)prepareVoteInfo:(NSString *)masterWalletID;
@@ -40,6 +45,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)createImpeachmentVote:(NSDictionary *)votes withWallet:(NSString *)masterWalletID;
 + (NSInteger)getCurrentCRCIndex:(NSArray *)data;
 + (NSInteger)getCurrentCRCStartDate:(NSArray *)data;
++ (NSArray *)getAllDelegates;
++ (NSArray *)getAllCRCs:(NSString *)timestamp;
++ (NSArray *)getAllProposals;
++ (NSArray *)getAllCouncilData:(NSString *)timestamp;
++ (NSDictionary *)getAllInfo:(NSDictionary *)voteTimestamps;
++ (HWMDetailsProposalModel *)getProposalDetails:(NSString *)proposalHash;
++ (ELAInformationDetail *)getCouncilDetails:(NSString *)did;
 
 @end
 

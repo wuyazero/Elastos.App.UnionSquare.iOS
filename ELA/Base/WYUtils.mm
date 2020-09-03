@@ -73,6 +73,15 @@ static NSMutableDictionary *globalDic = nil;
     return taskQueue;
 }
 
++ (dispatch_queue_t)getSerialQueue {
+    static dispatch_queue_t serialQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        serialQueue = dispatch_queue_create("elastos.elawallet.TaskQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    return serialQueue;
+}
+
 + (NSString *)getLogPath {
     NSString *rootPath = [MyUtil getRootPath];
     return [rootPath stringByAppendingPathComponent:LOG_FILE_NAME];
