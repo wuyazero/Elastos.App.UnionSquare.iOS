@@ -42,21 +42,36 @@
 }
 
 + (NSDictionary *)getDIDInfoFromString:(NSString *)DIDString {
+    NSDictionary *result = nil;
     const char *DIDCString = [DIDString UTF8String];
     DID *did = DID_FromString(DIDCString);
     DIDDocument *doc = DID_Resolve(did, true);
     if (doc) {
-        DIDURL *url = DIDURL_NewByDid(did, "name");
         time_t endTime = DIDDocument_GetExpires(doc);
-        Credential *cred = DIDDocument_GetCredential(doc, url);
-        const char *didCName = Credential_GetProperty(cred, "name");
-        NSString *didName = (didCName == NULL) ? nil : [NSString stringWithUTF8String:didCName];
         NSString *endTimeString=[[FLTools share]SpecialTimeZoneConversion:[NSString stringWithFormat:@"%@",@(endTime)]];
-        NSDictionary *result = @{
-            @"didName": didName,
-            @"endTime": endTimeString,
-            @"DIDString": DIDString
-        };
+        
+        DIDURL *url = DIDURL_NewByDid(did, "credential");
+        Credential *cred = DIDDocument_GetCredential(doc, url);
+        if (cred) {
+            const char *credentialCJson = Credential_GetProperty(cred, "credentialJson");
+            NSString *credentialJson = (credentialCJson == NULL) ? nil : [NSString stringWithUTF8String:credentialCJson];
+            NSDictionary *credentialDic = [[FLTools share] dictionaryWithJsonString:credentialJson];
+            result = @{
+                @"didName": credentialDic[@"didName"],
+                @"endTime": endTimeString,
+                @"DIDString": DIDString
+            };
+        } else {
+            url = DIDURL_NewByDid(did, "name");
+            cred = DIDDocument_GetCredential(doc, url);
+            const char *didCName = Credential_GetProperty(cred, "name");
+            NSString *didName = (didCName == NULL) ? nil : [NSString stringWithUTF8String:didCName];
+            result = @{
+                @"didName": didName,
+                @"endTime": endTimeString,
+                @"DIDString": DIDString
+            };
+        }
         DIDURL_Destroy(url);
         DIDDocument_Destroy(doc);
         DID_Destroy(did);

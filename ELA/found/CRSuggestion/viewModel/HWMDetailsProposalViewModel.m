@@ -40,6 +40,39 @@
 }
 -(HWMDetailsProposalModel*)AnalyticalDataWithDicJosn:(id)json{
     HWMDetailsProposalModel *Fmodel=[HWMDetailsProposalModel modelWithJSON:json];
+    
+    if ([Fmodel.status isEqualToString:@"VOTING"]) {
+        Fmodel.status=NSLocalizedString(@"委员评议",nil);
+    }else if ([Fmodel.status isEqualToString:@"NOTIFICATION"]){
+        Fmodel.status=NSLocalizedString(@"公示中",nil);
+    }else if ([Fmodel.status isEqualToString:@"ACTIVE"]){
+        Fmodel.status=NSLocalizedString(@"执行中",nil);
+    }else if ([Fmodel.status isEqualToString:@"FINAL"]){
+        Fmodel.status=NSLocalizedString(@"已完成",nil);
+    }else if ([Fmodel.status isEqualToString:@"REJECTED"]){
+        Fmodel.status=NSLocalizedString(@"未通过",nil);
+    }else if ([Fmodel.status isEqualToString:@"VETOED"]){
+        Fmodel.status=NSLocalizedString(@"已否决",nil);
+    }
+    
+    if ([Fmodel.type isEqualToString:@"normal"]) {
+        Fmodel.type=NSLocalizedString(@"新动议",nil);
+    }else if ([Fmodel.type isEqualToString:@"closeproposal"]){
+        Fmodel.type=NSLocalizedString(@"终止提案动议",nil);
+    }else if ([Fmodel.type isEqualToString:@"changeproposalowner"]){
+        Fmodel.type=NSLocalizedString(@"变更提案动议",nil);
+    }else if ([Fmodel.type isEqualToString:@"secretarygeneral"]){
+        Fmodel.type=NSLocalizedString(@"变更秘书长动议",nil);
+    }
+    
+    if (Fmodel.NewSecretaryDID && Fmodel.NewSecretaryDID.length < 35) {
+        Fmodel.NewSecretaryDID = [NSString stringWithFormat:@"did:elastos:%@", Fmodel.NewSecretaryDID];
+    }
+    
+    if (Fmodel.NewOwnerDID && Fmodel.NewOwnerDID.length < 35) {
+        Fmodel.NewOwnerDID = [NSString stringWithFormat:@"did:elastos:%@", Fmodel.NewOwnerDID];
+    }
+    
     Fmodel.abstractCell=[[FLTools share]calculateRowHeight:Fmodel.abstract fontSize:11 withmargin:30];
     Fmodel.duration=[[FLTools share]RemainingTimeFormatting:Fmodel.duration];
     Fmodel.rejectHeight=[[FLTools share]isEmptyString:Fmodel.rejectHeight];

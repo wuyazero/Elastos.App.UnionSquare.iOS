@@ -100,7 +100,13 @@
 @end
 @implementation HWMDetailsProposalModel
 + (NSDictionary *)modelCustomPropertyMapper {
-    return @{@"ID": @"id",@"abstract":@"abs"};
+    return @{
+        @"ID": @"id",
+        @"abstract":@"abs",
+        @"NewAddress":@"newAddress",
+        @"NewSecretaryDID":@"newSecretaryDID",
+        @"NewOwnerDID":@"newOwnerDID"
+    };
 }
 
 + (void)goThroughAllProperty:(id)object propertyBlock:(void(^)(NSString *propertyName))propertyBlcok {
