@@ -196,7 +196,7 @@
             self.cellTitle.text = info[@"title"];
         }
         
-        dispatch_async([WYUtils getTaskQueue], ^{
+        dispatch_async([WYUtils getSerialQueue], ^{
             
             HWMDetailsProposalModel *details = [WYVoteUtils getProposalDetails:address];
             
@@ -226,7 +226,7 @@
         if (info) {
             self.cellTitle.text = info.didName;
             
-            dispatch_async([WYUtils getTaskQueue], ^{
+            dispatch_async([WYUtils getSerialQueue], ^{
                 
                 ELAInformationDetail *details = [WYVoteUtils getCouncilDetails:info.did];
                 

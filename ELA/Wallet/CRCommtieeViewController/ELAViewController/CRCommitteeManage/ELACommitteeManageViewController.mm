@@ -145,14 +145,14 @@
 - (void)updateInfoButtonAction:(id)sender
 {
     
-    if(_type == 1)
-    {
+//    if(_type == 1)
+//    {
         FLWallet *wallet = [ELWalletManager share].currentWallet;
         HWMCRRegisteredViewController *vc=[[ HWMCRRegisteredViewController alloc]init];
         vc.isUpdate=YES;
         vc.currentWallet = wallet;
         [self.navigationController pushViewController:vc animated:YES];
-    }
+//    }
 }
 
 - (void)updataDIDInfoEvent:(id)sender
@@ -498,13 +498,13 @@
    // [button addTarget:self action:@selector(manageButtonAction:) forControlEvents:(UIControlEventTouchUpInside)];
     [self.view addSubview:button];
 
-    updateInfoButton.hidden = YES;
+//    updateInfoButton.hidden = YES;
     if(_type == 1)
     {
         NSString *des = @"本轮竞选已经结束，很遗憾您此次未能当选。感谢您的参与，祝您好运！";
         NSString *text = ELALocalizedString(des);
         subLabel.text = text;
-//        updateInfoButton.hidden = YES;
+        updateInfoButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
     }
     else if(_type == 2)
