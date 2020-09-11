@@ -142,7 +142,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
             return [self setTableViewFootViewWithHeight:self.secHeight];
         }
     }else{
-        if (section==3) {
+        if (section==7) {
             return [self setTableViewFootViewWithHeight:self.secHeight];
         }
     }
@@ -154,23 +154,37 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
             return self.secHeight;
         }
     }else{
-        if (section==3) {
+        if (section==7) {
             return self.secHeight;
         }
     }
     return 0.01;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if ((self.isOpen==NO&&section==1)||(self.isOpen==YES&&section==4)){
+    if ((self.isOpen==NO&&section==1)||(self.isOpen==YES&&section==8)){
         return self.DetailsModel.trackingResult.count;
     }
     return 1;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section==0&&self.isOpen) {
+    if (indexPath.section==1 && self.isOpen) {
         return 0.01;
     }
-    if ((self.isOpen==NO&&indexPath.section==1)||(self.isOpen==YES&&indexPath.section==4)){
+    
+    if (self.isOpen && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)] && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] && indexPath.section == 4) {
+        return 0.01;
+    }
+    
+    if (self.isOpen && (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] || !self.DetailsModel.NewOwnerDID) && indexPath.section == 5) {
+        WYLog(@"=== dev temp === New Owner DID: HIDE 0");
+        return 0.01;
+    }
+    
+    if (self.isOpen && (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更秘书长动议",nil)] || !self.DetailsModel.NewSecretaryDID) && indexPath.section == 6) {
+        return 0.01;
+    }
+    
+    if ((self.isOpen==NO&&indexPath.section==1)||(self.isOpen==YES&&indexPath.section==8)){
         HWMVoteResultModel *model=self.DetailsModel.trackingResult[indexPath.row];
         if (model.commentModel.createdBy) {
             UITableViewCell *cell=[self tableView:tableView cellForRowAtIndexPath:indexPath];
@@ -178,7 +192,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
         }
         return model.reasonCell+70;
     }
-    if (indexPath.section==3||self.isOpen==NO) {
+    if (indexPath.section==7||self.isOpen==NO) {
         return self.DetailsModel.abstractCell+50;
     }
     if ([self.cellInfoArray[indexPath.section] isEqualToString:NSLocalizedString(@"提案哈希", nil)]) {
@@ -187,7 +201,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     return 70;
 }
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if ((self.isOpen==NO&&indexPath.section==1)||(self.isOpen==YES&&indexPath.section==4)){
+    if ((self.isOpen==NO&&indexPath.section==1)||(self.isOpen==YES&&indexPath.section==8)){
         CGFloat isHid=0.f;
         if (indexPath.row!=self.DetailsModel.trackingResult.count-1) {
             isHid=1.f;
@@ -223,19 +237,51 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     }
     switch (indexPath.section) {
         case 0:
+            cell.constLabel.text = self.DetailsModel.type;
+        break;
+        case 1:
             cell.constLabel.text=self.DetailsModel.duration;
             cell.alpha=0.f;
             break;
-        case 1:
+        case 2:
             cell.constLabel.numberOfLines=0.f;
             cell.constLabel.text=self.model.proposalHash;
             break;
-        case 2:
+        case 3:
             cell.constLabel.text=self.DetailsModel.address;
             cell.constLabel.textColor=RGBA(28, 164, 252, 1);
             cell.constLabel.userInteractionEnabled=YES;
             break;
-        case 3:
+        case 4:
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)] && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)]) {
+                cell.alpha = 0.f;
+            } else if ([self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)]) {
+                cell.constLabel.text = [NSString stringWithFormat:@"#%@ %@", self.DetailsModel.closeProposalNum, self.DetailsModel.targetProposalTitle];
+            } else {
+                cell.constLabel.text = [NSString stringWithFormat:@"#%@ %@", self.DetailsModel.targetProposalNum, self.DetailsModel.targetProposalTitle];
+            }
+            break;
+        case 5:
+            WYLog(@"=== dev temp === New Owner DID: %@", self.DetailsModel.NewOwnerDID);
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] || !self.DetailsModel.NewOwnerDID) {
+                WYLog(@"=== dev temp === New Owner DID: HIDE 1");
+                cell.alpha = 0.f;
+            } else {
+                cell.constLabel.text = self.DetailsModel.NewOwnerDID;
+                cell.constLabel.textColor=RGBA(28, 164, 252, 1);
+                cell.constLabel.userInteractionEnabled=YES;
+            }
+            break;
+        case 6:
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更秘书长动议",nil)] || !self.DetailsModel.NewSecretaryDID) {
+                cell.alpha = 0.f;
+            } else {
+                cell.constLabel.text = self.DetailsModel.NewSecretaryDID;
+                cell.constLabel.textColor=RGBA(28, 164, 252, 1);
+                cell.constLabel.userInteractionEnabled=YES;
+            }
+            break;
+        case 7:
             cell.constLabel.text=self.DetailsModel.abstract;
             break;
         default:
@@ -315,7 +361,16 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 }
 -(NSArray *)cellInfoArray{
     if (!_cellInfoArray) {
-        _cellInfoArray =@[NSLocalizedString(@"剩余时间", nil),NSLocalizedString(@"提案哈希", nil),NSLocalizedString(@"原文网址", nil),NSLocalizedString(@"摘要", nil)];
+        _cellInfoArray =@[
+            NSLocalizedString(@"提案种类", nil),
+            NSLocalizedString(@"剩余时间", nil),
+            NSLocalizedString(@"提案哈希", nil),
+            NSLocalizedString(@"原文网址", nil),
+            NSLocalizedString(@"原提案", nil),
+            NSLocalizedString(@"新提案负责人DID", nil),
+            NSLocalizedString(@"新任秘书长DID", nil),
+            NSLocalizedString(@"摘要", nil)
+        ];
     }
     return _cellInfoArray;
 }

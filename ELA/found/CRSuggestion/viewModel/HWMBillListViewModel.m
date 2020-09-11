@@ -70,6 +70,17 @@
         }else if ([model.status isEqualToString:@"VETOED"]){
             model.status=NSLocalizedString(@"已否决",nil);
         }
+        
+        if ([model.type isEqualToString:@"normal"]) {
+            model.type=NSLocalizedString(@"新动议",nil);
+        }else if ([model.type isEqualToString:@"closeproposal"]){
+            model.type=NSLocalizedString(@"终止提案动议",nil);
+        }else if ([model.type isEqualToString:@"changeproposalowner"]){
+            model.type=NSLocalizedString(@"变更提案动议",nil);
+        }else if ([model.type isEqualToString:@"secretarygeneral"]){
+            model.type=NSLocalizedString(@"变更秘书长动议",nil);
+        }
+        
         model.cellHeight=[[FLTools share]calculateRowHeight:model.title fontSize:14 withmargin:30];
         if (model.cellHeight>60) {
             model.lastCellHeight=60;

@@ -51,6 +51,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 @interface HWMDetailsProposalModel : NSObject<NSCoding>
 @property(copy,nonatomic)NSString *ID;
+
+@property(copy,nonatomic)NSString *status;
+@property(copy,nonatomic)NSString *type;
+
+@property(copy,nonatomic)NSString *targetProposalTitle;
+@property(copy,nonatomic)NSString *closeProposalNum;
+@property(copy,nonatomic)NSString *targetProposalNum;
+@property(copy,nonatomic)NSString *NewAddress;
+@property(copy,nonatomic)NSString *NewSecretaryDID;
+@property(copy,nonatomic)NSString *NewOwnerDID;
+
 @property(copy,nonatomic)NSString *abstract;
 @property(copy,nonatomic)NSString *address;
 @property(copy,nonatomic)NSString *duration;
