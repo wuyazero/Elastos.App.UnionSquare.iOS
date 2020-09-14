@@ -2722,7 +2722,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
                 String jsonString= mainchainSubWallet->ProposalChangeOwnerDigest(payloadJson);
                 resultString=[self stringWithCString:jsonString];
             } else if ([Type isEqualToString:@"secretarygeneral"]) {
-                String jsonString= mainchainSubWallet->ProposalSecretaryGeneralElectionOwnerDigest(payloadJson);
+                String jsonString= mainchainSubWallet->ProposalSecretaryGeneralElectionDigest(payloadJson);
                 resultString=[self stringWithCString:jsonString];
             } else {
                 String jsonString= mainchainSubWallet->ProposalOwnerDigest(payloadJson);
@@ -2944,7 +2944,19 @@ void *ReverseByteOrder(void *p, unsigned int len)
         
         WYLog(@"=== dev temp === proposalSignTx: Proposal Payload Signed: %@", payload);
         
-        calculateProposalHash  = [self calculateProposalHash:dataDic walletID:masterWalletID];
+        NSMutableDictionary *proposalDic = [[NSMutableDictionary alloc] initWithDictionary:dataDic];
+        
+        if ([Type isEqualToString:@"closeproposal"]) {
+            [proposalDic setValue:@(1026) forKey:@"Type"];
+        } else if ([Type isEqualToString:@"changeproposalowner"]) {
+            [proposalDic setValue:@(1025) forKey:@"Type"];
+        } else if ([Type isEqualToString:@"secretarygeneral"]) {
+            [proposalDic setValue:@(1024) forKey:@"Type"];
+        }
+        
+        WYLog(@"=== dev temp === proposalSignTx: Proposal Dic to Hash : %@", proposalDic);
+        
+        calculateProposalHash  = [self calculateProposalHash:proposalDic walletID:masterWalletID];
         
         WYLog(@"=== dev temp === proposalSignTx: Proposal Hash Calculated : %@", calculateProposalHash);
         
@@ -2971,7 +2983,8 @@ void *ReverseByteOrder(void *p, unsigned int len)
        }
        try {
            result = suWall->PublishTransaction(signedTx);
-           WYLog(@"dev temp resultDic: %@", resultDic);
+           NSString *txResult = [self stringWithJson:result];
+           WYLog(@"=== dev temp === proposalSignTx Send Result: %@", txResult);
            return [self successProcess:command msg:resultDic];
        } catch (const std:: exception & e ) {
            return  [self errInfoToDic:e.what() with:command];
@@ -3379,7 +3392,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
     NSString *pwdString = args[idx++];
     NSString *recipientStr = args[idx++];
     NSString *amountStr = args[idx++];
-    NSArray *utxoDic = args[idx++];
+//    NSArray *utxoDic = args[idx++];
     
     NSString *playloadDicString = [payLoadDic jsonStringEncoded];
     String payLoadString = [self cstringWithString:playloadDicString];
@@ -3401,6 +3414,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
         NSString *signature = [self proposalWithdrawDigest:payLoadDic :mainchainSubWallet];
         if(signature == nil)
         {
+            WYLog(@"=== dev temp === proposalWithdrawDigest Error!!");
             return nil;
         }
         signature = [self reverseChar:signature passwd:pwdString];
@@ -3409,7 +3423,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
         String pay = [self cstringWithString:playloadDicString];
         Json payloadJson = nlohmann::json::parse(pay);
         
-        Json utxo = [self jsonWithString:[utxoDic jsonStringEncoded]];
+//        Json utxo = [self jsonWithString:[utxoDic jsonStringEncoded]];
         
 //        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(recipient, amount, utxo, payloadJson);
         

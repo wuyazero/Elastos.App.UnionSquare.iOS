@@ -152,6 +152,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
         WYLog(@"xxl 943 Code = %@",param[@"Code"]);
 //        WYLog(@"xxl 943 _pluginResult = %@",resultDic);
 //        WYLog(@"xxl 943 pwd = %@",resultDic[@"pwd"]);
+        
         WYLog(@"xxl 943 SignTransaction = %@",resultDic[@"SignTransaction"]);
         WYLog(@"xxl 943 calculateProposalHash = %@",resultDic[@"calculateProposalHash"]);
         
@@ -246,11 +247,11 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
             fmodel.titleString=model.titleString;
             fmodel.Type=model.Type;
             allAmount=[[FLTools share]CRVotingDecimalNumberByAdding:allAmount withCRMermVoting:model.Amount];
-            if ([model.Type isEqualToString:@"Imprest"]) {
+            if ([model.Type.lowercaseString isEqualToString:@"imprest"]) {
                 fmodel.titleString =NSLocalizedString(@"预付款",nil );
-            }else if ([model.Type isEqualToString:@"NormalPayment"]){
+            }else if ([model.Type.lowercaseString isEqualToString:@"normalpayment"]){
                 fmodel.titleString =[[FLTools share]StageOfProcessing:model.Stage];
-            }else if([model.Type isEqualToString:@"FinalPayment"]){
+            }else if([model.Type.lowercaseString isEqualToString:@"finalpayment"]){
                 fmodel.titleString =NSLocalizedString(@"尾款",nil );
             }
             fmodel.Amount=[NSString stringWithFormat:@"%@ ELA",[[FLTools share]elaScaleConversionWith:model.Amount]];
@@ -459,23 +460,23 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     } else if ([self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"closeproposal"] || [self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"changeproposalowner"] || [self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"secretarygeneral"]) {
         Type = self.PayLoadDic[@"data"][@"proposaltype"];
     } else {
-        Type=@(1);
+        Type=@(256);
     }
     NSMutableArray *BArray=[[NSMutableArray alloc]init];
     for (HWMBudgetsModel *model in self.BudgetsArray) {
         NSNumber *Type;
-        if ([model.Type isEqualToString:@"Imprest"]) {
+        if ([model.Type.lowercaseString isEqualToString:@"imprest"]) {
             Type=@(0);
-        }else if ([model.Type isEqualToString:@"NormalPayment"]) {
+        } else if ([model.Type.lowercaseString isEqualToString:@"normalpayment"]) {
             Type=@(1);
-        }else{
+        } else if ([model.Type.lowercaseString isEqualToString:@"finalpayment"]) {
             Type=@(2);
         }
         NSDictionary *dic=@{@"Type":Type,@"Stage":[model.Stage numberValue],@"Amount":model.Amount};
         [BArray addObject:dic];
     }
     NSDictionary *playLoadDic = nil;
-    if ([Type isEqual:@(0)] || [Type isEqual:@(1)]) {
+    if ([Type isEqual:@(0)] || [Type isEqual:@(256)]) {
         playLoadDic=@{@"Type":Type,@"CategoryData":self.PayLoadDic[@"data"][@"categorydata"],@"OwnerPublicKey":self.PayLoadDic[@"data"][@"ownerpublickey"],@"DraftHash":self.PayLoadDic[@"data"][@"drafthash"],@"Budgets":BArray,@"Recipient":self.PayLoadDic[@"data"][@"recipient"]};
     } else if ([Type isEqualToString:@"closeproposal"]) {
         playLoadDic=@{@"CategoryData":self.PayLoadDic[@"data"][@"categorydata"],@"OwnerPublicKey":self.PayLoadDic[@"data"][@"ownerpublickey"],@"DraftHash":self.PayLoadDic[@"data"][@"drafthash"],@"TargetProposalHash":self.PayLoadDic[@"data"][@"targetproposalhash"]};
@@ -563,8 +564,11 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
 
 -(void)updaeJWTInfoWithDic:(NSDictionary*)pare{
     WYLog(@"xxl %s pare %@", __func__ ,pare);
+    WYLog(@"xxl %s pare VCType %d", __func__ ,self.VCType);
     
     if (self.VCType != SuggestionType) {
+        WYLog(@"xxl %s pare VCType Not SuggestionType", __func__);
+        self->_isCallBackOK = YES;
         [self showSendSuccessOrFial:sendDealType];
     } else {
         
@@ -679,7 +683,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     } else if ([self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"closeproposal"] || [self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"changeproposalowner"] || [self.PayLoadDic[@"data"][@"proposaltype"] isEqualToString:@"secretarygeneral"]) {
         Type = self.PayLoadDic[@"data"][@"proposaltype"];
     } else {
-        Type=@(1);
+        Type=@(256);
         
     }
     NSMutableArray *BArray=[[NSMutableArray alloc]init];
@@ -687,17 +691,17 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     for (HWMBudgetsModel *model in self.BudgetsArray) {
         NSNumber *TypeInterNal;
         
-        if ([model.Type isEqualToString:@"Imprest"])
+        if ([model.Type.lowercaseString isEqualToString:@"imprest"])
         {
             TypeInterNal = [NSNumber numberWithInt:0];
             
         }
-        else if ([model.Type isEqualToString:@"NormalPayment"])
+        else if ([model.Type.lowercaseString isEqualToString:@"normalpayment"])
         {
             TypeInterNal = [NSNumber numberWithInt:1];
             
         }
-        else if ([model.Type isEqualToString:@"FinalPayment"])
+        else if ([model.Type.lowercaseString isEqualToString:@"finalpayment"])
         {
             TypeInterNal = [NSNumber numberWithInt:2];
             	
@@ -714,7 +718,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     NSString *didString = self.PayLoadDic[@"data"][@"did"];//[HWMDIDManager shareDIDManager].DIDString;
     didString = [didString stringByReplacingOccurrencesOfString:@"did:elastos:" withString:@""];
     NSDictionary *playLoadDic = nil;
-    if ([Type isEqual:@(0)] || [Type isEqual:@(1)]) {
+    if ([Type isEqual:@(0)] || [Type isEqual:@(256)]) {
         playLoadDic = @{@"Type":Type,@"CategoryData":CategoryData,@"OwnerPublicKey":self.PayLoadDic[@"data"][@"ownerpublickey"],@"DraftHash":self.PayLoadDic[@"data"][@"drafthash"],@"Budgets":BArray,@"Recipient":self.PayLoadDic[@"data"][@"recipient"], @"CRCouncilMemberDID":didString, @"Signature":signature};
     } else if ([Type isEqualToString:@"closeproposal"]) {
         playLoadDic=@{@"CategoryData":self.PayLoadDic[@"data"][@"categorydata"],@"OwnerPublicKey":self.PayLoadDic[@"data"][@"ownerpublickey"],@"DraftHash":self.PayLoadDic[@"data"][@"drafthash"],@"TargetProposalHash":self.PayLoadDic[@"data"][@"targetproposalhash"], @"CRCouncilMemberDID":didString, @"Signature":signature};
@@ -733,7 +737,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
     PluginResult *pluginResult = [[ELWalletManager share] proposaSignTransaction:mommand];
     _votingProcessUtil.resultDic = pluginResult.message[@"success"];
     
-    WYLog(@"xxl 943 1  proposaSignTransaction %@",_votingProcessUtil.resultDic);
+    WYLog(@"=== dev temp === xxl 943 1  proposaSignTransaction %@",_votingProcessUtil.resultDic);
     
 //    PluginResult *pluginResult = [[ELWalletManager share] proposaSignTransaction:mommand];
 //    if(pluginResult){
