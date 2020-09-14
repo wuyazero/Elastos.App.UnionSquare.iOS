@@ -517,6 +517,28 @@ namespace Elastos {
 			 */
 			virtual nlohmann::json GetRegisteredCRInfo() const = 0;
 
+			/**
+			 * Generate digest for signature of CR council members
+			 * @param payload
+			 * {
+			 *   "NodePublicKey": "...",
+			 *   "CRCouncilMemberDID": "...",
+			 * }
+			 * @return
+			 */
+			virtual std::string CRCouncilMemberClaimNodeDigest(const nlohmann::json &payload) const = 0;
+
+			/**
+			 * @param payload
+			 * {
+			 *   "NodePublicKey": "...",
+			 *   "CRCouncilMemberDID": "...",
+			 *   "CRCouncilMemberSignature": "..."
+			 * }
+			 * @return
+			 */
+			virtual nlohmann::json CreateCRCouncilMemberClaimNodeTransaction(const nlohmann::json &payload, const std::string &memo = "") = 0;
+
 
 		public:
 			//////////////////////////////////////////////////
@@ -749,22 +771,7 @@ namespace Elastos {
 			 * }
 			 * @return
 			 */
-			virtual std::string ProposalSecretaryGeneralElectionOwnerDigest(
-				const nlohmann::json &payload) const = 0;
-
-			/**
-			 * @param payload Proposal secretary election payload
-			 * {
-			 *    "CategoryData": "testdata",  // limit: 4096 bytes
-			 *    "OwnerPublicKey": "031f7a5a6bf3b2450cd9da4048d00a8ef1cb4912b5057535f65f3cc0e0c36f13b4",
-			 *    "DraftHash": "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
-			 *    "SecretaryGeneralPublicKey": "...",
-			 *    "SecretaryGeneralDID": "...",
-			 *    "Signature": "...",
-			 * }
-			 * @return
-			 */
-			virtual std::string ProposalSecretaryGeneralElectionSecretaryGeneralDigest(
+			virtual std::string ProposalSecretaryGeneralElectionDigest(
 				const nlohmann::json &payload) const = 0;
 
 			/**
