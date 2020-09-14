@@ -555,7 +555,7 @@
     WCQRCodeScanningVC *WCQRCode=[[WCQRCodeScanningVC alloc]init];
     WCQRCode.frVC=self;
     WCQRCode.scanBack=^(NSString *addr){
-        WYLog(@"扫二维码 获取到的数据---%@",addr);
+        WYLog(@"FirstVC 扫二维码 获取到的数据---%@", addr);
         [weakSelf SweepCodeProcessingResultsWithQRCodeString:addr];
         
     };
@@ -831,7 +831,8 @@
     [[HWMQrCodeSignatureManager shareTools]QrCodeDataWithData:QRCodeString withDidString:self.currentWallet.didString withmastWalletID:self.currentWallet.masterWalletID withComplete:^(QrCodeSignatureType type, id  _Nonnull data) {
         if (data !=NULL) {
             
-            WYLog(@"data is %@",data);
+            WYLog(@"FirstVC data is %@", data);
+            WYLog(@"FirstVC type is %d", type);
             
             
             
