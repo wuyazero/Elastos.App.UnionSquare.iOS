@@ -31,6 +31,16 @@ NS_ASSUME_NONNULL_BEGIN
  *
  */
 @property(copy,nonatomic)NSString *ID;
+
+@property(copy,nonatomic)NSString *status;
+@property(copy,nonatomic)NSString *type;
+
+@property(copy,nonatomic)NSString *targetProposalTitle;
+@property(copy,nonatomic)NSString *closeProposalNum;
+@property(copy,nonatomic)NSString *targetProposalNum;
+@property(copy,nonatomic)NSString *NewAddress;
+@property(copy,nonatomic)NSString *NewSecretaryDID;
+@property(copy,nonatomic)NSString *NewOwnerDID;
 /*
  *
  */
@@ -49,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(copy,nonatomic)NSString * baseInfoString;
 @property(assign,nonatomic)CGFloat  baseInfoCell;
 @property(assign,nonatomic)CGFloat  absCell;
+@property(assign,nonatomic)CGFloat  targetTitleCell;
 @end
 
 NS_ASSUME_NONNULL_END

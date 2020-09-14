@@ -30,6 +30,15 @@
     model.baseInfoString=[NSString stringWithFormat:@"#%@ %@ %@",model.ID ,[[FLTools share]TimeFormatConversionBirthday:model.createdAt],model.didName];
     model.baseInfoCell=[[FLTools share]calculateRowHeight:model.title fontSize:14 withmargin:30];
     model.absCell=[[FLTools share]calculateRowHeight:model.abs fontSize:11 withmargin:30];
+    model.targetTitleCell=[[FLTools share]calculateRowHeight:model.targetProposalTitle fontSize:11 withmargin:30];
+    
+    if (model.NewSecretaryDID && model.NewSecretaryDID.length < 35) {
+        model.NewSecretaryDID = [NSString stringWithFormat:@"did:elastos:%@", model.NewSecretaryDID];
+    }
+    
+    if (model.NewOwnerDID && model.NewOwnerDID.length < 35) {
+        model.NewOwnerDID = [NSString stringWithFormat:@"did:elastos:%@", model.NewOwnerDID];
+    }
 
     return model;
 }
