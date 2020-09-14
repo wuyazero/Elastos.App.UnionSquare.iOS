@@ -809,6 +809,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     
     if(self.type >= 0){
         
+        self->_isCallBackOK = YES;
         [self showSendSuccessOrFial:sendDealType];
         
     } else {
