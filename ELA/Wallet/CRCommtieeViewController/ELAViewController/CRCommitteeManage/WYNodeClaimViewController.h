@@ -21,16 +21,18 @@
  * SOFTWARE.
  */
 
+
 #import <UIKit/UIKit.h>
-#import "ELACRBaseViewController.h"
 #import "ELAInformationDetail.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ELACommitteeManageViewController : ELACRBaseViewController
+@interface WYNodeClaimViewController : UIViewController
 
-@property (nonatomic, assign) int type;//1 选举管理 2 委员管理 3 去职委员 4 任期已满 5 弹劾去职 6 解散 7 停职 //去职 和 解散 不知道如何判断
+@property(strong,nonatomic) FLWallet *currentWallet;
+
 @property (nonatomic, strong) ELAInformationDetail *infoModel;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -229,6 +229,8 @@ typedef std::map<String, IDidManager*> DIDManagerMap;
 - (PluginResult *)proposalTrackingTransaction:(invokedUrlCommand *)command;
 - (PluginResult *)proposalTrackingTransactionWithSecretary:(invokedUrlCommand *)command;
 
+- (PluginResult *)nodeClaimTransaction:(invokedUrlCommand *)command;
+
 - (NSArray *)getVoteInfoList:(NSString *)masterWalletID :(NSString *)typeStr;
 
 - (id)getVoteBalance:(NSString *)masterWalletID;

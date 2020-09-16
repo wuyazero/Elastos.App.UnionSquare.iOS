@@ -43,6 +43,7 @@
 #import "HMWToDeleteTheWalletPopView.h"
 #import "HWMTransactionDetailsView.h"
 #import "HMWAddTheCurrencyListViewController.h"
+#import "WYNodeClaimViewController.h"
 
 @interface ELACommitteeManageViewController ()<HWMDIDAuthorizationViewControllerDelegate, HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate, HWMTransactionDetailsViewDelegate>
 
@@ -153,6 +154,14 @@
         vc.currentWallet = wallet;
         [self.navigationController pushViewController:vc animated:YES];
 //    }
+}
+
+- (void)nodeButtonAction:(id)sender {
+    FLWallet *wallet = [ELWalletManager share].currentWallet;
+    WYNodeClaimViewController *vc = [[WYNodeClaimViewController alloc] init];
+    vc.currentWallet = wallet;
+    vc.infoModel = self.infoModel;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)updataDIDInfoEvent:(id)sender
@@ -497,7 +506,22 @@
     [button addTarget:self action:@selector(updateDIDButtonAction:) forControlEvents:(UIControlEventTouchUpInside)];
    // [button addTarget:self action:@selector(manageButtonAction:) forControlEvents:(UIControlEventTouchUpInside)];
     [self.view addSubview:button];
+    
+    UIButton *nodeButton = [[UIButton alloc] init];
+        nodeButton.layer.masksToBounds = YES;
+    //    button.layer.cornerRadius = 5;
+        nodeButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        nodeButton.layer.borderWidth = 1;
+        nodeButton.backgroundColor = ELARGB(45, 69, 76);
+        nodeButton.titleLabel.textColor = [UIColor whiteColor];
+        nodeButton.titleLabel.font = PingFangRegular(14);
+        [nodeButton setTitle:ELALocalizedString(@"领取CR节点") forState:(UIControlStateNormal)];
+        [nodeButton addTarget:self action:@selector(nodeButtonAction:) forControlEvents:(UIControlEventTouchUpInside)];
+       // [button addTarget:self action:@selector(manageButtonAction:) forControlEvents:(UIControlEventTouchUpInside)];
+        [self.view addSubview:nodeButton];
 
+//    UILayoutGuide *margin = self.view.layoutMarginsGuide;
+    
 //    updateInfoButton.hidden = YES;
     if(_type == 1)
     {
@@ -505,13 +529,59 @@
         NSString *text = ELALocalizedString(des);
         subLabel.text = text;
         updateInfoButton.hidden = YES;
+        nodeButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
     }
     else if(_type == 2)
     {
         NSString *des = @"每位CR委员须运行一个默认当选的DPoS超级节点，享有该节点产生的所有收益，并有义务保证节点正常运行。";
         NSString *text = ELALocalizedString(des);
         subLabel.text = text;
+        if (self.infoModel.dpospublickey && ![self.infoModel.dpospublickey isEqualToString:@""]) {
+            [nodeButton setTitle:ELALocalizedString(@"管理CR节点") forState:(UIControlStateNormal)];
+        }
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.trailing.equalTo(self.view.mas_trailing).offset(-40);
+               make.height.equalTo(@(40));
+               make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+           }];
+           
+           [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.leading.equalTo(self.view.mas_leading).offset(40);
+               make.trailing.equalTo(button.mas_leading).offset(-20);
+               make.width.equalTo(button.mas_width);
+               make.height.equalTo(button.mas_height);
+               make.bottom.equalTo(button.mas_bottom);
+           }];
+           
+           [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.leading.equalTo(updateInfoButton.mas_leading);
+               make.trailing.equalTo(button.mas_trailing);
+               make.height.equalTo(button.mas_height);
+               make.bottom.equalTo(button.mas_top).offset(-20);
+           }];
     }
     else if(_type == 3)
     {
@@ -520,37 +590,154 @@
         NSString *string = [NSString stringWithFormat:@"%@%0.4fELA", des, douValue / ELAUnitConversion];
         subLabel.text = string;
         updateInfoButton.hidden = YES;
+        nodeButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
     }
     else if(_type == 4)
     {
         double douValue = [_infoModel.depositAmount doubleValue];
         NSString *des = ELALocalizedString(@"上届CR委员会任期已满，所有委员自动卸任离职。根据您的世界履职情况及CRC委员节点的运行情况，您的竞选押金返还额度为");
         NSString *string = [NSString stringWithFormat:@"%@%0.4fELA", des, douValue / ELAUnitConversion];
-        NSString *text = string;
-        subLabel.text = text;
+        subLabel.text = string;
         updateInfoButton.hidden = YES;
+        nodeButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
     }
     else if(_type == 5)
     {
         double douValue = [_infoModel.depositAmount doubleValue];
         NSString *des = ELALocalizedString(@"由于对您的弹劾已通过。您的委员职务已被免职。根据您的世界履职情况及CRC委员节点的运行情况，您的竞选押金返还额度为");
         NSString *string = [NSString stringWithFormat:@"%@%0.4fELA", des, douValue / ELAUnitConversion];
-        NSString *text = string;
-        subLabel.text = text;
+        subLabel.text = string;
         updateInfoButton.hidden = YES;
+        nodeButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
     }
     else if(_type == 6)
     {
         double douValue = [_infoModel.depositAmount doubleValue];
         NSString *des = ELALocalizedString(@"上届CR委员会因故解散，所有委员自动去职。根据您时机履职情况及CRC委员节点的运行情况，您的竞选押金返回金额为");
         NSString *string = [NSString stringWithFormat:@"%@%0.4fELA", des, douValue / ELAUnitConversion];
-        NSString *text = string;
-        subLabel.text = text;
+        subLabel.text = string;
         updateInfoButton.hidden = YES;
+        nodeButton.hidden = YES;
         [button setTitle:ELALocalizedString(@"提取质押金") forState:(UIControlStateNormal)];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(button.mas_top).offset(-20);
+        }];
+    }
+    else if(_type == 7)
+    {
+        NSString *des = @"由于您的委员节点处于未激活状态，您的委员职务将暂时停职。\n请尽快处理节点问题，以免影响委员权限。";
+        NSString *text = ELALocalizedString(des);
+        subLabel.text = text;
+        if (self.infoModel.dpospublickey && ![self.infoModel.dpospublickey isEqualToString:@""]) {
+            [nodeButton setTitle:ELALocalizedString(@"管理CR节点") forState:(UIControlStateNormal)];
+        }
+        button.hidden = YES;
+        updateInfoButton.hidden = YES;
+        
+        [nodeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@(250));
+            make.height.equalTo(@(40));
+            make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
+        }];
+
+        [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(nodeButton.mas_top).offset(-20);
+        }];
+        
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerX.equalTo(self.view);
+           make.width.equalTo(@(250));
+           make.height.equalTo(@(40));
+           make.bottom.equalTo(nodeButton.mas_top).offset(-20);
+        }];
     }
     
     [infoView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -583,19 +770,6 @@
         make.top.equalTo(titleLabel.mas_bottom).offset(85);
     }];
     
-    [button mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view);
-        make.width.equalTo(@(250));
-        make.height.equalTo(@(40));
-        make.bottom.equalTo(self.view.mas_bottom).offset(-BottomHeight - 40);
-    }];
-    
-    [updateInfoButton mas_makeConstraints:^(MASConstraintMaker *make) {
-           make.centerX.equalTo(self.view);
-           make.width.equalTo(@(250));
-           make.height.equalTo(@(40));
-           make.bottom.equalTo(button.mas_top).offset(-20);
-       }];
 }
 
 @end
