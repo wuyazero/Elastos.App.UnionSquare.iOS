@@ -152,6 +152,14 @@
         HWMCRRegisteredViewController *vc=[[ HWMCRRegisteredViewController alloc]init];
         vc.isUpdate=YES;
         vc.currentWallet = wallet;
+    
+    HWMCRListModel *crModel = [[HWMCRListModel alloc] init];
+    crModel.did = _infoModel.did;
+    crModel.location = [NSString stringWithFormat:@"%ld", _infoModel.location];
+    crModel.nickname = _infoModel.didName;
+    crModel.url = _infoModel.address;
+    vc.CRmodel = crModel;
+    
         [self.navigationController pushViewController:vc animated:YES];
 //    }
 }
@@ -558,6 +566,9 @@
         NSString *des = @"每位CR委员须运行一个默认当选的DPoS超级节点，享有该节点产生的所有收益，并有义务保证节点正常运行。";
         NSString *text = ELALocalizedString(des);
         subLabel.text = text;
+        
+        WYLog(@"=== dev temp ===: infoModel dpospublickey: %@", self.infoModel.dpospublickey);
+        
         if (self.infoModel.dpospublickey && ![self.infoModel.dpospublickey isEqualToString:@""]) {
             [nodeButton setTitle:ELALocalizedString(@"管理CR节点") forState:(UIControlStateNormal)];
         }
