@@ -92,6 +92,7 @@
     self.DPoSTextField.backgroundColor = [UIColor clearColor];
     self.DPoSTextField.textColor = [UIColor whiteColor];
     self.DPoSTextField.font = [UIFont systemFontOfSize:14.f];
+    self.DPoSTextField.clearButtonMode = UITextFieldViewModeUnlessEditing;
     [[HMWCommView share]makeTextFieldPlaceHoTextColorWithTextField:self.DPoSTextField withTxt:NSLocalizedString(@"请输入运营公钥（必填）", nil)];
     [containerView addSubview:self.DPoSTextField];
     
@@ -137,8 +138,11 @@
     [self defultWhite];
     [self setBackgroundImg:@""];
     
+    WYLog(@"=== dev temp ===: infoModel dpospublickey: %@", self.infoModel.dpospublickey);
+    
     if (self.infoModel.dpospublickey && ![self.infoModel.dpospublickey isEqualToString:@""]) {
         self.title = NSLocalizedString(@"管理CR节点", nil);
+        self.DPoSTextField.text = self.infoModel.dpospublickey;
     } else {
         self.title = NSLocalizedString(@"领取CR节点", nil);
     }
