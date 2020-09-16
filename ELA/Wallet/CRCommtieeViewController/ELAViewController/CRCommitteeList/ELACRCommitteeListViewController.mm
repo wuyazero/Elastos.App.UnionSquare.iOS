@@ -349,9 +349,15 @@
 {
     UIButton *button  = sender;
     NSString *key = [NSString stringWithFormat:@"%@%ld", @"info", button.tag];
+    
+    WYLog(@"=== dev temp === _committeeDic: %@ key: %@", _committeeDic, key);
+    
     ELAInformationDetail *detailModel = [_committeeDic valueForKey:key];
     
     ELACommitteeManageViewController *vc = [[ELACommitteeManageViewController alloc] init];
+    
+    WYLog(@"=== dev temp === detailModel dpospublickey: %@", detailModel.dpospublickey);
+    
     vc.infoModel = detailModel;
     vc.type = 2;
     vc.title = ELALocalizedString(@"委员管理");

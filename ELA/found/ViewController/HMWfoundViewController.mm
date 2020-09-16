@@ -325,6 +325,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             
             ELACommitteeManageViewController *vc = [[ELACommitteeManageViewController alloc] init];
+            
+            WYLog(@"=== dev temp === detailModel dpospublickey: %@", detailModel.dpospublickey);
+            
             vc.infoModel = detailModel;
             vc.type = type;
             vc.title = ELALocalizedString(@"委员管理");
