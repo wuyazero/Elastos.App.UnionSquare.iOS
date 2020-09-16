@@ -262,7 +262,6 @@
 
      [self UpdataLocalOwerlist];
     });
-
     
 }
 -(void)getNetCoinPointArray{

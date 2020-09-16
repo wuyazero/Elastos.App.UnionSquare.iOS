@@ -43,6 +43,8 @@ NSInteger timeOut = 60;
         manage.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
     }
     
+    WYLog(@"=== dev temp === Active Timeout Setting: %d", manage.requestSerializer.timeoutInterval);
+    
     return manage;
 }
 
@@ -170,6 +172,8 @@ NSInteger timeOut = 60;
         manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
     }
     
+    WYLog(@"=== dev temp === Active Timeout Setting: %d", manager.requestSerializer.timeoutInterval);
+    
     NSString *httpStr = [Http_IP stringByAppendingString:@"/api/attachment/upload"];
     [manager POST:httpStr parameters:nil headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         //对图片大小进行压缩--
@@ -230,6 +234,8 @@ NSInteger timeOut = 60;
         manager.completionQueue = [WYUtils getNetworkQueue];
         manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
     }
+    
+    WYLog(@"=== dev temp === Active Timeout Setting: %d", manager.requestSerializer.timeoutInterval);
     
     NSString *httpStr = [host stringByAppendingString:url];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];

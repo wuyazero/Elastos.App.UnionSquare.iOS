@@ -57,6 +57,8 @@
         
     });
     
+    WYLog(@"=== dev temp === Active Timeout Setting: %d", manager.requestSerializer.timeoutInterval);
+    
     return manager;
 }
 
