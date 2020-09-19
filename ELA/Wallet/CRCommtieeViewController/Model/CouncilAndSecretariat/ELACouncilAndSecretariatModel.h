@@ -43,6 +43,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger location;
 @property (nonatomic, strong) NSString *status;
 
+@property (strong, nonatomic) NSString *impeachmentVotes;
+@property (strong, nonatomic) NSString *rejectRatio;
+@property (nonatomic, assign) NSInteger endDate;
+
 @end
 
 @interface ELASecretariatModel : ELABaseModel

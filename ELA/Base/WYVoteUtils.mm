@@ -524,6 +524,15 @@
     return 0;
 }
 
++ (NSInteger)getCurrentCRCEndDate:(NSArray *)data {
+    for(ELACommitteeInfoModel *item in data) {
+        if(item.status && [item.status isEqualToString:@"CURRENT"]) {
+            return [item.endDate integerValue];
+        }
+    }
+    return 0;
+}
+
 + (NSDictionary *)getValidPayloads:(NSDictionary *)payloads withInvalidAddrs:(NSDictionary *)invalidAddrs {
     @try {
         if (payloads) {
@@ -846,6 +855,7 @@
     
     __block ELACommitteeInfoModel *CRCVotingInfo = nil;
     __block NSArray *CRCDataList = @[];
+    __block NSInteger endDate = 0;
     __block BOOL networkErr = NO;
     dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
@@ -859,6 +869,7 @@
                 CRCVotingInfo = data;
                 NSInteger startDate = [WYVoteUtils getCurrentCRCStartDate:CRCVotingInfo.data];
                 if ([WYVoteUtils isCRCVoting:CRCVotingInfo.data] && [timestamp integerValue] >= startDate) {
+                    endDate = [WYVoteUtils getCurrentCRCEndDate:CRCVotingInfo.data];
                     NSString *httpIP=[[FLTools share]http_IpFast];
                     [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
                         NSDictionary *param = data[@"data"];
@@ -889,6 +900,8 @@
     
     NSMutableArray *resultArr = [[NSMutableArray alloc] init];
     for (HWMCRListModel *item in CRCDataList) {
+        item.endDate = endDate;
+        
         [resultArr addObject:@{
             @"key": item.did,
             @"item": item
@@ -945,6 +958,7 @@
     dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
     
     __block NSArray *councilDataList = @[];
+    __block NSInteger endDate = 0;
     __block BOOL networkErr = NO;
     dispatch_group_enter(waitGroup);
     dispatch_async(waitQueue, ^{
@@ -959,6 +973,7 @@
                 NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
                 NSInteger startDate = [WYVoteUtils getCurrentCRCStartDate:CRCInfo.data];
                 if (index && [timestamp integerValue] >= startDate) {
+                    endDate = [WYVoteUtils getCurrentCRCEndDate:CRCInfo.data];
                     [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
                         if (error) {
                             WYLog(@"%s: getCouncilList failed with error code %ld", __func__, error.code);
@@ -990,6 +1005,8 @@
     
     NSMutableArray *resultArr = [[NSMutableArray alloc] init];
     for (ELACouncilModel *item in councilDataList) {
+        item.endDate = endDate;
+        
         [resultArr addObject:@{
             @"key": item.cid,
             @"item": item

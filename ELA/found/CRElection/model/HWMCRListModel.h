@@ -72,6 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy)NSString * TextVotes;
 @property(nonatomic,copy)NSString *cid;
 
+@property (nonatomic, assign) NSInteger endDate;
+
 @property(copy,nonatomic)HWMDIDInfoModel *didIndoModel;
 
 @end

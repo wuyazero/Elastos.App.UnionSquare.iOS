@@ -231,6 +231,8 @@
     }
     NSURLSessionDataTask *task = [ELANetwork GET:url parameters:nil block:^(id data, NSError *error) {
         
+        WYLog(@"=== dev temp === Get Council Information url: %@ data: %@ error: %@", url, data, error);
+        
         if(error)
         {
             block(nil, error);

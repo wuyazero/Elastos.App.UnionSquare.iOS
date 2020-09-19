@@ -77,6 +77,26 @@
             [self.cellContent.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor],
             [self.cellContent.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor]
         ]];
+        
+        self.invalidButton = [[UIButton alloc] init];
+        self.invalidButton.translatesAutoresizingMaskIntoConstraints = NO;
+        self.invalidButton.titleLabel.font = [UIFont systemFontOfSize:12.f];
+        [self.invalidButton setTitle:NSLocalizedString(@"已失效", nil) forState:UIControlStateNormal];
+        [self.invalidButton setTitleColor:RGBA(255.f, 255.f, 255.f, 0.5f) forState:UIControlStateNormal];
+        self.invalidButton.backgroundColor = RGBA(255.f, 255.f, 255.f, 0.2f);
+        self.invalidButton.layer.borderColor = RGBA(255.f, 255.f, 255.f, 0.5f).CGColor;
+        self.invalidButton.layer.borderWidth = 1.f;
+        self.invalidButton.layer.cornerRadius = 5.f;
+        self.invalidButton.layer.masksToBounds = YES;
+        self.invalidButton.contentEdgeInsets = UIEdgeInsetsMake(1.f, 1.f, 1.f, 1.f);
+        self.invalidButton.userInteractionEnabled = NO;
+        self.invalidButton.alpha = 0.f;
+        [self addSubview:self.invalidButton];
+        
+        [NSLayoutConstraint activateConstraints:@[
+            [self.invalidButton.centerYAnchor constraintEqualToAnchor:self.cellContent.centerYAnchor],
+            [self.invalidButton.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor]
+        ]];
     }
     return self;
 }
