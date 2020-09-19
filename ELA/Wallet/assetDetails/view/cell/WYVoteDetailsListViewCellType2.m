@@ -28,6 +28,8 @@
 
 @interface WYVoteDetailsListViewCellType2 ()
 
+@property (strong, nonatomic) NSLayoutConstraint *cellWidth;
+
 @property (strong, nonatomic) UILabel *cellTitle;
 @property (strong, nonatomic) UILabel *expireInfo;
 @property (strong, nonatomic) UIButton *invalidButton;
@@ -45,6 +47,10 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        self.cellWidth = [self.widthAnchor constraintEqualToConstant:0.f];
+        
         self.backgroundColor = [UIColor clearColor];
         
         UILayoutGuide *margin = self.layoutMarginsGuide;
@@ -71,11 +77,14 @@
         self.cellTitle.text = @"--";
         self.cellTitle.textColor = [UIColor whiteColor];
         self.cellTitle.backgroundColor = [UIColor clearColor];
+        self.cellTitle.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.cellTitle.numberOfLines = 0;
         [containerView addSubview:self.cellTitle];
         
         [NSLayoutConstraint activateConstraints:@[
             [self.cellTitle.topAnchor constraintEqualToAnchor:containerMargin.topAnchor],
-            [self.cellTitle.leadingAnchor constraintEqualToAnchor:containerMargin.leadingAnchor]
+            [self.cellTitle.leadingAnchor constraintEqualToAnchor:containerMargin.leadingAnchor],
+            [self.cellTitle.widthAnchor constraintLessThanOrEqualToAnchor:containerMargin.widthAnchor]
         ]];
         
         self.expireInfo = [[UILabel alloc] init];
@@ -149,6 +158,8 @@
         [containerView addSubview:self.amountInfo];
         
         [NSLayoutConstraint activateConstraints:@[
+            [self.amountInfo.topAnchor constraintGreaterThanOrEqualToAnchor:self.expireInfo.bottomAnchor constant:20.f],
+            [self.amountInfo.topAnchor constraintGreaterThanOrEqualToAnchor:self.invalidButton.bottomAnchor constant:20.f],
             [self.amountInfo.bottomAnchor constraintEqualToAnchor:self.amountTitle.topAnchor constant:-5.f],
             [self.amountInfo.leadingAnchor constraintEqualToAnchor:self.amountTitle.leadingAnchor],
             [self.amountInfo.trailingAnchor constraintEqualToAnchor:self.amountTitle.trailingAnchor]
@@ -164,12 +175,20 @@
         [containerView addSubview:self.progressInfo];
         
         [NSLayoutConstraint activateConstraints:@[
+            [self.progressInfo.topAnchor constraintGreaterThanOrEqualToAnchor:self.expireInfo.bottomAnchor constant:20.f],
+            [self.progressInfo.topAnchor constraintGreaterThanOrEqualToAnchor:self.invalidButton.bottomAnchor constant:20.f],
             [self.progressInfo.bottomAnchor constraintEqualToAnchor:self.progressTitle.topAnchor constant:-5.f],
             [self.progressInfo.leadingAnchor constraintEqualToAnchor:self.progressTitle.leadingAnchor],
             [self.progressInfo.trailingAnchor constraintEqualToAnchor:self.progressTitle.trailingAnchor]
         ]];
     }
     return self;
+}
+
+- (void)reloadWidth:(CGFloat)width {
+    self.cellWidth.active = NO;
+    self.cellWidth.constant = width;
+    self.cellWidth.active = YES;
 }
 
 - (void)reloadData {
@@ -180,8 +199,10 @@
     if ([valid isEqual:@NO]) {
         self.invalidButton.alpha = 1.f;
         self.expireInfo.alpha = 0.f;
+        [self.expireInfo.heightAnchor constraintEqualToConstant:0.f].active = YES;
     } else {
         self.invalidButton.alpha = 0.f;
+        [self.invalidButton.heightAnchor constraintEqualToConstant:0.f].active = YES;
         self.expireInfo.alpha = 1.f;
     }
     
@@ -193,32 +214,52 @@
         self.progressTitle.text = NSLocalizedString(@"反对进度", nil);
         
         if (info) {
+            WYLog(@"=== dev temp === Proposal Cell Info: %@", info);
+            
             self.cellTitle.text = info[@"title"];
+            
+            if (info[@"voteEndsIn"]) {
+                self.expireInfo.text = [[FLTools share] RemainingTimeFormatting:info[@"voteEndsIn"]];
+            }
+            
+            if (info[@"rejectAmount"]) {
+                self.amountInfo.text = [NSString stringWithFormat:@"%@", info[@"rejectAmount"]];
+            }
+            
+            if (info[@"rejectRatio"]) {
+                self.progressInfo.text = [NSString stringWithFormat:@"%.2f%%", [info[@"rejectRatio"] floatValue] * 100.f];
+            }
         }
         
-        dispatch_async([WYUtils getSerialQueue], ^{
-            
-            HWMDetailsProposalModel *details = [WYVoteUtils getProposalDetails:address];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                if ([valid isEqual:@YES]) {
-                    self.expireInfo.text = details.duration;
-                }
-                if (details.rejectAmount) {
-                    self.amountInfo.text = details.rejectAmount;
-                }
-                if (details.rejectPercentage) {
-                    self.progressInfo.text = details.rejectPercentage;
-                }
-                
-            });
-            
-        });
+//        if ([valid isEqual:@YES]) {
+//
+//            dispatch_async([WYUtils getSerialQueue], ^{
+//
+//                HWMDetailsProposalModel *details = [WYVoteUtils getProposalDetails:address];
+//
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                    if ([valid isEqual:@YES]) {
+//                        self.expireInfo.text = details.duration;
+//                    }
+//                    if (details.rejectAmount) {
+//                        self.amountInfo.text = details.rejectAmount;
+//                    }
+//                    if (details) {
+//                        self.progressInfo.text = [NSString stringWithFormat:@"%.2f%%", details.rejectRatio * 100.f];
+//                    }
+//
+//                });
+//
+//            });
+//
+//        }
+        
     } else if ([cellType isEqualToString:@"CRCImpeachment"]) {
         ELACouncilModel *info = self.listCellData[@"info"];
         if ([valid isEqual:@YES]) {
             self.expireInfo.alpha = 0.f;
+            [self.expireInfo.heightAnchor constraintEqualToConstant:0.f].active = YES;
         }
         self.amountTitle.text = [NSString stringWithFormat:@"%@(ELA)", NSLocalizedString(@"弹劾票数", nil)];
         self.progressTitle.text = NSLocalizedString(@"弹劾进度", nil);
@@ -226,19 +267,35 @@
         if (info) {
             self.cellTitle.text = info.didName;
             
-            dispatch_async([WYUtils getSerialQueue], ^{
-                
-                ELAInformationDetail *details = [WYVoteUtils getCouncilDetails:info.did];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (details) {
-                        self.amountInfo.text = [NSString stringWithFormat:@"%ld", lround(details.impeachmentVotes)];
-                        self.progressInfo.text = [NSString stringWithFormat:@"%.2f%%", details.impeachmentRatio / 100.f];
-                    }
-                    
-                });
-                
-            });
+            WYLog(@"=== dev temp === Council Cell impeachmentVotes: %@", info.impeachmentVotes);
+            WYLog(@"=== dev temp === Council Cell rejectRatio: %@", info.rejectRatio);
+            
+            if (info.impeachmentVotes) {
+                self.amountInfo.text = [NSString stringWithFormat:@"%ld", [info.impeachmentVotes integerValue]];
+            }
+            
+            if (info.rejectRatio) {
+                self.progressInfo.text = [NSString stringWithFormat:@"%.2f%%", [info.rejectRatio floatValue] * 100.f];
+            }
+            
+//            if ([valid isEqual:@YES]) {
+//
+//                dispatch_async([WYUtils getSerialQueue], ^{
+//
+//                    ELAInformationDetail *details = [WYVoteUtils getCouncilDetails:info.did];
+//
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        if (details) {
+//                            self.amountInfo.text = [NSString stringWithFormat:@"%ld", lround(details.impeachmentVotes)];
+//                            self.progressInfo.text = [NSString stringWithFormat:@"%.2f%%", details.impeachmentRatio * 100.f];
+//                        }
+//
+//                    });
+//
+//                });
+//
+//            }
+            
         }
     }
     

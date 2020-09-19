@@ -41,6 +41,8 @@
 -(HWMDetailsProposalModel*)AnalyticalDataWithDicJosn:(id)json{
     HWMDetailsProposalModel *Fmodel=[HWMDetailsProposalModel modelWithJSON:json];
     
+    WYLog(@"=== dev temp === Proposal duration: %@, reject ratio: %f", Fmodel.duration, Fmodel.rejectRatio);
+    
     if ([Fmodel.status isEqualToString:@"VOTING"]) {
         Fmodel.status=NSLocalizedString(@"委员评议",nil);
     }else if ([Fmodel.status isEqualToString:@"NOTIFICATION"]){

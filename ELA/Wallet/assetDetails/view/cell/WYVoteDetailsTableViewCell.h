@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WYVoteDetailsTableViewCell : UITableViewCell
 
 @property (strong, nonatomic) UILabel *cellTitle;
-
 @property (strong, nonatomic) UILabel *cellContent;
+@property (strong, nonatomic) UIButton *invalidButton;
 
 @end
 
