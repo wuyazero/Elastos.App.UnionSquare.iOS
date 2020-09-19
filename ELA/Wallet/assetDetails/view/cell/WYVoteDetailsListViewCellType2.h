@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic) NSDictionary *listCellData;
 
+- (void)reloadWidth:(CGFloat)width;
 - (void)reloadData;
 
 @end

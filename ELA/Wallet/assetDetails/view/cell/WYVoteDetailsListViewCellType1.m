@@ -28,6 +28,8 @@
 
 @interface WYVoteDetailsListViewCellType1 ()
 
+@property (strong, nonatomic) NSLayoutConstraint *cellWidth;
+
 @property (strong, nonatomic) UILabel *cellTitle;
 @property (strong, nonatomic) UILabel *cellContent;
 
@@ -39,6 +41,10 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        self.cellWidth = [self.widthAnchor constraintEqualToConstant:0.f];
+        
         self.backgroundColor = [UIColor clearColor];
         
         UILayoutGuide *margin = self.layoutMarginsGuide;
@@ -49,13 +55,15 @@
         self.cellTitle.text = @"--";
         self.cellTitle.textColor = [UIColor whiteColor];
         self.cellTitle.backgroundColor = [UIColor clearColor];
+        self.cellTitle.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.cellTitle.numberOfLines = 0;
         [self addSubview:self.cellTitle];
         
         [NSLayoutConstraint activateConstraints:@[
-            [self.cellTitle.topAnchor constraintEqualToAnchor:margin.topAnchor],
+            [self.cellTitle.topAnchor constraintEqualToAnchor:margin.topAnchor constant:5.f],
             [self.cellTitle.leadingAnchor constraintEqualToAnchor:margin.leadingAnchor],
             [self.cellTitle.widthAnchor constraintGreaterThanOrEqualToConstant:100.f],
-            [self.cellTitle.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor]
+            [self.cellTitle.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor constant:-5.f]
         ]];
         
         self.cellContent = [[UILabel alloc] init];
@@ -65,17 +73,25 @@
         self.cellContent.textAlignment = NSTextAlignmentRight;
         self.cellContent.textColor = [UIColor whiteColor];
         self.cellContent.backgroundColor = [UIColor clearColor];
+        self.cellContent.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.cellContent.numberOfLines = 0;
         [self addSubview:self.cellContent];
         
         [NSLayoutConstraint activateConstraints:@[
-            [self.cellContent.topAnchor constraintEqualToAnchor:margin.topAnchor],
+            [self.cellContent.topAnchor constraintEqualToAnchor:margin.topAnchor constant:5.f],
             [self.cellContent.leadingAnchor constraintEqualToAnchor:self.cellTitle.trailingAnchor constant:30.f],
-            [self.cellContent.widthAnchor constraintGreaterThanOrEqualToConstant:50.f],
+            [self.cellContent.widthAnchor constraintEqualToAnchor:margin.widthAnchor multiplier:0.25f],
             [self.cellContent.trailingAnchor constraintEqualToAnchor:margin.trailingAnchor],
-            [self.cellContent.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor]
+            [self.cellContent.bottomAnchor constraintEqualToAnchor:margin.bottomAnchor constant:-5.f]
         ]];
     }
     return self;
+}
+
+- (void)reloadWidth:(CGFloat)width {
+    self.cellWidth.active = NO;
+    self.cellWidth.constant = width;
+    self.cellWidth.active = YES;
 }
 
 - (void)reloadData {
@@ -97,7 +113,7 @@
         NSInteger votes = [info.SinceVotes intValue];
         if (votes < 1) {
             self.cellContent.text = [NSString stringWithFormat:@"<1 %@", NSLocalizedString(@"票", nil)];
-        }else{
+        } else {
             self.cellContent.text = [NSString stringWithFormat:@"%ld %@", votes, NSLocalizedString(@"票", nil)];
         }
         if ([valid isEqual:@YES]) {

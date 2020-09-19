@@ -34,11 +34,11 @@
 #endif
 
 #ifndef WAIT_TIMEOUT
-#define WAIT_TIMEOUT 16
+#define WAIT_TIMEOUT 25
 #endif
 
 #ifndef QUEUE_TIMEOUT
-#define QUEUE_TIMEOUT 10
+#define QUEUE_TIMEOUT 20
 #endif
 
 #import <Foundation/Foundation.h>

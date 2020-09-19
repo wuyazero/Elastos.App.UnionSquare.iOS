@@ -26,6 +26,8 @@
 #import "WYVoteDetailsTableViewCell.h"
 #import "WYVoteDetailsListViewCellType1.h"
 #import "WYVoteDetailsListViewCellType2.h"
+#import "ELACouncilAndSecretariatModel.h"
+#import "HWMCRListModel.h"
 
 static NSString *tableCellID = @"CellForTable";
 static NSString *listCellIDType1 = @"Type1CellForList";
@@ -90,6 +92,7 @@ static NSString *listCellIDType2 = @"Type2CellForList";
         
         UICollectionViewFlowLayout *listLayout = [[UICollectionViewFlowLayout alloc] init];
         [listLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        listLayout.estimatedItemSize = CGSizeMake(1.f, 1.f);
         
         self.listView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:listLayout];
         self.listView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -243,6 +246,52 @@ static NSString *listCellIDType2 = @"Type2CellForList";
             cell.cellContent.text = @"";
         } else {
             cell.cellTitle.text = NSLocalizedString(@"剩余有效期", nil);
+            
+            if ([self.cellType isEqualToString:@"CRCImpeachment"]) {
+                
+                NSInteger endDate = 0;
+                if ([self.cellInfo count] > 0) {
+                    NSDictionary *firstInfo = [self.cellInfo objectAtIndex:0];
+                    if (firstInfo[@"info"]) {
+                        ELACouncilModel *info = firstInfo[@"info"];
+                        endDate = info.endDate;
+                    }
+                }
+                
+                NSTimeInterval currentTimestamp = [[NSDate date] timeIntervalSince1970];
+                NSInteger currentDate = [[NSNumber numberWithDouble:currentTimestamp] integerValue];
+                
+                if (currentDate <= endDate) {
+                    NSString *duration = [NSString stringWithFormat:@"%ld", endDate - currentDate];
+                    cell.cellContent.text = [[FLTools share] RemainingTimeFormatting:duration];
+                } else {
+                    cell.cellContent.alpha = 0.f;
+                    cell.invalidButton.alpha = 1.f;
+                }
+                
+            } else if ([self.cellType isEqualToString:@"CRC"]) {
+                
+                NSInteger endDate = 0;
+                if ([self.cellInfo count] > 0) {
+                    NSDictionary *firstInfo = [self.cellInfo objectAtIndex:0];
+                    if (firstInfo[@"info"]) {
+                        HWMCRListModel *info = firstInfo[@"info"];
+                        endDate = info.endDate;
+                    }
+                }
+                
+                NSTimeInterval currentTimestamp = [[NSDate date] timeIntervalSince1970];
+                NSInteger currentDate = [[NSNumber numberWithDouble:currentTimestamp] integerValue];
+                
+                if (currentDate <= endDate) {
+                    NSString *duration = [NSString stringWithFormat:@"%ld", endDate - currentDate];
+                    cell.cellContent.text = [[FLTools share] RemainingTimeFormatting:duration];
+                } else {
+                    cell.cellContent.alpha = 0.f;
+                    cell.invalidButton.alpha = 1.f;
+                }
+                
+            }
         }
     } else if (indexPath.row == 3) {
         if ([self.cellType isEqualToString:@"CRCImpeachment"]) {
@@ -281,6 +330,9 @@ static NSString *listCellIDType2 = @"Type2CellForList";
     
     if ([self.cellType isEqualToString:@"Delegate"] || [self.cellType isEqualToString:@"CRC"]) {
         WYVoteDetailsListViewCellType1 *cell = [self.listView dequeueReusableCellWithReuseIdentifier:listCellIDType1 forIndexPath:indexPath];
+        
+        [cell reloadWidth:collectionView.frame.size.width];
+        
         cell.backgroundColor = RGBA(255.f, 255.f, 255.f, 0.2f);
         cell.layer.masksToBounds = YES;
         NSInteger cellCount = [collectionView numberOfItemsInSection:indexPath.section];
@@ -304,6 +356,9 @@ static NSString *listCellIDType2 = @"Type2CellForList";
         return cell;
     } else {
         WYVoteDetailsListViewCellType2 *cell = [self.listView dequeueReusableCellWithReuseIdentifier:listCellIDType2 forIndexPath:indexPath];
+        
+        [cell reloadWidth:collectionView.frame.size.width];
+        
         cell.listCellData = [self.cellInfo objectAtIndex:indexPath.row];
         [cell reloadData];
         return cell;
@@ -323,11 +378,11 @@ static NSString *listCellIDType2 = @"Type2CellForList";
     return 0.f;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.cellType isEqualToString:@"Delegate"] || [self.cellType isEqualToString:@"CRC"]) {
-        return CGSizeMake(collectionView.frame.size.width, 44.f);
-    }
-    return CGSizeMake(collectionView.frame.size.width, 105.f);
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+//    if ([self.cellType isEqualToString:@"Delegate"] || [self.cellType isEqualToString:@"CRC"]) {
+//        return CGSizeMake(collectionView.frame.size.width, 44.f);
+//    }
+//    return CGSizeMake(collectionView.frame.size.width, 105.f);
+//}
 
 @end
