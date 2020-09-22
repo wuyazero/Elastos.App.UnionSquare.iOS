@@ -446,7 +446,7 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async([WYUtils getTaskQueue], ^{
             
             NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
             NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
