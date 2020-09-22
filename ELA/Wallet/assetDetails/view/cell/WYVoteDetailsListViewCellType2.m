@@ -103,6 +103,8 @@
         self.invalidButton = [[UIButton alloc] init];
         self.invalidButton.translatesAutoresizingMaskIntoConstraints = NO;
         self.invalidButton.titleLabel.font = [UIFont systemFontOfSize:12.f];
+        self.invalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+        self.invalidButton.titleLabel.minimumScaleFactor = 0.5f;
         [self.invalidButton setTitle:NSLocalizedString(@"已失效", nil) forState:UIControlStateNormal];
         [self.invalidButton setTitleColor:RGBA(255.f, 255.f, 255.f, 0.5f) forState:UIControlStateNormal];
         self.invalidButton.backgroundColor = [UIColor clearColor];
@@ -123,6 +125,8 @@
         self.amountTitle = [[UILabel alloc] init];
         self.amountTitle.translatesAutoresizingMaskIntoConstraints = NO;
         self.amountTitle.font = [UIFont systemFontOfSize:12.f];
+        self.amountTitle.adjustsFontSizeToFitWidth = YES;
+        self.amountTitle.minimumScaleFactor = 0.5f;
         self.amountTitle.text = @"--";
         self.amountTitle.textColor = RGBA(255.f, 255.f, 255.f, 0.5f);
         self.amountTitle.backgroundColor = [UIColor clearColor];
@@ -137,6 +141,8 @@
         self.progressTitle = [[UILabel alloc] init];
         self.progressTitle.translatesAutoresizingMaskIntoConstraints = NO;
         self.progressTitle.font = [UIFont systemFontOfSize:12.f];
+        self.progressTitle.adjustsFontSizeToFitWidth = YES;
+        self.progressTitle.minimumScaleFactor = 0.5f;
         self.progressTitle.textAlignment = NSTextAlignmentRight;
         self.progressTitle.text = @"--";
         self.progressTitle.textColor = RGBA(255.f, 255.f, 255.f, 0.5f);

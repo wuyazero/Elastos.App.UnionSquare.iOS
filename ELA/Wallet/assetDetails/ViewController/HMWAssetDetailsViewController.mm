@@ -209,6 +209,8 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     
     self.voteDetailsButton.layer.borderWidth = 1.f;
     self.voteDetailsButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+    self.voteDetailsButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.voteDetailsButton.titleLabel.minimumScaleFactor = 0.5f;
     
     self.DPoSTitleLabel.text = NSLocalizedString(@"DPoS节点选举", nil);
     self.CRCTitleLabel.text = NSLocalizedString(@"CR委员选举", nil);
@@ -562,8 +564,8 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
     NSString *amountStr = [[FLTools share] elaScaleConversionWith:[NSString stringWithFormat:@"%ld", totalAmount]];
     NSString *timeStr = [[FLTools share] YMDHMSgetTimeFromTimesTamp:[NSString stringWithFormat:@"%ld", lastTimestamp]];
     
-    self.voteAmountLabel.text = [NSString stringWithFormat:@"%@: %@ ELA", NSLocalizedString(@"金额总计", nil), amountStr];
-    self.voteTimeLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"最新投票时间", nil), timeStr];
+    self.voteAmountLabel.text = [NSString stringWithFormat:@"%@%@ ELA", NSLocalizedString(@"金额总计：", nil), amountStr];
+    self.voteTimeLabel.text = [NSString stringWithFormat:@"%@%@", NSLocalizedString(@"最新投票时间：", nil), timeStr];
     
     NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
     NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];

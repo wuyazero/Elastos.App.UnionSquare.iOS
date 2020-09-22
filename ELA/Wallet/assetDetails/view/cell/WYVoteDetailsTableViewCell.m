@@ -50,6 +50,8 @@
         self.cellTitle.translatesAutoresizingMaskIntoConstraints = NO;
         self.cellTitle.textAlignment = NSTextAlignmentLeft;
         self.cellTitle.font = [UIFont systemFontOfSize:14.f];
+        self.cellTitle.adjustsFontSizeToFitWidth = YES;
+        self.cellTitle.minimumScaleFactor = 0.5f;
         self.cellTitle.text = @"--";
         self.cellTitle.textColor = RGBA(255.f, 255.f, 255.f, 0.5f);
         self.cellTitle.backgroundColor = [UIColor clearColor];
@@ -81,6 +83,8 @@
         self.invalidButton = [[UIButton alloc] init];
         self.invalidButton.translatesAutoresizingMaskIntoConstraints = NO;
         self.invalidButton.titleLabel.font = [UIFont systemFontOfSize:12.f];
+        self.invalidButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+        self.invalidButton.titleLabel.minimumScaleFactor = 0.5f;
         [self.invalidButton setTitle:NSLocalizedString(@"已失效", nil) forState:UIControlStateNormal];
         [self.invalidButton setTitleColor:RGBA(255.f, 255.f, 255.f, 0.5f) forState:UIControlStateNormal];
         self.invalidButton.backgroundColor = RGBA(255.f, 255.f, 255.f, 0.2f);

@@ -240,7 +240,7 @@
           self.titlePopLabel.text = NSLocalizedString(@"请选择重置范围", nil);
         self.cancelButtonWidth = [self.cancelButton.widthAnchor constraintEqualToConstant:0.f];
     } else if (deleteType == AuthSwitchOffType){
-          self.titlePopLabel.text = NSLocalizedString(@"是否停用安全验证", nil);
+          self.titlePopLabel.text = NSLocalizedString(@"是否停用安全验证？", nil);
     }
     _deleteType=deleteType;
     self.cancelButtonWidth.active = YES;
