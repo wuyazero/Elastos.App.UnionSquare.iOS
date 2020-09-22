@@ -263,8 +263,13 @@
         if (!([topVC isKindOfClass:[WYLockViewController class]] || [topVC isKindOfClass:[WYAuthViewController class]])) {
             WYLockViewController *lockVC = [[WYLockViewController alloc] init];
             lockVC.modalPresentationStyle = UIModalPresentationFullScreen;
-            WYLog(@"=== dev temp === Lock nav is: %@", topVC.navigationController);
+            WYLog(@"=== dev temp === Top nav is: %@", topVC.navigationController);
             [topVC.navigationController presentViewController:lockVC animated:NO completion:nil];
+        } else if ([topVC isKindOfClass:[WYLockViewController class]]) {
+            WYAuthViewController *authVC = [[WYAuthViewController alloc] init];
+            authVC.modalPresentationStyle = UIModalPresentationFullScreen;
+            WYLog(@"=== dev temp === Top VC is: %@", topVC);
+            [topVC presentViewController:authVC animated:NO completion:nil];
         }
     }
 }

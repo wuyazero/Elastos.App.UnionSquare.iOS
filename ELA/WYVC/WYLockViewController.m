@@ -59,14 +59,12 @@
     NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
     if ([authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
         [authContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication
-                  localizedReason:authLocalizedReasonString
-                            reply:^(BOOL success, NSError *error) {
+                    localizedReason:authLocalizedReasonString
+                              reply:^(BOOL success, NSError *error) {
             if (success) {
                 WYLog(@"=== Auth Success ===");
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
-                        [self dismissViewControllerAnimated:NO completion:nil];
-                    });
+                    [self dismissViewControllerAnimated:NO completion:nil];
                 });
             } else {
                 WYLog(@"=== Auth Failed === : %@", error.localizedDescription);
