@@ -564,6 +564,7 @@ DIDAdapter *TestDIDAdapter_Create(const char *pwd, const char *walletId)
        NSString* UnSignature=[NSString stringWithFormat:@"%@.%@",[self removeSpaceAndNewline:manySecrets.firstObject],manySecrets[1]];
        UnSignature=[UnSignature stringByReplacingOccurrencesOfString:@"//n" withString:@""];
        bool isDID=[pubKey isEqualToString:jsonDict[@"data"][@"ownerpublickey"]];
+    WYLog(@"=== dev temp === QR JWT dic: %@", jsonDict);
     WYLog(@"pubKey==%@-------ownerpublickey==%@",pubKey,jsonDict[@"data"][@"ownerpublickey"]);
        if (isDID){
            return NO;
@@ -574,6 +575,31 @@ DIDAdapter *TestDIDAdapter_Create(const char *pwd, const char *walletId)
     return YES;
 }
 
+-(BOOL)comparedWithTheDIDWithmastWalletID:(NSString*)walletID withStringInfo:(NSString *)jwtStr{
+    NSString *didString = [[HWMDIDManager shareDIDManager]hasDIDWithPWD:@"" withDIDString:@"" WithPrivatekeyString:@"" WithmastWalletID:walletID needCreatDIDString:NO];
+    
+    if (didString && didString.length < 35) {
+        didString = [NSString stringWithFormat:@"did:elastos:%@", didString];
+    }
+    
+    NSArray * manySecrets = [jwtStr componentsSeparatedByString:@"."];
+       NSString *base=[NSString stringFromBase64UrlEncodedString:manySecrets[1]];
+       NSDictionary * jsonDict = [NSJSONSerialization JSONObjectWithData:[base dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+       NSString* UnSignature=[NSString stringWithFormat:@"%@.%@",[self removeSpaceAndNewline:manySecrets.firstObject],manySecrets[1]];
+       UnSignature=[UnSignature stringByReplacingOccurrencesOfString:@"//n" withString:@""];
+       bool isDID=[didString isEqualToString:jsonDict[@"data"][@"userdid"]];
+    
+    WYLog(@"=== dev temp === QR JWT dic: %@", jsonDict);
+    WYLog(@"didString==%@-------userdid==%@",didString,jsonDict[@"data"][@"userdid"]);
+    
+    if (isDID){
+        return NO;
+    }else{
+        return YES;
+    }
+    
+    return YES;
+}
 
 -(BOOL)voteforProposalQrCodeTypeWithString:(NSString*)jwtStr{
     NSArray * manySecrets = [jwtStr componentsSeparatedByString:@"."];

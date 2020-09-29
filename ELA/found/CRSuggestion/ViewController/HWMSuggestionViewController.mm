@@ -111,7 +111,7 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
                 WYLog(@"=== dev temp === SuggestionVC SuggestionArray 1: %@", self.suggestionArray);
                 
                 [self hiddLoading];
-                self. signatureButton.userInteractionEnabled=YES;
+                self.signatureButton.userInteractionEnabled=YES;
             }];
         }];
         
@@ -119,11 +119,11 @@ static NSString *AbstractVCell=@"HWMAbstractTableViewCell";
         
         //xxl 2.3 TODO
         [self setVoteforProposalInfo];
-        self. signatureButton.userInteractionEnabled=YES;
+        self.signatureButton.userInteractionEnabled=YES;
         
     }
     else{
-        self. signatureButton.userInteractionEnabled=YES;
+        self.signatureButton.userInteractionEnabled=YES;
     }
     
     
