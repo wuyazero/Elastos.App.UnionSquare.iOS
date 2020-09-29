@@ -55,7 +55,7 @@ static HWMQrCodeSignatureManager * _instance;
     QrCodeSignatureType type=[self QrCodeStringtype:data];
     
     
-    
+    WYLog(@"=== dev temp === QrCodeDataWithData: data %@ did %@ type %d", data, didString, type);
     
     
     //xxl fix the bug for suggestionQrCodeType
@@ -82,7 +82,11 @@ static HWMQrCodeSignatureManager * _instance;
             
         }
         if (type==suggestionQrCodeType||type==withdrawalsType) {
-            BOOL isDID=[[HWMDIDManager shareDIDManager]adviceComparedWithThePublicKeyWithmastWalletID:masterWalletID withStringInfo:data];
+//            BOOL isDID=[[HWMDIDManager shareDIDManager]adviceComparedWithThePublicKeyWithmastWalletID:masterWalletID withStringInfo:data];
+            
+            BOOL isDID=[[HWMDIDManager shareDIDManager]comparedWithTheDIDWithmastWalletID:masterWalletID withStringInfo:data];
+
+            
                      if (isDID) {
                          Complete(AuthenticationDID,data);
                          return;
@@ -92,12 +96,14 @@ static HWMQrCodeSignatureManager * _instance;
             HWMSecretaryGeneralAndMembersDetailsModel* model=[[HWMSecretaryGeneralAndMembersInfo shareTools]getDetailsModel];
             if (model) {
                 if (model.GMtype!= COUNCILType&&model.GMtype!=SECRETARIATType) {
+                    WYLog(@"=== dev temp === QRType: CommonIdentityType 1!!");
                     Complete(CommonIdentityType,data) ;
                     return  ;
                 }
             }else {
                 [[HWMSecretaryGeneralAndMembersInfo shareTools] loadDataSourceWithLoading:YES complete:^(HWMSecretaryGeneralAndMembersDetailsModel *model) {
                     if (model.GMtype!= COUNCILType&&model.GMtype!=SECRETARIATType) {
+                        WYLog(@"=== dev temp === QRType: CommonIdentityType 2!!");
                         Complete(CommonIdentityType,data) ;
                         return  ;
                     }
@@ -154,6 +160,9 @@ static HWMQrCodeSignatureManager * _instance;
     }
     else if ([QRCodeString containsString:@"elastos://crproposal/"]){
         NSDictionary * PayLoadDic=  [[HWMDIDManager shareDIDManager]CRInfoDecodeWithJwtStringInfo:QRCodeString];
+        
+        WYLog(@"=== dev temp === crproposal QR payload: %@", PayLoadDic);
+        
         NSString *command = PayLoadDic[@"command"];
         if(command && [command isEqualToString:@"createsuggestion"]){
             return suggestionQrCodeType;
@@ -181,6 +190,8 @@ static HWMQrCodeSignatureManager * _instance;
         return unknowQrCodeType;
         
     }
+    
+    return unknowQrCodeType;
     
 }
 -(id)ParsingQrCodeDataWithQrCodeType:(QrCodeSignatureType)type withQrCodeString:(NSString*)QRCodeString{

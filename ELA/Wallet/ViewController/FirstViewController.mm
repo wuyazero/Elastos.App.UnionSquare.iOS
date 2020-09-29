@@ -868,6 +868,7 @@
             [[FLTools share]showErrorInfo:NSLocalizedString(@"DID已过期", nil)];
             break;
         case CommonIdentityType:
+            WYLog(@"=== dev temp === First VC QR Type: CommonIdentityType!!");
             [self QrCodeScanningResultsWithString:QRCodeString withVC:self];
             break;
         case credaccessQrCodeType:
@@ -885,6 +886,7 @@
             [self showAdviceInfoText:data withJWTString:QRCodeString WithType:type];
             break;
         case unknowQrCodeType:
+            WYLog(@"=== dev temp === First VC QR Type: unknowQrCodeType!!");
             [self QrCodeScanningResultsWithString:QRCodeString withVC:self];
             break;
             
