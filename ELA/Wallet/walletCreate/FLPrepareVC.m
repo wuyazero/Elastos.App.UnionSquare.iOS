@@ -59,13 +59,14 @@
 
 }
 - (IBAction)clickBtn1:(id)sender {
+    
 //    HWMcreatListViewController *vc=[[HWMcreatListViewController alloc]init];
 //
-//   [self.navigationController pushViewController:vc animated:YES];
-//
+//    [self.navigationController pushViewController:vc animated:YES];
+
     FLCreatAcountVC *vc = [[FLCreatAcountVC alloc]init];
-//      vc.delegate=self;
-      [self.navigationController pushViewController:vc animated:YES];
+ //      vc.delegate=self;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (IBAction)clickBtn2:(id)sender {

@@ -453,24 +453,26 @@
     {
         NSDictionary *dic = _PayLoadDic;
         NSDictionary *payLoadDic = @{@"ProposalHash":dic[@"data"][@"proposalhash"],
-                                     @"OwnerPublicKey":dic[@"data"][@"ownerpublickey"]
+                                     @"OwnerPublicKey":dic[@"data"][@"ownerpublickey"],
+                                     @"Recipient":dic[@"data"][@"recipient"],
+                                     @"Amount":dic[@"data"][@"amount"]
         };
-        NSArray *array = dic[@"data"][@"utxos"];
+//        NSArray *array = dic[@"data"][@"utxos"];
         NSString *recipient = dic[@"data"][@"recipient"];
         NSString *amount = dic[@"data"][@"amount"];
         
         NSMutableArray *utxosArray = [[NSMutableArray alloc] init];
-        for(NSDictionary *dic in array)
-        {
-            NSString *amount = dic[@"amount"];
-            NSString *txid = dic[@"txid"];
-            NSNumber *vout = dic[@"vout"];
-            NSMutableDictionary *utxosDic = [[NSMutableDictionary alloc] init];
-            [utxosDic setValue:amount forKey:@"Amount"];
-            [utxosDic setValue:txid forKey:@"Hash"];
-            [utxosDic setValue:vout forKey:@"Index"];
-            [utxosArray addObject:utxosDic];
-        }
+//        for(NSDictionary *dic in array)
+//        {
+//            NSString *amount = dic[@"amount"];
+//            NSString *txid = dic[@"txid"];
+//            NSNumber *vout = dic[@"vout"];
+//            NSMutableDictionary *utxosDic = [[NSMutableDictionary alloc] init];
+//            [utxosDic setValue:amount forKey:@"Amount"];
+//            [utxosDic setValue:txid forKey:@"Hash"];
+//            [utxosDic setValue:vout forKey:@"Index"];
+//            [utxosArray addObject:utxosDic];
+//        }
         
         invokedUrlCommand *mommand = [[invokedUrlCommand alloc] initWithArguments:
                                       @[self.currentWallet.masterWalletID,

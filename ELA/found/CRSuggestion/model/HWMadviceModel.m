@@ -26,6 +26,11 @@
 
 @implementation HWMadviceModel
 + (NSDictionary *)modelCustomPropertyMapper {
-    return @{@"ID": @"id"};
+    return @{
+        @"ID": @"id",
+        @"NewAddress": @"newAddress",
+        @"NewSecretaryDID": @"newSecretaryDID",
+        @"NewOwnerDID": @"newOwnerDID"
+    };
 }
 @end

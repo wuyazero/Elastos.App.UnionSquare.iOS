@@ -45,6 +45,8 @@
 #import "WYVoteUtils.h"
 #import "ELANetwork.h"
 #import "ELACommitteeInfoModel.h"
+#import "WYLockViewController.h"
+#import "WYDIDUtils.h"
 
 @interface FirstViewController ()<FLCapitalViewDelegate,UITableViewDelegate,UITableViewDataSource,HMWaddFooterViewDelegate,HMWTheWalletListViewControllerDelegate,HMWpwdPopupViewDelegate,HMWToDeleteTheWalletPopViewDelegate, HMWAddTheCurrencyListViewControllerDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCommentPerioDetailsViewControllerDelegate>
 {
@@ -114,6 +116,17 @@
 @implementation FirstViewController
 
 - (void)viewDidLoad {
+    if ([[WYUtils getGlobal:@"APPStart"] isEqual:@YES]) {
+        NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+        BOOL authOn = [prefs boolForKey:@"authOn"];
+        if (authOn) {
+            UIViewController *lockVC = [[WYLockViewController alloc] init];
+            lockVC.modalPresentationStyle = UIModalPresentationFullScreen;
+            [self.navigationController presentViewController:lockVC animated:NO completion:nil];
+        }
+    }
+    [WYUtils setGlobal:@"APPStart" withValue:@NO];
+    
     [super viewDidLoad];
     [self setBackgroundImg:@""];
     self.walletIDListArray=[NSArray arrayWithArray:[[HMWFMDBManager sharedManagerType:walletType] allRecordWallet]];
@@ -433,77 +446,28 @@
         self.currentWallet.N=[baseDic[@"N"] integerValue];
         [self UpWalletType];
         
-        // WYDebug
-        
-        //        WYLog(@"=== wydebug start ===");
-        //
-        //        WYLog(@"=== wydebug end ===");
-        
-        dispatch_group_t waitGroup = dispatch_group_create();
-        dispatch_queue_t waitQueue = [WYUtils getNetworkQueue];
-        
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_group_enter(waitGroup);
-        dispatch_async(waitQueue, ^{
-
-            WYSetUseNetworkQueue(YES);
-            NSString *httpIP=[[FLTools share]http_IpFast];
-            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listproducer" header:@{} body:@{@"moreInfo":@"1",@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-                NSDictionary *param = data[@"data"];
-                WYLog(@"Producers List: %@", param[@"result"][@"producers"]);
-                dispatch_group_leave(waitGroup);
-            } WithFailBlock:^(id data) {
-                WYLog(@"%s: Failed to get DposList, error: ", __func__, data[@"code"]);
-                dispatch_group_leave(waitGroup);
-            }];
+        dispatch_async([WYUtils getTaskQueue], ^{
             
-            [ELANetwork getCommitteeInfo:^(id  _Nonnull data, NSError * _Nonnull error) {
-                WYLog(@"CRCommittee Info: %@", @{
-                    @"data": data,
-                    @"error": error
-                                             });
-                if (!error) {
-                    ELACommitteeInfoModel *CRCInfo = data;
-                    NSInteger index = [WYVoteUtils getCurrentCRCIndex:CRCInfo.data];
-                    if (index) {
-                        [ELANetwork getCouncilListInfo:index block:^(id  _Nonnull data, NSError * _Nonnull error) {
-                            WYLog(@"CRCouncil List: %@", @{
-                            @"data": data,
-                            @"error": error
-                                                     });
-                            dispatch_group_leave(waitGroup);
-                        }];
-                    } else {
-                        dispatch_group_leave(waitGroup);
-                    }
-                } else {
-                    dispatch_group_leave(waitGroup);
-                }
-            }];
-            
-            [HttpUrl NetPOSTHost:httpIP url:@"/api/dposnoderpc/check/listcrcandidates" header:@{} body:@{@"state":@"all"} showHUD:NO WithSuccessBlock:^(id data) {
-                NSDictionary *param = data[@"data"];
-                WYLog(@"CRC List: %@", param[@"result"][@"crcandidatesinfo"]);
-                dispatch_group_leave(waitGroup);
-            } WithFailBlock:^(id data) {
-                WYLog(@"%s: Failed to get CRCList, error: ", __func__, data[@"code"]);
-                dispatch_group_leave(waitGroup);
-            }];
-            
-            [ELANetwork cvoteAllSearch:@"" page:0 results:100 type:NOTIFICATIONType block:^(id  _Nonnull data, NSError * _Nonnull error){
-                WYLog(@"Proposals Info: %@", @{
-                    @"data": data,
-                    @"error": error
-                                             });
-                dispatch_group_leave(waitGroup);
-            }];
-            WYSetUseNetworkQueue(NO);
+            NSDictionary *voteInfo = [WYVoteUtils getVoteInfo:self.currentWallet.masterWalletID];
+            NSDictionary *votePayloads = [WYVoteUtils getVotePayloads:voteInfo];
+            NSDictionary *voteTimestamps = [WYVoteUtils getVoteTimestamps:voteInfo];
+            NSInteger voteAmount = [WYVoteUtils getTotalAmount:voteInfo];
+            NSDictionary *voteAddrs = [WYVoteUtils getVoteAddrs:votePayloads];
+            NSDictionary *invalidAddrs = [WYVoteUtils getInvalidAddrs:voteAddrs withVoteTimestamps:voteTimestamps];
+            WYLog(@"Vote Info: %@", voteInfo);
+            WYLog(@"Vote Amount: %ld", voteAmount);
+            WYLog(@"Vote Payloads: %@", votePayloads);
+            WYLog(@"Vote Addrs: %@", voteAddrs);
+            WYLog(@"Invalid Addrs: %@", invalidAddrs);
             
         });
         
         [self hiddLoading];
+        
+        // WYDebug
+        WYLog(@"=== wydebug start ===");
+        
+        WYLog(@"=== wydebug end ===");
     }
 }
 
@@ -591,7 +555,7 @@
     WCQRCodeScanningVC *WCQRCode=[[WCQRCodeScanningVC alloc]init];
     WCQRCode.frVC=self;
     WCQRCode.scanBack=^(NSString *addr){
-        WYLog(@"扫二维码 获取到的数据---%@",addr);
+        WYLog(@"FirstVC 扫二维码 获取到的数据---%@", addr);
         [weakSelf SweepCodeProcessingResultsWithQRCodeString:addr];
         
     };
@@ -867,7 +831,8 @@
     [[HWMQrCodeSignatureManager shareTools]QrCodeDataWithData:QRCodeString withDidString:self.currentWallet.didString withmastWalletID:self.currentWallet.masterWalletID withComplete:^(QrCodeSignatureType type, id  _Nonnull data) {
         if (data !=NULL) {
             
-            WYLog(@"data is %@",data);
+            WYLog(@"FirstVC data is %@", data);
+            WYLog(@"FirstVC type is %d", type);
             
             
             
@@ -903,6 +868,7 @@
             [[FLTools share]showErrorInfo:NSLocalizedString(@"DID已过期", nil)];
             break;
         case CommonIdentityType:
+            WYLog(@"=== dev temp === First VC QR Type: CommonIdentityType!!");
             [self QrCodeScanningResultsWithString:QRCodeString withVC:self];
             break;
         case credaccessQrCodeType:
@@ -920,6 +886,7 @@
             [self showAdviceInfoText:data withJWTString:QRCodeString WithType:type];
             break;
         case unknowQrCodeType:
+            WYLog(@"=== dev temp === First VC QR Type: unknowQrCodeType!!");
             [self QrCodeScanningResultsWithString:QRCodeString withVC:self];
             break;
             

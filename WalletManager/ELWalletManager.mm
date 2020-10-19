@@ -2709,12 +2709,26 @@ void *ReverseByteOrder(void *p, unsigned int len)
     NSString *masterWalletID =args[idx++];
     String playStrig=[self cstringWithString:args[idx++]];
     NSString *pwdString=args[idx++];
+    id Type = args[idx++];
+    
     nlohmann::json payloadJson = nlohmann::json::parse(playStrig);
     IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
     try {
         if (mainchainSubWallet) {
-            String jsonString= mainchainSubWallet->ProposalOwnerDigest(payloadJson);
-            NSString *resultString=[self stringWithCString:jsonString];
+            NSString *resultString = nil;
+            if ([Type isEqualToString:@"closeproposal"]) {
+                String jsonString= mainchainSubWallet->TerminateProposalOwnerDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else if ([Type isEqualToString:@"changeproposalowner"]) {
+                String jsonString= mainchainSubWallet->ProposalChangeOwnerDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else if ([Type isEqualToString:@"secretarygeneral"]) {
+                String jsonString= mainchainSubWallet->ProposalSecretaryGeneralElectionDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else {
+                String jsonString= mainchainSubWallet->ProposalOwnerDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            }
             NSData *testData =[NSData dataWithHexString:resultString];
 
             Byte *testByte = (Byte *)[testData bytes];
@@ -2776,17 +2790,31 @@ void *ReverseByteOrder(void *p, unsigned int len)
     }
     return nil;
 }
-- (NSString *)proposalCRCouncilMemberDigest:(NSString *)passwd payLoad:(String)payLoad walletID:(NSString *)masterWalletID
+- (NSString *)proposalCRCouncilMemberDigest:(NSString *)passwd payLoad:(String)payLoad walletID:(NSString *)masterWalletID withType:(id)Type
 {
     try {
         NSString *signDigest = nil;
+        WYLog(@"=== dev temp === proposalCRCouncilMemberDigest %s : payload: %@ type: %@", __func__, [self stringWithCString:payLoad], Type);
         
         Json payloadJson = nlohmann::json::parse(payLoad);
         IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
         if (mainchainSubWallet)
         {
-            String jsonString = mainchainSubWallet->ProposalCRCouncilMemberDigest(payloadJson);
-            NSString *resultString = [self stringWithCString:jsonString];
+            NSString *resultString = nil;
+            if ([Type isEqualToString:@"closeproposal"]) {
+                WYLog(@"=== dev temp === proposalCRCouncilMemberDigest: closeproposal entered!!");
+                String jsonString= mainchainSubWallet->TerminateProposalCRCouncilMemberDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else if ([Type isEqualToString:@"changeproposalowner"]) {
+                String jsonString= mainchainSubWallet->ProposalChangeOwnerCRCouncilMemberDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else if ([Type isEqualToString:@"secretarygeneral"]) {
+                String jsonString= mainchainSubWallet->ProposalSecretaryGeneralElectionCRCouncilMemberDigest(payloadJson);
+                resultString=[self stringWithCString:jsonString];
+            } else {
+                String jsonString = mainchainSubWallet->ProposalCRCouncilMemberDigest(payloadJson);
+                resultString = [self stringWithCString:jsonString];
+            }
             NSData *resultData = [NSData dataWithHexString:resultString];
             Byte *resultByte = (Byte *)[resultData bytes];
             
@@ -2812,7 +2840,45 @@ void *ReverseByteOrder(void *p, unsigned int len)
     return nil;
 }
 
-- (NSString *)createProposalTransaction:(NSDictionary *)dic walletID:(NSString *)masterWalletID
+- (NSString *)CRCouncilMemberClaimNodeDigest:(NSString *)passwd payLoad:(String)payLoad walletID:(NSString *)masterWalletID
+{
+    try {
+        NSString *signDigest = nil;
+        WYLog(@"=== dev temp === CRCouncilMemberClaimNodeDigest %s : payload: %@", __func__, [self stringWithCString:payLoad]);
+        
+        Json payloadJson = nlohmann::json::parse(payLoad);
+        IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
+        if (mainchainSubWallet)
+        {
+            String jsonString = mainchainSubWallet->CRCouncilMemberClaimNodeDigest(payloadJson);
+            NSString *resultString = [self stringWithCString:jsonString];
+        
+            NSData *resultData = [NSData dataWithHexString:resultString];
+            Byte *resultByte = (Byte *)[resultData bytes];
+            
+            char ReverseChar[DIGEST_LEN];
+            
+            ReverseByteOrder(resultByte, (int)[resultData length]);
+            
+            for(int i = 0; i < [resultData length]; i++)
+            {
+                ReverseChar[i] = resultByte[i];
+                
+            };
+            signDigest = [[HWMDIDManager shareDIDManager] proposalTheSignatureWithPWD:passwd withDigestChar:ReverseChar];
+            return signDigest;
+        }
+    }
+    catch (const std:: exception &e) {
+        NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]];
+        NSString *errCode=[NSString stringWithFormat:@"err%@",errDic[@"Code"]];
+        [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
+        return nil;
+    }
+    return nil;
+}
+
+- (NSString *)createProposalTransaction:(NSDictionary *)dic walletID:(NSString *)masterWalletID withType:(id)Type
 {
 
     try {
@@ -2822,9 +2888,47 @@ void *ReverseByteOrder(void *p, unsigned int len)
         IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
         if (mainchainSubWallet)
         {
-            Json json = mainchainSubWallet->CreateProposalTransaction(payloadJson, "");
-            NSString *resultString = [self stringWithJson:json];
+            NSString *resultString = nil;
+            if ([Type isEqualToString:@"closeproposal"]) {
+                Json json = mainchainSubWallet->CreateTerminateProposalTransaction(payloadJson, "");
+                resultString = [self stringWithJson:json];
+            } else if ([Type isEqualToString:@"changeproposalowner"]) {
+                Json json = mainchainSubWallet->CreateProposalChangeOwnerTransaction(payloadJson, "");
+                resultString = [self stringWithJson:json];
+            } else if ([Type isEqualToString:@"secretarygeneral"]) {
+                Json json = mainchainSubWallet->CreateSecretaryGeneralElectionTransaction(payloadJson, "");
+                resultString = [self stringWithJson:json];
+            } else {
+                Json json = mainchainSubWallet->CreateProposalTransaction(payloadJson, "");
+                resultString = [self stringWithJson:json];
+            }
           //  NSString *resultString=[self stringWithCString:json.dump()];
+            return resultString;
+        }
+    }
+    catch (const std:: exception &e) {
+        NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]];
+        NSString *errCode=[NSString stringWithFormat:@"err%@",errDic[@"Code"]];
+        [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
+        return nil;
+    }
+    
+    return nil;
+    
+}
+
+- (NSString *)createClaimNodeTransaction:(NSDictionary *)dic walletID:(NSString *)masterWalletID
+{
+
+    try {
+        NSString *payLoadStrig = [dic jsonStringEncoded];
+        String std = [self cstringWithString:payLoadStrig];
+        Json payloadJson = nlohmann::json::parse(std);
+        IMainchainSubWallet* mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
+        if (mainchainSubWallet)
+        {
+            Json json = mainchainSubWallet->CreateCRCouncilMemberClaimNodeTransaction(payloadJson, "");
+            NSString *resultString = [self stringWithJson:json];
             return resultString;
         }
     }
@@ -2871,6 +2975,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
     NSString *masterWalletID = args[idx++];
     NSDictionary *payLoadDic = args[idx++];
     NSString *pwdString = args[idx++];
+    id Type = args[idx++];
  
     NSString *playloadDicString = [payLoadDic jsonStringEncoded];
     String paySLoadtrig = [self cstringWithString:playloadDicString];
@@ -2883,22 +2988,42 @@ void *ReverseByteOrder(void *p, unsigned int len)
     ISubWallet *suWall = [self getSubWallet:walletID :chainID];
     Json  josn;
     try {
-        NSString *proposalCRCouncilMemberDigest = [self proposalCRCouncilMemberDigest:pwdString payLoad:paySLoadtrig walletID:masterWalletID];
+        WYLog(@"=== dev temp === proposalSignTx: Start!!");
+        NSString *proposalCRCouncilMemberDigest = [self proposalCRCouncilMemberDigest:pwdString payLoad:paySLoadtrig walletID:masterWalletID withType:Type];
         
         if(!proposalCRCouncilMemberDigest)
         {
+            WYLog(@"=== dev temp === proposalSignTx: proposalCRCouncilMemberDigest Error!!");
             return nil;
         }
         NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithDictionary:payLoadDic];
         [dic setValue:proposalCRCouncilMemberDigest forKey:@"CRCouncilMemberSignature"];
     
         NSDictionary *dataDic = [[NSDictionary alloc] initWithDictionary:dic];
-        NSString *payload  = [self createProposalTransaction:dataDic walletID:masterWalletID];
+        NSString *payload  = [self createProposalTransaction:dataDic walletID:masterWalletID withType:Type];
         if(!payload)
         {
+            WYLog(@"=== dev temp === proposalSignTx: createProposalTransaction Error!!");
             return nil;
         }
-        calculateProposalHash  = [self calculateProposalHash:dataDic walletID:masterWalletID];
+        
+        WYLog(@"=== dev temp === proposalSignTx: Proposal Payload Signed: %@", payload);
+        
+        NSMutableDictionary *proposalDic = [[NSMutableDictionary alloc] initWithDictionary:dataDic];
+        
+        if ([Type isEqualToString:@"closeproposal"]) {
+            [proposalDic setValue:@(1026) forKey:@"Type"];
+        } else if ([Type isEqualToString:@"changeproposalowner"]) {
+            [proposalDic setValue:@(1025) forKey:@"Type"];
+        } else if ([Type isEqualToString:@"secretarygeneral"]) {
+            [proposalDic setValue:@(1024) forKey:@"Type"];
+        }
+        
+        WYLog(@"=== dev temp === proposalSignTx: Proposal Dic to Hash : %@", proposalDic);
+        
+        calculateProposalHash  = [self calculateProposalHash:proposalDic walletID:masterWalletID];
+        
+        WYLog(@"=== dev temp === proposalSignTx: Proposal Hash Calculated : %@", calculateProposalHash);
         
         josn = [self jsonWithString:payload];
     } catch (const std:: exception & e) {
@@ -2923,7 +3048,8 @@ void *ReverseByteOrder(void *p, unsigned int len)
        }
        try {
            result = suWall->PublishTransaction(signedTx);
-           WYLog(@"dev temp resultDic: %@", resultDic);
+           NSString *txResult = [self stringWithJson:result];
+           WYLog(@"=== dev temp === proposalSignTx Send Result: %@", txResult);
            return [self successProcess:command msg:resultDic];
        } catch (const std:: exception & e ) {
            return  [self errInfoToDic:e.what() with:command];
@@ -3283,6 +3409,83 @@ void *ReverseByteOrder(void *p, unsigned int len)
     return nil;
 }
 
+- (PluginResult *)nodeClaimTransaction:(invokedUrlCommand *)command
+{
+    NSArray *args = command.arguments;
+    int idx = 0;
+    NSString *masterWalletID = args[idx++];
+    NSDictionary *payLoadDic = args[idx++];
+    NSString *pwdString = args[idx++];
+ 
+    NSString *playloadDicString = [payLoadDic jsonStringEncoded];
+    String paySLoadtrig = [self cstringWithString:playloadDicString];
+    String PWD = [self cstringWithString:pwdString];
+    
+    String walletID = [self cstringWithString:masterWalletID];
+    String chainID = "ELA";//暂时不知道
+
+    ISubWallet *suWall = [self getSubWallet:walletID :chainID];
+    Json  josn;
+    try {
+        WYLog(@"=== dev temp === nodeClaimTx: Start!!");
+        NSString *nodeClaimDigest = [self CRCouncilMemberClaimNodeDigest:pwdString payLoad:paySLoadtrig walletID:masterWalletID];
+        
+        if(!nodeClaimDigest)
+        {
+            WYLog(@"=== dev temp === nodeClaimTx: CRCouncilMemberClaimNodeDigest Error!!");
+            return nil;
+        }
+        WYLog(@"=== dev temp === nodeClaimTx: nodeClaimDigest: %@", nodeClaimDigest);
+        
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithDictionary:payLoadDic];
+        [dic setValue:nodeClaimDigest forKey:@"CRCouncilMemberSignature"];
+    
+        NSDictionary *dataDic = [[NSDictionary alloc] initWithDictionary:dic];
+        NSString *payload  = [self createClaimNodeTransaction:dataDic walletID:masterWalletID];
+        if(!payload)
+        {
+            WYLog(@"=== dev temp === nodeClaimTx: createClaimNodeTransaction Error!!");
+            return nil;
+        }
+        
+        WYLog(@"=== dev temp === nodeClaimTx: signed payload: %@", payload);
+        
+        josn = [self jsonWithString:payload];
+    } catch (const std:: exception & e) {
+        return  [self errInfoToDic:e.what() with:command];
+    }
+       Json signedTx;
+       Json result;
+       NSString *resultString = @"";
+       NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
+       try {
+           signedTx =  suWall->SignTransaction(josn, PWD);
+           
+           resultString = [self stringWithJson:signedTx];
+           
+           [resultDic setValue:resultString forKey:@"SignTransaction"];
+           [resultDic setValue:pwdString forKey:@"pwd"];
+           
+           WYLog(@"=== dev temp === nodeClaimTx: signed tx: %@", resultString);
+           
+           
+       } catch (const std:: exception & e ) {
+           return  [self errInfoToDic:e.what() with:command];
+       }
+       try {
+           result = suWall->PublishTransaction(signedTx);
+           NSString *txResult = [self stringWithJson:result];
+           WYLog(@"=== dev temp === nodeClaimTx Send Result: %@", txResult);
+           [resultDic setValue:txResult forKey:@"result"];
+           return [self successProcess:command msg:resultDic];
+       } catch (const std:: exception & e ) {
+           return  [self errInfoToDic:e.what() with:command];
+       }
+ 
+    
+    return NULL;
+}
+
 #pragma mark -Utils
 
 - (NSDictionary *)addValue:(NSDictionary *)dic key:(NSString *)key value:(NSString *)value
@@ -3331,7 +3534,7 @@ void *ReverseByteOrder(void *p, unsigned int len)
     NSString *pwdString = args[idx++];
     NSString *recipientStr = args[idx++];
     NSString *amountStr = args[idx++];
-    NSArray *utxoDic = args[idx++];
+//    NSArray *utxoDic = args[idx++];
     
     NSString *playloadDicString = [payLoadDic jsonStringEncoded];
     String payLoadString = [self cstringWithString:playloadDicString];
@@ -3347,12 +3550,14 @@ void *ReverseByteOrder(void *p, unsigned int len)
     NSString *calculateProposalHash = @"";
     Json json;
     try {
+        WYLog(@"=== dev temp === createProposalWithdrawTx payload: %@", payLoadDic);
         
         IMainchainSubWallet *mainchainSubWallet  = [self getWalletELASubWallet:masterWalletID];
         
         NSString *signature = [self proposalWithdrawDigest:payLoadDic :mainchainSubWallet];
         if(signature == nil)
         {
+            WYLog(@"=== dev temp === proposalWithdrawDigest Error!!");
             return nil;
         }
         signature = [self reverseChar:signature passwd:pwdString];
@@ -3361,18 +3566,24 @@ void *ReverseByteOrder(void *p, unsigned int len)
         String pay = [self cstringWithString:playloadDicString];
         Json payloadJson = nlohmann::json::parse(pay);
         
-        Json utxo = [self jsonWithString:[utxoDic jsonStringEncoded]];
+//        Json utxo = [self jsonWithString:[utxoDic jsonStringEncoded]];
         
-        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(recipient, amount, utxo, payloadJson);
+//        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(recipient, amount, utxo, payloadJson);
+        
+        WYLog(@"=== dev temp === createProposalWithdrawTx signed: %@", playloadDicString);
+        
+        Json resultJson = mainchainSubWallet->CreateProposalWithdrawTransaction(payloadJson);
+        
         json = resultJson;
     }
     catch (const std:: exception &e) {
-        NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]];
+        NSDictionary *errDic=[self dictionaryWithJsonString:[self stringWithCString:e.what()]]; 
         NSString *errCode=[NSString stringWithFormat:@"err%@",errDic[@"Code"]];
         [[FLTools share]showErrorInfo:NSLocalizedString(errCode, nil)];
         return nil;
     }
     NSDictionary *resultDic = [self publishTransactionWithdraw:json pwd:PWD suWall:suWall hash:calculateProposalHash];
+    WYLog(@"=== dev temp === createProposalWithdrawTx result: %@", resultDic);
     if(resultDic)
     {
         return [self successProcess:command msg:resultDic];

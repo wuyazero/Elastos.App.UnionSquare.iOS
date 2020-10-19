@@ -40,6 +40,8 @@
 #import <UserNotifications/UserNotifications.h>
 #import "IQKeyboardManager.h"
 #import "WYCrashViewController.h"
+#import "WYLockViewController.h"
+#import "WYAuthViewController.h"
 
 @interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
@@ -130,6 +132,7 @@
             vc.type=creatWalletType;
             self.window.rootViewController = naVC;
         } else {
+            [WYUtils setGlobal:@"APPStart" withValue:@YES];
             FLFLTabBarVC *tabVC = [[FLFLTabBarVC alloc]init];
             self.window.rootViewController = tabVC;
         }
@@ -235,6 +238,8 @@
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     [prefs setBool:NO forKey:@"crashed"];
     [prefs setObject:@"" forKey:@"crashReason"];
+    
+    [WYUtils setGlobal:@"InactiveStart" withValue:[NSDate date]];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
@@ -242,6 +247,31 @@
     [prefs setBool:YES forKey:@"crashed"];
     [prefs setObject:@"Crashed Outside App" forKey:@"crashReason"];
     [[ELWalletManager share]EMWMFlushData];
+    
+    BOOL authOn = [prefs boolForKey:@"authOn"];
+    NSDate *inactiveStart = [WYUtils getGlobal:@"InactiveStart"];
+    [WYUtils setGlobal:@"InactiveStart" withValue:nil];
+    NSDate *inactiveEnd = [NSDate date];
+    if (!inactiveStart) {
+        inactiveStart = inactiveEnd;
+    }
+    NSTimeInterval inactiveTime = [inactiveEnd timeIntervalSinceDate:inactiveStart];
+    WYLog(@"=== dev temp === Inactive time is: %f authOn is: %d", inactiveTime, authOn);
+    if (inactiveTime > 60.f && authOn) {
+        UIViewController *topVC = [WYUtils topViewController];
+        WYLog(@"=== dev temp === Top Class is: %@", [topVC class]);
+        if (!([topVC isKindOfClass:[WYLockViewController class]] || [topVC isKindOfClass:[WYAuthViewController class]])) {
+            WYLockViewController *lockVC = [[WYLockViewController alloc] init];
+            lockVC.modalPresentationStyle = UIModalPresentationFullScreen;
+            WYLog(@"=== dev temp === Top nav is: %@", topVC.navigationController);
+            [topVC.navigationController presentViewController:lockVC animated:NO completion:nil];
+        } else if ([topVC isKindOfClass:[WYLockViewController class]]) {
+            WYAuthViewController *authVC = [[WYAuthViewController alloc] init];
+            authVC.modalPresentationStyle = UIModalPresentationFullScreen;
+            WYLog(@"=== dev temp === Top VC is: %@", topVC);
+            [topVC presentViewController:authVC animated:NO completion:nil];
+        }
+    }
 }
 
 -(void)regsLocaNotc{

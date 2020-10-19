@@ -30,11 +30,11 @@
 
 + (AFHTTPSessionManager *)getManager
 {
-    static AFHTTPSessionManager *manager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+//    static AFHTTPSessionManager *manager = nil;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
         
-        manager = [AFHTTPSessionManager manager];
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
         
         //网络传输类型
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -53,9 +53,15 @@
         if (WYUseNetworkQueue()) {
             manager.completionQueue = [WYUtils getNetworkQueue];
             manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+        } else {
+            manager.completionQueue = dispatch_get_main_queue();
+            manager.requestSerializer.timeoutInterval = TimeOut;
         }
         
-    });
+//    });
+    
+    WYLog(@"=== dev temp === Use NetworkQueue: %d", WYUseNetworkQueue());
+    WYLog(@"=== dev temp === Active Timeout Setting 1: %f", manager.requestSerializer.timeoutInterval);
     
     return manager;
 }

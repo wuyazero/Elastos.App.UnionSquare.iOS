@@ -111,6 +111,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     }
     
     WYLog(@"xxl viewDidLoad %@",self.view);
+    WYLog(@" === dev temp === isOpen: %d", self.isOpen);
     //xxl #943
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(onTxPublish:)
@@ -315,6 +316,8 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     [self setTableViewFootViewWithHeight:300];
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    WYLog(@"=== dev temp === isOpen Section: %d", self.isOpen);
+    
     if (self.isOpen) {
         return self.cellInfoArray.count;
     }
@@ -336,12 +339,26 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     return [[UIView alloc]initWithFrame:CGRectZero];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if ((self.isOpen==YES&&self.type==CommentPerioREJECTEDType)||(self.isOpen==YES&&self.type==CommentPerioVETOEDType)) {
-        if (indexPath.section==0) {
+    if ((self.isOpen==YES && self.type==CommentPerioREJECTEDType) || (self.isOpen==YES && self.type==CommentPerioVETOEDType)) {
+        if (indexPath.section==1) {
             return 0.01;
         }
     }
-    if (indexPath.section==3||self.isOpen==NO) {
+    
+    if (self.isOpen && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)] && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] && indexPath.section == 4) {
+        return 0.01;
+    }
+    
+    if (self.isOpen && (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] || !self.DetailsModel.NewOwnerDID) && indexPath.section == 5) {
+        WYLog(@"=== dev temp === New Owner DID: HIDE 0");
+        return 0.01;
+    }
+    
+    if (self.isOpen && (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更秘书长动议",nil)] || !self.DetailsModel.NewSecretaryDID) && indexPath.section == 6) {
+        return 0.01;
+    }
+    
+    if (indexPath.section==7 || self.isOpen==NO) {
         return self.DetailsModel.abstractCell+50;
     }
     if ([self.cellInfoArray[indexPath.section] isEqualToString:NSLocalizedString(@"提案哈希", nil)]) {
@@ -361,20 +378,52 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     }
     switch (indexPath.section) {
         case 0:
+            cell.constLabel.text = self.DetailsModel.type;
+            break;
+        case 1:
             cell.constLabel.text=self.DetailsModel.duration;
             if((self.isOpen==YES&&self.type==CommentPerioREJECTEDType)||(self.isOpen==YES&&self.type==CommentPerioVETOEDType)) {
                 cell.alpha=0.f;
             }
             break;
-        case 1:
+        case 2:
             cell.constLabel.text=self.model.proposalHash;
             break;
-        case 2:
+        case 3:
             cell.constLabel.text=self.DetailsModel.address;
             cell.constLabel.textColor=RGBA(28, 164, 252, 1);
             cell.constLabel.userInteractionEnabled=YES;
             break;
-        case 3:
+        case 4:
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)] && ![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)]) {
+                cell.alpha = 0.f;
+            } else if ([self.DetailsModel.type isEqualToString:NSLocalizedString(@"终止提案动议",nil)]) {
+                cell.constLabel.text = [NSString stringWithFormat:@"#%@ %@", self.DetailsModel.closeProposalNum, self.DetailsModel.targetProposalTitle];
+            } else {
+                cell.constLabel.text = [NSString stringWithFormat:@"#%@ %@", self.DetailsModel.targetProposalNum, self.DetailsModel.targetProposalTitle];
+            }
+            break;
+        case 5:
+            WYLog(@"=== dev temp === New Owner DID: %@", self.DetailsModel.NewOwnerDID);
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更提案动议",nil)] || !self.DetailsModel.NewOwnerDID) {
+                WYLog(@"=== dev temp === New Owner DID: HIDE 1");
+                cell.alpha = 0.f;
+            } else {
+                cell.constLabel.text = self.DetailsModel.NewOwnerDID;
+                cell.constLabel.textColor=RGBA(28, 164, 252, 1);
+                cell.constLabel.userInteractionEnabled=YES;
+            }
+            break;
+        case 6:
+            if (![self.DetailsModel.type isEqualToString:NSLocalizedString(@"变更秘书长动议",nil)] || !self.DetailsModel.NewSecretaryDID) {
+                cell.alpha = 0.f;
+            } else {
+                cell.constLabel.text = self.DetailsModel.NewSecretaryDID;
+                cell.constLabel.textColor=RGBA(28, 164, 252, 1);
+                cell.constLabel.userInteractionEnabled=YES;
+            }
+            break;
+        case 7:
             cell.constLabel.text=self.DetailsModel.abstract;
             break;
         default:
@@ -592,12 +641,26 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
 }
 -(NSArray *)cellInfoArray{
     if (!_cellInfoArray) {
-        _cellInfoArray =@[NSLocalizedString(@"剩余时间", nil),NSLocalizedString(@"提案哈希", nil),NSLocalizedString(@"原文网址", nil),NSLocalizedString(@"摘要", nil)];
+        _cellInfoArray =@[
+            NSLocalizedString(@"提案种类", nil),
+            NSLocalizedString(@"剩余时间", nil),
+            NSLocalizedString(@"提案哈希", nil),
+            NSLocalizedString(@"原文网址", nil),
+            NSLocalizedString(@"原提案", nil),
+            NSLocalizedString(@"新提案负责人DID", nil),
+            NSLocalizedString(@"新任秘书长DID", nil),
+            NSLocalizedString(@"摘要", nil)
+        ];
     }
     return _cellInfoArray;
 }
 -(void)closeCommentPerioDetailsOrOpen:(BOOL)isOpen{
+    WYLog(@"=== dev temp === isOpen Switch 0: %d", self.isOpen);
+    WYLog(@"=== dev temp === isOpen Switch 1: %d", isOpen);
+    
     self.isOpen=!isOpen;
+    
+    WYLog(@"=== dev temp === isOpen Switch 2: %d", self.isOpen);
     [self.baseTable reloadData];
 }
 -(HWMDetailsProposalModel *)DetailsModel{
@@ -746,6 +809,7 @@ static NSString *BaseTableViewCell=@"HWMAbstractTableViewCell";
     
     if(self.type >= 0){
         
+        self->_isCallBackOK = YES;
         [self showSendSuccessOrFial:sendDealType];
         
     } else {

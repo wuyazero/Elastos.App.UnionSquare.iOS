@@ -19,8 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)sureToDeleteViewWithPWD:(NSString*)pwd;
 -(void)toCancelOrCloseDelegate;
+
+@optional
 -(void)CancelEvent;
-    
 
 @end
 
@@ -41,7 +42,8 @@ typedef NS_ENUM(NSInteger, HMWToDeleteType) {
     CloseChainIDType,
     CoverCommitteeMembersListType,
     ResyncChainDataType,
-    ResyncChainDataPromptType
+    ResyncChainDataPromptType,
+    AuthSwitchOffType
 };
 
 

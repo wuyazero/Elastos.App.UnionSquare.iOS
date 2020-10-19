@@ -59,12 +59,14 @@
     if (self.deleteType==CoverCommitteeMembersListType) {
         if ([self.delegate respondsToSelector:@selector(CancelEvent)]) {
             [self.delegate CancelEvent];
+        } else if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
+            [self.delegate toCancelOrCloseDelegate];
         }
         
     }else{
-    if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
-        [self.delegate toCancelOrCloseDelegate];
-    }
+        if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
+            [self.delegate toCancelOrCloseDelegate];
+        }
         
     }
 }
@@ -78,80 +80,84 @@
         [self.securityVerificationPopV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.top.bottom.equalTo(self);
         }];
-    }else if (self.deleteType==deleteFriends){
+    } else if (self.deleteType==deleteFriends) {
         self.titlePopLabel.text=NSLocalizedString(@"是否删除当前联系人？", nil);
         if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==deleteSelectVote){
-        if(self.delegate){
+    } else if (self.deleteType==deleteSelectVote) {
+        if(self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
         //        [self addSubview:self.securityVerificationPopV];
         //        [self.securityVerificationPopV mas_makeConstraints:^(MASConstraintMaker *make) {
         //            make.left.right.top.bottom.equalTo(self);
         //        }];
-    }else if (self.deleteType==moreThan36SelectList){
+    } else if (self.deleteType==moreThan36SelectList) {
         //        self.titlePopLabel.text=NSLocalizedString(@"超出投票选择上限，是否在已选列表中按排名顺序选择前36名？", nil);
-        if(self.delegate){
+        if(self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
         
-    }else if (self.deleteType==UtxoChangeWhole){
+    } else if (self.deleteType==UtxoChangeWhole) {
         
-        if(self.delegate){
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==openIDChainType){
-        if(self.delegate){
+    } else if (self.deleteType==openIDChainType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
         
-    }else if (self.deleteType==NeedsSavedType){
-        if(self.delegate){
+    } else if (self.deleteType==NeedsSavedType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==deleteCRVote){
-        if(self.delegate){
+    } else if (self.deleteType==deleteCRVote) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==voteInvalidType){
-        if(self.delegate){
+    } else if (self.deleteType==voteInvalidType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==deleteDIDInfoType){
-        if(self.delegate){
+    } else if (self.deleteType==deleteDIDInfoType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
             
         }
-    }else if (self.deleteType==needCreadDIDType){
+    } else if (self.deleteType==needCreadDIDType) {
         [self addSubview:self.securityVerificationPopV];
         [self.securityVerificationPopV mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.top.bottom.equalTo(self);
         }];
-    }else if (self.deleteType==deleteHasSaveInfoType){
-        if(self.delegate){
+    } else if (self.deleteType==deleteHasSaveInfoType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
             
         }
-    }else if (self.deleteType== documentsCoveringType){
-        if(self.delegate){
+    } else if (self.deleteType== documentsCoveringType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==CloseChainIDType){
-        if(self.delegate){
+    } else if (self.deleteType==CloseChainIDType) {
+        if (self.delegate) {
             [self.delegate sureToDeleteViewWithPWD:@""];
         }
-    }else if (self.deleteType==CoverCommitteeMembersListType){
-         if(self.delegate){
+    } else if (self.deleteType==CoverCommitteeMembersListType) {
+         if (self.delegate) {
               [self.delegate sureToDeleteViewWithPWD:@""];
           }
-    }else if (self.deleteType==ResyncChainDataType){
-         if(self.delegate){
+    } else if (self.deleteType == ResyncChainDataType) {
+         if (self.delegate) {
               [self.delegate sureToDeleteViewWithPWD:@""];
           }
-    }else if (self.deleteType==ResyncChainDataPromptType){
-         if(self.delegate){
+    } else if (self.deleteType == ResyncChainDataPromptType) {
+         if (self.delegate) {
+              [self.delegate sureToDeleteViewWithPWD:@""];
+          }
+    } else if (self.deleteType == AuthSwitchOffType) {
+         if (self.delegate) {
               [self.delegate sureToDeleteViewWithPWD:@""];
           }
     }
@@ -160,9 +166,9 @@
 -(void)takeOutOrShutDown{
     [self.securityVerificationPopV removeFromSuperview];
     self.securityVerificationPopV=nil;
-    if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
-        [self.delegate toCancelOrCloseDelegate];
-    }
+//    if ([self.delegate respondsToSelector:@selector(toCancelOrCloseDelegate)]) {
+//        [self.delegate toCancelOrCloseDelegate];
+//    }
 }
 -(void)makeSureWithPWD:(NSString*)pwdString{
     if ([[FLTools share]checkWhetherThePassword:pwdString]) {
@@ -228,15 +234,18 @@
         self.titlePopLabel.text= NSLocalizedString(@"关闭ID侧链将无法使用DID功能，\n是否立即关闭？", nil);
     }else if (deleteType==CoverCommitteeMembersListType){
           self.titlePopLabel.text= NSLocalizedString(@"是否覆盖现有候选列表？", nil);
-    }else if (deleteType==ResyncChainDataType){
-          self.titlePopLabel.text= NSLocalizedString(@"是否清除并重新同步数据？", nil);
-    }else if (deleteType==ResyncChainDataPromptType){
-          self.titlePopLabel.text= NSLocalizedString(@"请选择重置范围", nil);
+    } else if (deleteType == ResyncChainDataType){
+          self.titlePopLabel.text = NSLocalizedString(@"是否清除并重新同步数据？", nil);
+    } else if (deleteType == ResyncChainDataPromptType){
+          self.titlePopLabel.text = NSLocalizedString(@"请选择重置范围", nil);
         self.cancelButtonWidth = [self.cancelButton.widthAnchor constraintEqualToConstant:0.f];
+    } else if (deleteType == AuthSwitchOffType){
+          self.titlePopLabel.text = NSLocalizedString(@"是否停用安全验证？", nil);
     }
     _deleteType=deleteType;
     self.cancelButtonWidth.active = YES;
 }
+
 -(void)setUtxosString:(NSString *)UtxosString{
     _UtxosString=UtxosString;
     

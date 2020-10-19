@@ -17,6 +17,9 @@
 #import "friendsModel.h"
 #import "AboutELAWalletViewController.h"
 #import "HWMTheMessageCenterViewController.h"
+#import "HMWToDeleteTheWalletPopView.h"
+#import "WYContactListViewController.h"
+#import <LocalAuthentication/LocalAuthentication.h>
 
 static NSString *MyIncomeOrWealthCell=@"HMWMyIncomeOrWealthTableViewCell";
 static NSString *LanguageCell=@"HMWClassificationOfLanguageTableViewCell";
@@ -24,7 +27,8 @@ static NSString *addListCell=@"HMWaddWalletListTableViewCell";
 static NSString *notAddCell=@"HMWNotAddContactTableViewCell";
 static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 
-@interface FLMyVC ()<UITableViewDataSource,UITableViewDelegate,FLMeHeadViewDelegate>
+@interface FLMyVC ()<UITableViewDataSource, UITableViewDelegate, FLMeHeadViewDelegate, HMWToDeleteTheWalletPopViewDelegate>
+
 @property (nonatomic, strong)FLMeHeadView *headerView;
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong)NSArray *dataSorse;
@@ -44,6 +48,8 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 
 @property(strong,nonatomic)UIButton *meeasseButton;
 
+@property (strong, nonatomic) HMWToDeleteTheWalletPopView *authSwitchOffPopView;
+
 @end
 
 @implementation FLMyVC
@@ -57,13 +63,13 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     [self.table reloadData];
     [self setBackgroundImg:@""];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(myfriendNeedUpdateInfo) name:myfriendNeedUpdate object:nil];
-//    UIBarButtonItem *ClickMorenButton =  [[UIBarButtonItem alloc]initWithCustomView:self.meeasseButton];
-//    UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-//                                                                                    target:nil
-//                                                                                    action:nil];
-//    negativeSpacer.width =-20;
-//    NSArray *buttonArray = [[NSArray alloc]initWithObjects:negativeSpacer,ClickMorenButton,nil];
-//    self.navigationItem.rightBarButtonItems = buttonArray;
+    //    UIBarButtonItem *ClickMorenButton =  [[UIBarButtonItem alloc]initWithCustomView:self.meeasseButton];
+    //    UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+    //                                                                                    target:nil
+    //                                                                                    action:nil];
+    //    negativeSpacer.width =-20;
+    //    NSArray *buttonArray = [[NSArray alloc]initWithObjects:negativeSpacer,ClickMorenButton,nil];
+    //    self.navigationItem.rightBarButtonItems = buttonArray;
 }
 -(void)messageCenter{
     UIView *reView =[self.meeasseButton viewWithTag:999];
@@ -113,7 +119,9 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     self.dataSorse = @[
         @{@"img":@"mine_mission",@"title":NSLocalizedString(@"语言", nil),@"url":@"/app/task.html",@"subTitle":@""},
         @{@"img":@"mine_sugar",@"title":NSLocalizedString(@"联系人", nil),@"url":@"/app/vlink/wallet.html",@"subTitle":@""},
-        @{@"img":@"mine_sugar",@"title":NSLocalizedString(@"关于", nil),@"url":@"/app/vlink/wallet.html",@"subTitle":@""}];
+        @{@"img":@"mine_mission",@"title":NSLocalizedString(@"安全验证", nil),@"url":@"/app/vlink/wallet.html",@"subTitle":@""},
+        @{@"img":@"mine_sugar",@"title":NSLocalizedString(@"关于", nil),@"url":@"/app/vlink/wallet.html",@"subTitle":@""}
+    ];
     
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -160,7 +168,7 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     
-    return 3;
+    return 4;
 }
 
 -(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
@@ -197,66 +205,57 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
         }
     }
     
-    if (self.theContactOpen) {
-        if (indexPath.section==1) {
-            if (indexPath.row==0) {
-                FLTableViewDefultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FLTableViewDefultCell"];
-                
-                NSDictionary*dict =self.dataSorse[indexPath.section];
-                cell.nameLab.text  = dict[@"title"];
-                cell.subImag.image=[UIImage imageNamed:@"setting_list_arrow"];
-                return cell;
-                cell.selectionStyle=UITableViewCellSelectionStyleNone;
-            }
-            if (self.theContactMutableArray.count==0) {
-                
-                if(indexPath.row==self.theContactMutableArray.count+2) {
-                    HMWaddWalletListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:addListCell];
-                    cell.backgroundColor=[UIColor clearColor];
-                    [[HMWCommView share] makeBordersWithView:cell.BGView];
-                    cell.selectionStyle=UITableViewCellSelectionStyleNone;
-                    return cell;
-                    
-                }
-                HMWNotAddContactTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:notAddCell];
-                cell.backgroundColor=[UIColor clearColor];
-                cell.selectionStyle=UITableViewCellSelectionStyleNone;
-                return cell;
-                
-                
-            }else{
-                if (indexPath.row==self.theContactMutableArray.count+1) {
-                    HMWaddWalletListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:addListCell];
-                    
-                    cell.backgroundColor=[UIColor clearColor];
-                    [[HMWCommView share] makeBordersWithView:cell.BGView];
-                    
-                    cell.selectionStyle=UITableViewCellSelectionStyleNone;
-                    return cell;
-                }
-                HMWmyContactListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:theContactCell];
-                
-                cell.backgroundColor=[UIColor clearColor];
-                cell.selectionStyle=UITableViewCellSelectionStyleNone;
-                
-                
-                friendsModel *model=self.theContactMutableArray[indexPath.row-1];
-                cell.nickNameLabel.text=model.nameString;
-                
-                return cell;
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        }
-    }
+//    if (self.theContactOpen) {
+//        if (indexPath.section==1) {
+//            if (indexPath.row==0) {
+//                FLTableViewDefultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FLTableViewDefultCell"];
+//
+//                NSDictionary*dict =self.dataSorse[indexPath.section];
+//                cell.nameLab.text  = dict[@"title"];
+//                cell.subImag.image=[UIImage imageNamed:@"setting_list_arrow"];
+//                return cell;
+//                cell.selectionStyle=UITableViewCellSelectionStyleNone;
+//            }
+//            if (self.theContactMutableArray.count==0) {
+//
+//                if(indexPath.row==self.theContactMutableArray.count+2) {
+//                    HMWaddWalletListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:addListCell];
+//                    cell.backgroundColor=[UIColor clearColor];
+//                    [[HMWCommView share] makeBordersWithView:cell.BGView];
+//                    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+//                    return cell;
+//
+//                }
+//                HMWNotAddContactTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:notAddCell];
+//                cell.backgroundColor=[UIColor clearColor];
+//                cell.selectionStyle=UITableViewCellSelectionStyleNone;
+//                return cell;
+//
+//            } else {
+//                if (indexPath.row==self.theContactMutableArray.count+1) {
+//                    HMWaddWalletListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:addListCell];
+//
+//                    cell.backgroundColor=[UIColor clearColor];
+//                    [[HMWCommView share] makeBordersWithView:cell.BGView];
+//
+//                    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+//                    return cell;
+//                }
+//                HMWmyContactListTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:theContactCell];
+//
+//                cell.backgroundColor=[UIColor clearColor];
+//                cell.selectionStyle=UITableViewCellSelectionStyleNone;
+//
+//
+//                friendsModel *model=self.theContactMutableArray[indexPath.row-1];
+//                cell.nickNameLabel.text=model.nameString;
+//
+//                return cell;
+//
+//            }
+//
+//        }
+//    }
     
     FLTableViewDefultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FLTableViewDefultCell"];
     
@@ -264,8 +263,130 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     cell.nameLab.text  = dict[@"title"];
     cell.subImag.image=[UIImage imageNamed:@"setting_list_arrow_fold"];
     
+    if (indexPath.section == 2) {
+        cell.subImag.alpha = 0.f;
+        cell.pwdSwitch.alpha = 1.f;
+        cell.pwdSwitch.onTintColor = [UIColor greenColor];
+        [self authSwitchStateInit:cell.pwdSwitch];
+        [cell.pwdSwitch addTarget:self action:@selector(authSwitchDidChange:) forControlEvents:UIControlEventValueChanged];
+    }
     
     return cell;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.table reloadData];
+}
+
+- (void)authSwitchStateInit:(UISwitch *)pwdSwitch {
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    BOOL authOn = [prefs boolForKey:@"authOn"];
+    if (authOn) {
+        LAContext *authContext = [[LAContext alloc] init];
+        NSError *authError = nil;
+        if (![authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
+            [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
+            authOn = NO;
+            [prefs setBool:authOn forKey:@"authOn"];
+        }
+    }
+    [pwdSwitch setOn:authOn animated:NO];
+}
+
+- (void)authSwitchDidChange:(UISwitch *)sender {
+    WYLog(@"=== dev temp === isOn: %d", sender.isOn);
+    __block BOOL authOn = sender.isOn;
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    LAContext *authContext = [[LAContext alloc] init];
+    NSError *authError = nil;
+    NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
+    if (![authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
+        [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
+        authOn = NO;
+        [prefs setBool:authOn forKey:@"authOn"];
+        [sender setOn:authOn animated:NO];
+    } else {
+        if (authOn) {
+            [authContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                        localizedReason:authLocalizedReasonString
+                                  reply:^(BOOL success, NSError *error) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
+                    if (!success) {
+                        authOn = !authOn;
+                    }
+                    [prefs setBool:authOn forKey:@"authOn"];
+                    [sender setOn:authOn animated:NO];
+                });
+            }];
+        } else {
+            UIView *mainWindow = [self mainWindow];
+            [mainWindow addSubview:self.authSwitchOffPopView];
+            [self.authSwitchOffPopView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.top.bottom.equalTo(mainWindow);
+            }];
+        }
+    }
+}
+
+- (HMWToDeleteTheWalletPopView *)authSwitchOffPopView {
+    if (!_authSwitchOffPopView) {
+        _authSwitchOffPopView = [[HMWToDeleteTheWalletPopView alloc] init];
+        _authSwitchOffPopView.delegate = self;
+        _authSwitchOffPopView.deleteType = AuthSwitchOffType;
+    }
+    return _authSwitchOffPopView;
+}
+
+-(void)sureToDeleteViewWithPWD:(NSString *)pwd {
+    LAContext *authContext = [[LAContext alloc] init];
+    NSError *authError = nil;
+    NSString *authLocalizedReasonString = NSLocalizedString(@"安全验证", nil);
+    if (![authContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
+        [[FLTools share] showErrorInfo:NSLocalizedString(@"未设置系统锁屏密码", nil)];
+        [self toCancelOrCloseDelegate];
+    } else {
+        [authContext evaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                    localizedReason:authLocalizedReasonString
+                              reply:^(BOOL success, NSError *error) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 0), dispatch_get_main_queue(), ^{
+                if (success) {
+                    [self doAuthSwitchOff];
+                } else {
+                    [self toCancelOrCloseDelegate];
+                }
+            });
+        }];
+    }
+}
+
+-(void)doAuthSwitchOff {
+    NSIndexPath *authSwitchPath = [NSIndexPath indexPathForRow:0 inSection:2];
+    FLTableViewDefultCell *authSwitchCell = [self.table cellForRowAtIndexPath:authSwitchPath];
+    BOOL authOn = authSwitchCell.pwdSwitch.isOn;
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:authOn forKey:@"authOn"];
+    [self hideAuthSwitchOffPopView];
+}
+
+-(void)toCancelOrCloseDelegate {
+    NSIndexPath *authSwitchPath = [NSIndexPath indexPathForRow:0 inSection:2];
+    FLTableViewDefultCell *authSwitchCell = [self.table cellForRowAtIndexPath:authSwitchPath];
+    BOOL authOn = authSwitchCell.pwdSwitch.isOn;
+    authOn = !authOn;
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setBool:authOn forKey:@"authOn"];
+    [authSwitchCell.pwdSwitch setOn:authOn animated:NO];
+    [self hideAuthSwitchOffPopView];
+}
+
+-(void)CancelEvent {
+    [self hideAuthSwitchOffPopView];
+}
+
+-(void)hideAuthSwitchOffPopView {
+    [self.authSwitchOffPopView removeFromSuperview];
+    self.authSwitchOffPopView = nil;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -279,42 +400,50 @@ static NSString *theContactCell=@"HMWmyContactListTableViewCell";
     NSDictionary *dict = self.dataSorse[indexPath.section];
     
     NSString *name = dict[@"title"];
-    if([name isEqualToString:@"语言"]||[name isEqualToString:@"Language"]) {
+    if ([name isEqualToString:@"语言"]||[name isEqualToString:@"Language"]) {
         if (indexPath.row==0) {
             self.languageOpen=!self.languageOpen;
             NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:indexPath.section];
             [self.table reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
         }
-    }else if([name isEqualToString:@"联系人"]||[name isEqualToString:@"Contacts"]){
-        self.selectIndex=indexPath;
-        if (indexPath.row==0) {
-            self.theContactOpen=!self.theContactOpen;
-            NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:indexPath.section];
-            [self.table reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
-            
-            
-        }else{
-            if (self.theContactMutableArray.count==0) {
-                HMWaddContactViewController *addContactVC=[[ HMWaddContactViewController alloc]init];
-                addContactVC.title=NSLocalizedString(@"添加联系人", nil);
-                addContactVC.typeInfo=updateInfo;
-                [self.navigationController pushViewController:addContactVC animated:YES];
-            }else{
-                if (indexPath.row==self.theContactMutableArray.count+1) {//添加
-                    HMWaddContactViewController *addContactVC=[[ HMWaddContactViewController alloc]init];
-                    addContactVC.title=NSLocalizedString(@"添加联系人", nil);
-                    [self.navigationController pushViewController:addContactVC animated:YES];
-                    
-                }else{
-                    
-                    HMWtheContactInformationViewController *theContactInformationVC=[[HMWtheContactInformationViewController alloc]init];
-                    theContactInformationVC.model=self.theContactMutableArray[indexPath.row-1];
-                    [self.navigationController pushViewController:theContactInformationVC animated:YES];}
-            }}}else if ([name isEqualToString:NSLocalizedString(@"关于", nil)]){
+//    } else if ([name isEqualToString:@"联系人"]||[name isEqualToString:@"Contacts"]) {
+//        self.selectIndex=indexPath;
+//        if (indexPath.row==0) {
+//            self.theContactOpen=!self.theContactOpen;
+//            NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:indexPath.section];
+//            [self.table reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
+//
+//
+//        }else{
+//            if (self.theContactMutableArray.count==0) {
+//                HMWaddContactViewController *addContactVC=[[ HMWaddContactViewController alloc]init];
+//                addContactVC.title=NSLocalizedString(@"添加联系人", nil);
+//                addContactVC.typeInfo=updateInfo;
+//                [self.navigationController pushViewController:addContactVC animated:YES];
+//            }else{
+//                if (indexPath.row==self.theContactMutableArray.count+1) {//添加
+//                    HMWaddContactViewController *addContactVC=[[ HMWaddContactViewController alloc]init];
+//                    addContactVC.title=NSLocalizedString(@"添加联系人", nil);
+//                    [self.navigationController pushViewController:addContactVC animated:YES];
+//
+//                }else{
+//
+//                    HMWtheContactInformationViewController *theContactInformationVC=[[HMWtheContactInformationViewController alloc]init];
+//                    theContactInformationVC.model=self.theContactMutableArray[indexPath.row-1];
+//                    [self.navigationController pushViewController:theContactInformationVC animated:YES];}
+//            }
+//
+//        }
+        
+    } else if ([name isEqualToString:NSLocalizedString(@"关于", nil)]) {
                 AboutELAWalletViewController* AboutELAWalletVC =[[AboutELAWalletViewController alloc]init];
                 AboutELAWalletVC.title=name;
                 [self.navigationController pushViewController:AboutELAWalletVC animated:YES];
                 
+            } else if ([name isEqualToString:NSLocalizedString(@"联系人", nil)]) {
+                WYContactListViewController *contactListVC = [[WYContactListViewController alloc] init];
+                contactListVC.title = name;
+                [self.navigationController pushViewController:contactListVC animated:YES];
             }
     
     

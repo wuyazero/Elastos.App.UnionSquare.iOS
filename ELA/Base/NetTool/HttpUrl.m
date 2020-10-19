@@ -41,7 +41,13 @@ NSInteger timeOut = 60;
     if (WYUseNetworkQueue()) {
         manage.completionQueue = [WYUtils getNetworkQueue];
         manage.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    } else {
+        manage.completionQueue = dispatch_get_main_queue();
+        manage.requestSerializer.timeoutInterval = timeOut;
     }
+    
+    WYLog(@"=== dev temp === Use NetworkQueue: %d", WYUseNetworkQueue());
+    WYLog(@"=== dev temp === Active Timeout Setting 2: %f", manage.requestSerializer.timeoutInterval);
     
     return manage;
 }
@@ -168,7 +174,13 @@ NSInteger timeOut = 60;
     if (WYUseNetworkQueue()) {
         manager.completionQueue = [WYUtils getNetworkQueue];
         manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    } else {
+        manager.completionQueue = dispatch_get_main_queue();
+        manager.requestSerializer.timeoutInterval = timeOut;
     }
+    
+    WYLog(@"=== dev temp === Use NetworkQueue: %d", WYUseNetworkQueue());
+    WYLog(@"=== dev temp === Active Timeout Setting 3: %f", manager.requestSerializer.timeoutInterval);
     
     NSString *httpStr = [Http_IP stringByAppendingString:@"/api/attachment/upload"];
     [manager POST:httpStr parameters:nil headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -229,7 +241,13 @@ NSInteger timeOut = 60;
     if (WYUseNetworkQueue()) {
         manager.completionQueue = [WYUtils getNetworkQueue];
         manager.requestSerializer.timeoutInterval = QUEUE_TIMEOUT;
+    } else {
+        manager.completionQueue = dispatch_get_main_queue();
+        manager.requestSerializer.timeoutInterval = timeOut;
     }
+    
+    WYLog(@"=== dev temp === Use NetworkQueue: %d", WYUseNetworkQueue());
+    WYLog(@"=== dev temp === Active Timeout Setting 4: %f", manager.requestSerializer.timeoutInterval);
     
     NSString *httpStr = [host stringByAppendingString:url];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];

@@ -25,36 +25,61 @@
 #import "MyUtil.h"
 #import "ELWalletManager.h"
 
-static dispatch_queue_t logQueue = nil;
-static dispatch_queue_t networkQueue = nil;
-static dispatch_queue_t taskQueue = nil;
 static BOOL useNetworkQueue = NO;
-static NSString *logPath = nil;
-static NSDateFormatter *dateFormatter = nil;
 static NSUncaughtExceptionHandler *nextHandler = nil;
-static WYUtils *sharedWYUtils = nil;
+static NSMutableDictionary *globalDic = nil;
 
 @implementation WYUtils
 
 + (WYUtils *)shared {
-    if (!sharedWYUtils) {
+    static WYUtils *sharedWYUtils = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         sharedWYUtils = [[WYUtils alloc] init];
-    }
+    });
     return sharedWYUtils;
 }
 
-+ (dispatch_queue_t)getNetworkQueue {
-    if (!networkQueue) {
-        networkQueue = dispatch_queue_create("elastos.elawallet.NetworkQueue", DISPATCH_QUEUE_CONCURRENT);
++ (void)setGlobal:(NSString *)key withValue:(id _Nullable)value {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        globalDic = [[NSMutableDictionary alloc] init];
+    });
+    globalDic[key] = value;
+}
+
++ (id)getGlobal:(NSString *)key {
+    if (!globalDic) {
+        return nil;
     }
+    return globalDic[key];
+}
+
++ (dispatch_queue_t)getNetworkQueue {
+    static dispatch_queue_t networkQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        networkQueue = dispatch_queue_create("elastos.elawallet.NetworkQueue", DISPATCH_QUEUE_CONCURRENT);
+    });
     return networkQueue;
 }
 
 + (dispatch_queue_t)getTaskQueue {
-    if (!taskQueue) {
+    static dispatch_queue_t taskQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         taskQueue = dispatch_queue_create("elastos.elawallet.TaskQueue", DISPATCH_QUEUE_CONCURRENT);
-    }
+    });
     return taskQueue;
+}
+
++ (dispatch_queue_t)getSerialQueue {
+    static dispatch_queue_t serialQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        serialQueue = dispatch_queue_create("elastos.elawallet.TaskQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    return serialQueue;
 }
 
 + (NSString *)getLogPath {
@@ -192,6 +217,11 @@ static WYUtils *sharedWYUtils = nil;
     
 }
 
++ (BOOL)matchString:(NSString *)inputStr withRegex:(NSString *)regexStr {
+    NSPredicate *testRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regexStr];
+    return [testRegex evaluateWithObject:inputStr];
+}
+
 + (NSDictionary *)processAddressOrCryptoName:(NSString *)inputStr withMasterWalletID:(NSString *)masterWalletID {
     NSString *elaAddress = nil;
     NSString *errMsg = nil;
@@ -229,20 +259,46 @@ static WYUtils *sharedWYUtils = nil;
     };
 }
 
++ (UIViewController *)topViewController {
+    UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (true) {
+        if (topViewController.presentedViewController) {
+            topViewController = topViewController.presentedViewController;
+        } else if ([topViewController isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)topViewController;
+            topViewController = nav.topViewController;
+        } else if ([topViewController isKindOfClass:[UITabBarController class]]) {
+            UITabBarController *tab = (UITabBarController *)topViewController;
+            topViewController = tab.selectedViewController;
+        } else {
+            break;
+        }
+    }
+    return topViewController;
+}
+
 @end
 
 void WYLog(NSString *fmt, ...) {
-    if (!logQueue) {
+    static dispatch_queue_t logQueue = nil;
+    static dispatch_once_t onceQueue;
+    dispatch_once(&onceQueue, ^{
         logQueue = dispatch_queue_create("elastos.elawallet.LogQueue", DISPATCH_QUEUE_SERIAL);
-    }
-    if (!logPath) {
+    });
+    
+    static NSString *logPath = nil;
+    static dispatch_once_t oncePath;
+    dispatch_once(&oncePath, ^{
         NSString *rootPath = [MyUtil getRootPath];
         logPath = [rootPath stringByAppendingPathComponent:LOG_FILE_NAME];
-    }
-    if (!dateFormatter) {
+    });
+    
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceFormatter;
+    dispatch_once(&onceFormatter, ^{
         dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
-    }
+    });
     
     @autoreleasepool {
         va_list args;

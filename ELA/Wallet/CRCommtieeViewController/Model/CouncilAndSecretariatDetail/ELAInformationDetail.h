@@ -54,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) double startDate;
 @property (nonatomic, assign) double endDate;
 
+@property (nonatomic, strong) NSString *dpospublickey;
 
 @end
 

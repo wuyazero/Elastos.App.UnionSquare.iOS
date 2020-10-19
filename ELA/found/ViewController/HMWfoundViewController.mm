@@ -292,12 +292,17 @@
             }
             else if([model.status isEqualToString:@"Terminated"] && ![model.depositAmount isEqualToString:@""] && ![model.depositAmount isEqualToString:@"0"])//任满
             {
-                [self setELACommitteeManageViewController:4 :detailModel];
+                [self setELACommitteeManageViewController:4 withModel:detailModel];
                 return YES;
             }
             else if([model.status isEqualToString:@"Impeached"] && ![model.depositAmount isEqualToString:@""] && ![model.depositAmount isEqualToString:@"0"])//弹劾
             {
-                [self setELACommitteeManageViewController:5 :detailModel];
+                [self setELACommitteeManageViewController:5 withModel:detailModel];
+                return YES;
+                
+            } else if([model.status isEqualToString:@"Inactive"] && ![model.depositAmount isEqualToString:@""] && ![model.depositAmount isEqualToString:@"0"])//停职
+            {
+                [self setELACommitteeManageViewController:7 withModel:detailModel];
                 return YES;
                 
             }
@@ -312,7 +317,7 @@
     }
     return NO;
 }
-- (void)setELACommitteeManageViewController:(int)type :(ELAInformationDetail *)detailModel
+- (void)setELACommitteeManageViewController:(int)type withModel:(ELAInformationDetail *)detailModel
 {
     ELAPledgeView *_pledgeView = [[ELAPledgeView alloc] init];
     [_pledgeView showAlertView];
@@ -320,6 +325,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             
             ELACommitteeManageViewController *vc = [[ELACommitteeManageViewController alloc] init];
+            
+            WYLog(@"=== dev temp === detailModel dpospublickey: %@", detailModel.dpospublickey);
+            
             vc.infoModel = detailModel;
             vc.type = type;
             vc.title = ELALocalizedString(@"委员管理");

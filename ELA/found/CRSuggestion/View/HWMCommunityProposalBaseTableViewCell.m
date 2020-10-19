@@ -48,7 +48,7 @@
 }
 -(void)setModel:(HWMBillListModel *)model{
     self.titleLabel.text=model.title;
-    self.rightLabte.text=model.status;
+    self.rightLabte.text=model.type;
     self.leftLabel.text=model.baseInfoString;
     _model=model;
     if (self.isSearch) {

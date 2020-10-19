@@ -7,7 +7,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HMWmyContactListTableViewCell : UITableViewCell
+
 @property (weak, nonatomic) IBOutlet UILabel *nickNameLabel;
+@property (weak, nonatomic) IBOutlet UIView *BGView;
 
 @end
 
