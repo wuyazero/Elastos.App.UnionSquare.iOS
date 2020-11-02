@@ -1034,14 +1034,13 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             detailsM.Type=NSLocalizedString(@"侧链充值交易", nil);
             break;
         case 7:
-            detailsM.Type=NSLocalizedString(@"侧链提现交易", nil);
+            detailsM.Type=NSLocalizedString(@"主链提现交易", nil);
             break;
-        case 8:{
-            
+        case 8:
+        {
             NSDictionary*dic=result.message[@"success"][@"Transactions"][0][@"Payload"][0];
             transferTransactionDetailsVC.PayloadInfoString=[NSString stringWithFormat:@"%@\n%@ %@",dic[@"CrossChainAddress"],[[FLTools share] elaScaleConversionWith:dic[@"CrossChainAmount"]],@"ELA"];
             detailsM.Type=NSLocalizedString(@"跨链交易", nil);
-            
         }
             break;
         case 9:
@@ -1053,13 +1052,19 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             }else{
                 detailsM.Type=NSLocalizedString(@"取消参选交易", nil);
             }
-            
             break;
         case 11:
             detailsM.Type=NSLocalizedString(@"更新参选交易", nil);
             break;
         case 12:
-            detailsM.Type=NSLocalizedString(@"提取DPoS质押金交易", nil);
+            if ([self.model.iconName isEqualToString:@"IDChain"]) {
+                detailsM.Type=NSLocalizedString(@"取回参选质押资产交易", nil);
+            }else{
+                detailsM.Type=NSLocalizedString(@"提取DPoS质押金交易", nil);
+            }
+            break;
+        case 13:
+            detailsM.Type=NSLocalizedString(@"未知交易类型", nil);
             break;
         case 33:
             detailsM.Type=NSLocalizedString(@"注册CR参选交易", nil);
@@ -1071,7 +1076,11 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             detailsM.Type=NSLocalizedString(@"更新CR参选信息交易", nil);
             break;
         case 36:
-            detailsM.Type=NSLocalizedString(@"提取CR质押金交易", nil);
+            if ([self.model.iconName isEqualToString:@"IDChain"]) {
+                detailsM.Type=NSLocalizedString(@"取回CR参选质押资产交易", nil);
+            }else{
+                detailsM.Type=NSLocalizedString(@"提取CR质押金交易", nil);
+            }
             break;
         case 37:
             detailsM.Type=NSLocalizedString(@"提案发起交易", nil);
@@ -1084,6 +1093,12 @@ static NSString *showOwnerAddressCellString=@"showOwnerAddressTableViewCell";
             break;
         case 41:
             detailsM.Type=NSLocalizedString(@"提案资金提取交易", nil);
+            break;
+        case 42:
+            detailsM.Type=NSLocalizedString(@"拨款交易", nil);
+            break;
+        case 49:
+            detailsM.Type=NSLocalizedString(@"CR委员节点交易", nil);
             break;
             
         default:

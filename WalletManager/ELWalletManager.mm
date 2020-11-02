@@ -3320,6 +3320,10 @@ void *ReverseByteOrder(void *p, unsigned int len)
            
            [resultDic setValue:resultString forKey:@"SignTransaction"];
            [resultDic setValue:pwdString forKey:@"pwd"];
+           if(calculateProposalHash && ![calculateProposalHash isEqualToString:@""])
+           {
+               [resultDic setValue:calculateProposalHash forKey:@"calculateProposalHash"];
+           }
            
            
        } catch (const std:: exception & e ) {

@@ -116,7 +116,7 @@ void ElaSubWalletCallback::OnTxPublished(const std::string &hash, const nlohmann
             HWMMessageCenterModel *model =[[HWMMessageCenterModel alloc]init];
             model.walletID= walletID;
             model.chainID=chainID;
-            model.MessageC=@"交易错误，无法上链";
+            model.MessageC=NSLocalizedString(@"交易错误，无法上链", nil);
             model.typeHash=hashString;
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [[FLTools share]showNeMessageWith:model];
