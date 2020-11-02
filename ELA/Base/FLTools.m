@@ -1965,7 +1965,79 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
 }
 -(NSString*)EnquiryForDetailsWithTransactiontype:(NSInteger)type withChainName:(NSString*)chainID{
     NSString *detailsMType;
+//    switch (type) {
+//        case 0:
+//            detailsMType=NSLocalizedString(@"创币交易", nil);
+//            break;
+//        case 1:
+//            detailsMType=NSLocalizedString(@"注册资产交易", nil);
+//            break;
+//        case 2:
+//            detailsMType=NSLocalizedString(@"普通转账交易", nil);
+//            break;
+//        case 3:
+//            detailsMType=NSLocalizedString(@"记录交易", nil);
+//            break;
+//        case 4:
+//            detailsMType=NSLocalizedString(@"部署交易", nil);
+//            break;
+//        case 5:
+//            detailsMType=NSLocalizedString(@"侧链挖矿交易", nil);
+//            break;
+//        case 6:
+//            detailsMType=NSLocalizedString(@"侧链充值交易", nil);
+//            break;
+//        case 7:
+//            detailsMType=NSLocalizedString(@"侧链提现交易", nil);
+//            break;
+//        case 8:{
+//            detailsMType=NSLocalizedString(@"跨链交易", nil);
+//        }
+//            break;
+//        case 9:
+//            detailsMType=NSLocalizedString(@"注册参选交易", nil);
+//            break;
+//        case 10:
+//            if ([chainID isEqualToString:@"IDChain"]) {
+//                detailsMType=NSLocalizedString(@"ID 交易", nil);
+//            }else{
+//                detailsMType=NSLocalizedString(@"取消参选交易", nil);
+//            }
+//            break;
+//        case 11:
+//            detailsMType=NSLocalizedString(@"更新参选交易", nil);
+//            break;
+//        case 12:
+//            detailsMType=NSLocalizedString(@"提取DPoS质押金交易", nil);
+//            break;
+//        case 33:
+//            detailsMType=NSLocalizedString(@"注册CR参选交易", nil);
+//            break;
+//        case 34:
+//            detailsMType=NSLocalizedString(@"取消CR参选交易", nil);
+//            break;
+//        case 35:
+//            detailsMType=NSLocalizedString(@"更新CR参选信息交易", nil);
+//            break;
+//        case 36:
+//            detailsMType=NSLocalizedString(@"提取CR质押金交易", nil);
+//            break;
+//        case 1001:
+//            detailsMType=NSLocalizedString(@"投票交易", nil);
+//            break;
+//        case 1002:
+//            detailsMType=NSLocalizedString(@"投票交易", nil);
+//            break;
+//        case 1003:
+//            detailsMType=NSLocalizedString(@"零钱换整", nil);
+//            break;
+//
+//        default:
+//            break;
+//    }
+    
     switch (type) {
+            
         case 0:
             detailsMType=NSLocalizedString(@"创币交易", nil);
             break;
@@ -1988,11 +2060,10 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
             detailsMType=NSLocalizedString(@"侧链充值交易", nil);
             break;
         case 7:
-            detailsMType=NSLocalizedString(@"侧链提现交易", nil);
+            detailsMType=NSLocalizedString(@"主链提现交易", nil);
             break;
-        case 8:{
+        case 8:
             detailsMType=NSLocalizedString(@"跨链交易", nil);
-        }
             break;
         case 9:
             detailsMType=NSLocalizedString(@"注册参选交易", nil);
@@ -2008,7 +2079,14 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
             detailsMType=NSLocalizedString(@"更新参选交易", nil);
             break;
         case 12:
-            detailsMType=NSLocalizedString(@"提取DPoS质押金交易", nil);
+            if ([chainID isEqualToString:@"IDChain"]) {
+                detailsMType=NSLocalizedString(@"取回参选质押资产交易", nil);
+            }else{
+                detailsMType=NSLocalizedString(@"提取DPoS质押金交易", nil);
+            }
+            break;
+        case 13:
+            detailsMType=NSLocalizedString(@"未知交易类型", nil);
             break;
         case 33:
             detailsMType=NSLocalizedString(@"注册CR参选交易", nil);
@@ -2020,8 +2098,31 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
             detailsMType=NSLocalizedString(@"更新CR参选信息交易", nil);
             break;
         case 36:
-            detailsMType=NSLocalizedString(@"提取CR质押金交易", nil);
+            if ([chainID isEqualToString:@"IDChain"]) {
+                detailsMType=NSLocalizedString(@"取回CR参选质押资产交易", nil);
+            }else{
+                detailsMType=NSLocalizedString(@"提取CR质押金交易", nil);
+            }
             break;
+        case 37:
+            detailsMType=NSLocalizedString(@"提案发起交易", nil);
+            break;
+        case 38:
+            detailsMType=NSLocalizedString(@"提案评议交易", nil);
+            break;
+        case 39:
+            detailsMType=NSLocalizedString(@"提案反馈交易", nil);
+            break;
+        case 41:
+            detailsMType=NSLocalizedString(@"提案资金提取交易", nil);
+            break;
+        case 42:
+            detailsMType=NSLocalizedString(@"拨款交易", nil);
+            break;
+        case 49:
+            detailsMType=NSLocalizedString(@"CR委员节点交易", nil);
+            break;
+            
         case 1001:
             detailsMType=NSLocalizedString(@"投票交易", nil);
             break;
@@ -2035,6 +2136,7 @@ void ProViderReleaseData (void *info,const void *data,size_t size) {
         default:
             break;
     }
+    
     return detailsMType;
     
 }
