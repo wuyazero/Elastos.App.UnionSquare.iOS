@@ -27,6 +27,7 @@
 #import "HWMCreateDIDViewController.h"
 #import "HWMDIDManager.h"
 #import "HWMDIDInfoModel.h"
+#import "WYDIDUtils.h"
 
 
 @interface HMWCRCommitteeMemberListViewController ()<HMWvotingRulesViewDelegate,HMWVotingListViewDelegate,HMWnodeInformationViewControllerDelegate,HWMCRCommitteeForAgreementViewDelegate,HMWToDeleteTheWalletPopViewDelegate,HMWAddTheCurrencyListViewControllerDelegate,HWMCRCCommitteeElectionListViewControllerDelegate,HMWMyVoteViewControllerDeleagte>
@@ -751,7 +752,14 @@
 }
 -(bool)UnregisteredAndTimeExpired{
     
-    [[HWMDIDManager shareDIDManager]hasDIDWithPWD:@"" withDIDString:self.wallet.didString WithPrivatekeyString:@"" WithmastWalletID:self.wallet.masterWalletID needCreatDIDString:NO];
+    NSString* didString = [WYDIDUtils validateDIDString:[[HWMDIDManager shareDIDManager]hasDIDWithPWD:@"" withDIDString:self.wallet.didString WithPrivatekeyString:@"" WithmastWalletID:self.wallet.masterWalletID needCreatDIDString:NO]];
+    
+    WYLog(@"=== dev temp === UnregisteredAndTimeExpired: didString %@", didString);
+    if (!didString) {
+        [[FLTools share]showErrorInfo:NSLocalizedString(@"当前钱包未创建DID",nil)];
+        return NO;
+    }
+    self.wallet.didString = didString;
     
     BOOL hasChain=[[HWMDIDManager shareDIDManager]HasBeenOnTheChain];
     if (hasChain==NO) {
@@ -764,6 +772,7 @@
 //        }];
         return NO;
     }
+    
     if ([[HWMDIDManager shareDIDManager]CheckDIDwhetherExpiredWithDIDString:self.wallet.didString WithmastWalletID:self.wallet.masterWalletID]) {
         return YES;
     }
